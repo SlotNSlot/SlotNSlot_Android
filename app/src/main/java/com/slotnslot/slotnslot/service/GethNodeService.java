@@ -27,11 +27,10 @@ public class GethNodeService extends Service {
     public int onStartCommand(Intent intent, @OnStartCommandFlag int flags, int startId) {
         Completable
                 .create(e -> {
-                    GethManager.initialize(new GethManager.Builder(getApplicationContext().getFilesDir().getPath()).build());
-                    this.gethManager = GethManager.getInstance();
-                    this.gethManager.startNode();
-                    e.onComplete();
+                    this.gethManager = GethManager.getInstance(getApplicationContext());
+                    this.gethManager.startNode(e);
                 })
+                .retry()
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
 
