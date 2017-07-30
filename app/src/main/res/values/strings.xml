@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">SlotNSlot</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="step1_title">SET HIT RATIO</string>
+    <string name="step2_title">SET TOTAL STAKE</string>
+    <string name="step3_title">SET MAX PRIZE</string>
+    <string name="step4_title">SET BET RANGE</string>
+    <string name="summary_title">CHECK PARAMETERS</string>
+    <string name="step1_description">The hit ratio is an ideal probability\nthat a hit occurs in a slot. </string>
+    <string name="step2_description">Total stake of ETH\nto wager on this slot machine</string>
+    <string name="step3_description">Sets the maximum compensation\nthat can come out of the slot</string>
+    <string name="step4_description">Players can wager on every bet\nan amount within the range you set</string>
+    <string name="underline_all"><u>All</u></string>
+    <string name="sign_in"><i><u>Sign in</u></i></string>
+    <string name="menu_main_slot_n_slot">SlotNSlot</string>
+    <string name="menu_main_terms">Terms</string>
+    <string name="menu_play_pay_line">Pay Line</string>
+    <string name="menu_play_contract">Contract</string>
+    <string name="delete">Delete</string>
+    <string name="shared_preferences_seed_round">shared_preferences_seed_round</string>
+    <string name="shared_preferences_seed_seed1">shared_preferences_seed_seed1</string>
+    <string name="shared_preferences_seed_seed2">shared_preferences_seed_seed2</string>
+    <string name="shared_preferences_seed_seed3">shared_preferences_seed_seed3</string>
+    <string name="shared_preferences_seed_repeat1">shared_preferences_seed_repeat1</string>
+    <string name="shared_preferences_seed_repeat2">shared_preferences_seed_repeat2</string>
+    <string name="shared_preferences_seed_repeat3">shared_preferences_seed_repeat3</string>
+    <string name="shared_preferences_seed_opponent_seed1">shared_preferences_seed_opponent_seed1</string>
+    <string name="shared_preferences_seed_opponent_seed2">shared_preferences_seed_opponent_seed2</string>
+    <string name="shared_preferences_seed_opponent_seed3">shared_preferences_seed_opponent_seed3</string>
+</resources>

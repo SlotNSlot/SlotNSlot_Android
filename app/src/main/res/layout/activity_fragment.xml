@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1e0d44"
+    android:orientation="vertical">
+
+    <include android:id="@+id/toolbar_contianer"
+        layout="@layout/slot_center_textview_toolbar" />
+
+    <FrameLayout
+        android:id="@+id/fragment_framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar_contianer">
+
+    </FrameLayout>
+
+    <include layout="@layout/view_global_loading" />
+
+</RelativeLayout>

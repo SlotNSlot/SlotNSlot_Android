@@ -1,0 +1,465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1e0d44">
+
+    <RelativeLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/slot_center_textview_toolbar"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/play_top_send_emoji_container"
+        android:layout_width="match_parent"
+        android:layout_height="39.5dp"
+        android:layout_below="@id/toolbar_layout"
+        android:background="@drawable/send_emoji_background"
+        android:visibility="gone">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+            <TextView
+                android:id="@+id/play_top_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13.2sp"
+                android:textColor="#200c4e"
+                android:gravity="center_horizontal"
+                android:text="This slot banker is watching you!"
+                />
+
+            <TextView
+                android:id="@+id/play_top_send_emoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13.2sp"
+                android:textColor="#200c4e"
+                android:text="  send emoji"
+                android:layout_toRightOf="@id/play_top_textview"
+                />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/play_players_state_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10.5dp"
+        android:paddingRight="10.5dp"
+        android:layout_marginTop="14.8dp"
+        android:layout_below="@id/play_top_send_emoji_container">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="53dp"
+            android:layout_weight="1"
+            android:layout_marginRight="3.6dp"
+            android:background="@drawable/play_clear_box_background">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+                <TextView
+                    android:id="@+id/play_current_balance_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textColor="#928bcc"
+                    android:text="CURRENT BALANCE"
+                    />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/play_current_balance_text"
+                    android:layout_marginTop="4dp"
+                    android:layout_centerHorizontal="true">
+                    <TextView
+                        android:id="@+id/play_current_balance_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:lineSpacingExtra="3sp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:lineSpacingExtra="9sp"
+                        android:text="ETH"
+                        android:layout_toRightOf="@id/play_current_balance_textview"
+                        android:layout_marginLeft="3dp"
+                        android:layout_centerVertical="true"
+                        />
+                </RelativeLayout>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="53dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="3.6dp"
+            android:background="@drawable/play_clear_box_background">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
+                <TextView
+                    android:id="@+id/play_banker_stake_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="11sp"
+                    android:textColor="#928bcc"
+                    android:text="BANKER STAKE"
+                    />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/play_banker_stake_text"
+                    android:layout_marginTop="4dp"
+                    android:layout_centerHorizontal="true">
+                    <TextView
+                        android:id="@+id/play_banker_stake_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:lineSpacingExtra="3sp"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@color/white"
+                        android:lineSpacingExtra="9sp"
+                        android:text="ETH"
+                        android:layout_toRightOf="@id/play_banker_stake_textview"
+                        android:layout_marginLeft="3dp"
+                        android:layout_centerVertical="true"
+                        />
+                </RelativeLayout>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/play_slot_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/play_players_state_container"
+        android:layout_marginTop="16.8dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <LinearLayout
+            android:id="@+id/play_slot_background"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/slot_background"
+            android:padding="6.4dp"
+            android:orientation="horizontal"
+            >
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/play_big_win_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="invisible">
+            <ImageView
+                android:id="@+id/play_big_win_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/big_win_front"
+                android:layout_centerHorizontal="true"/>
+            <TextView
+                android:id="@+id/play_big_win_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="38.4sp"
+                android:textStyle="italic"
+                android:gravity="center_horizontal"
+                android:layout_alignBottom="@id/play_big_win_imageview"
+                android:layout_centerHorizontal="true"
+                android:text="+500"
+                />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/play_last_win_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/last_win_frame"
+        android:layout_alignTop="@id/play_slot_container"
+        android:layout_marginTop="180dp"
+        android:layout_centerHorizontal="true"
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/play_last_win_text">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="9sp"
+                android:textColor="@color/gold"
+                android:gravity="center_horizontal"
+                android:text="LAST"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"
+                android:textColor="@color/gold"
+                android:gravity="center_horizontal"
+                android:text="WIN"
+                android:layout_gravity="center_horizontal"
+                />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/play_last_win_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/gold"
+            android:gravity="end"
+            android:text="+ 0.12 ETH"
+            android:layout_toRightOf="@id/play_last_win_text"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/play_bet_line_container"
+        android:layout_width="match_parent"
+        android:layout_height="46.5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@id/play_slot_container"
+        android:layout_marginTop="45dp">
+
+        <RelativeLayout
+            android:id="@+id/play_bet_line_select_container"
+            android:layout_width="220dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bet_select_container_background"
+            >
+
+            <ImageButton
+                android:id="@+id/play_bet_line_minus_button"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/minus"/>
+
+            <ImageButton
+                android:id="@+id/play_bet_line_plus_button"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/plus"/>
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="37.5dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:background="@color/white"
+                android:layout_marginLeft="44.5dp"/>
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="37.5dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:background="@color/white"
+                android:layout_marginRight="44.5dp"/>
+
+            <TextView
+                android:id="@+id/play_bet_line_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_centerInParent="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/play_clear_box_background">
+
+            <TextView
+                android:id="@+id/play_total_bet_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10sp"
+                android:textColor="@color/white"
+                android:gravity="center_horizontal"
+                android:text="Total BET"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                />
+
+            <TextView
+                android:id="@+id/play_total_bet_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:gravity="center_horizontal"
+                android:text="0.5 ETH"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/play_total_bet_text"
+                android:layout_marginTop="2.2dp"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/play_bet_eth_container"
+        android:layout_width="match_parent"
+        android:layout_height="46.5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_below="@id/play_bet_line_container"
+        android:layout_marginTop="13dp">
+
+        <RelativeLayout
+            android:id="@+id/play_bet_eth_select_container"
+            android:layout_width="220dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/bet_select_container_background"
+            >
+
+            <ImageButton
+                android:id="@+id/play_bet_eth_minus_button"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/minus"/>
+
+            <ImageButton
+                android:id="@+id/play_bet_eth_plus_button"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/plus"/>
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="37.5dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:background="@color/white"
+                android:layout_marginLeft="44.5dp"/>
+
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="37.5dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:background="@color/white"
+                android:layout_marginRight="44.5dp"/>
+
+            <TextView
+                android:id="@+id/play_bet_eth_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:layout_centerInParent="true"
+                />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/play_max_bet_button"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/max_bet_button_background">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:gravity="center_horizontal"
+                android:text="MAX BET"
+                android:layout_centerInParent="true"
+                />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:orientation="horizontal" android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/play_auto_button"
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:text="AUTO"
+            android:background="@color/pink2"
+            android:textColor="@color/white"
+            android:layout_weight="2"/>
+
+        <Button
+            android:id="@+id/play_spin_button"
+            android:layout_width="match_parent"
+            android:layout_height="61dp"
+            android:text="SPIN"
+            android:background="#ff1c71"
+            android:textColor="@color/white"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <include layout="@layout/view_global_loading" />
+
+</RelativeLayout>

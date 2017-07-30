@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="129.5dp"
+    android:layout_marginLeft="11dp"
+    android:layout_marginRight="11dp"
+    android:background="@drawable/slot_room_background">
+
+    <TextView
+        android:id="@+id/slot_title_textview"
+        android:layout_width="match_parent"
+        android:layout_height="26dp"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:text="Pang Pang Slot"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14.5dp"
+        android:gravity="center"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        />
+    
+    <ImageButton
+        android:id="@+id/slot_more_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:src="@drawable/more"
+        android:background="@android:color/transparent"
+        android:layout_alignParentRight="true"
+        />
+    
+    <TextView
+        android:id="@+id/slot_delete_button"
+        android:layout_width="131dp"
+        android:layout_height="43dp"
+        android:layout_marginTop="8.2dp"
+        android:layout_alignParentRight="true"
+        android:textSize="14.3sp"
+        android:textColor="#000000"
+        android:paddingLeft="14dp"
+        android:gravity="left|center_vertical"
+        android:background="@color/white"
+        android:text="@string/delete"
+        android:visibility="gone"/>
+    
+    <LinearLayout
+        android:id="@+id/slot_text_container"
+        android:layout_width="match_parent"
+        android:layout_height="39.5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="6dp"
+        android:layout_below="@id/slot_title_textview"
+        android:orientation="horizontal">
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/slot_total_stack_text"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:text="Total Stake"
+                android:textSize="12sp"
+                android:textColor="@color/purple_tonedown_3"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true" />
+            <TextView
+                android:id="@+id/slot_total_value_text"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="12.22 ETH"
+                android:textSize="15sp"
+                android:textColor="@color/purple1"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/slot_max_win_prize_text"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:text="Max Win Prize"
+                android:textSize="12sp"
+                android:textColor="@color/purple_tonedown_3"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true" />
+            <TextView
+                android:id="@+id/slot_max_win_prize_value_text"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="12.22 ETH"
+                android:textSize="15sp"
+                android:textColor="@color/purple1"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/slot_hit_ratio_text"
+                android:layout_width="wrap_content"
+                android:layout_height="16dp"
+                android:text="Hit Ratio"
+                android:textSize="12sp"
+                android:textColor="@color/purple_tonedown_3"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true" />
+            <TextView
+                android:id="@+id/slot_hit_ratio_value_text"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:text="12.22 ETH"
+                android:textSize="15sp"
+                android:textColor="@color/purple1"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <View
+        android:id="@+id/slot_border_view"
+        android:layout_width="match_parent"
+        android:layout_height="1.5dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_below="@id/slot_text_container"
+        android:background="#3a2c56"
+        />
+
+    <TextView
+        android:id="@+id/slot_play_time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@color/purple_tonedown_3"
+        android:text="Played 28 times"
+        android:layout_below="@id/slot_border_view"
+        android:layout_marginTop="6dp"
+        android:layout_marginLeft="15.5dp"
+        />
+
+    <TextView
+        android:id="@+id/slot_bet_range_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="11sp"
+        android:textColor="@color/purple_tonedown_3"
+        android:text="BET Range  0.01 - 0.10 ETH"
+        android:layout_below="@id/slot_border_view"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="11dp"
+        android:layout_alignParentRight="true"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/signin_title_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:text="Hi, Tammyhouse"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="38.5dp"
+        android:lines="1"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        />
+
+    <LinearLayout
+        android:id="@+id/signin_password_input_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="50dp"
+        android:paddingRight="50dp"
+        android:orientation="vertical"
+        android:layout_marginTop="26dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#7262a0"
+            android:text="Password"
+            />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/signin_password_input_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:backgroundTint="@android:color/transparent"
+                android:includeFontPadding="false"
+                android:inputType="textPassword"
+                android:textColor="#ffffff"
+                android:textCursorDrawable="@drawable/red_cursor_drawable"
+                android:textSize="14sp" >
+                <requestFocus />
+            </EditText>
+        </RelativeLayout>
+        <View
+            android:id="@+id/signin_border_view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#786f92"/>
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/signin_auto_signin_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Auto Sign-in"
+        android:textSize="12sp"
+        android:layout_marginLeft="50dp"
+        android:buttonTint="@color/white"
+        android:textColor="@color/white"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/signin_signin_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="SIGN IN"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:background="#ff1c71"/>
+
+</LinearLayout>

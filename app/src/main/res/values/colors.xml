@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3f4456</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="complete_cancel">#DC0052</color>
+    <color name="complete_confirm">#ff1c71</color>
+
+    <color name="pay_line_color">#f5a623</color>
+    <color name="big_win_start_color">#fbda61</color>
+    <color name="navy1">#180d36</color>
+    <color name="navy2">#11052a</color>
+    <color name="pink1">#ff1c71</color>
+    <color name="pink2">#dc0052</color>
+    <color name="red">#ff2a48</color>
+    <color name="purple1">#6257da</color>
+    <color name="purple2">#4438c0</color>
+    <color name="purple_tonedown_1">#35245c</color>
+    <color name="purple_tonedown_2">#5c4982</color>
+    <color name="neon_mint">#00e9dd</color>
+    <color name="sky_blue">#3ac5e7</color>
+    <color name="purple_tonedown_3">#d1c4ef</color>
+    <color name="gold">#e2bc43</color>
+    <color name="white">#fff</color>
+    <color name="default_border_color">#3b305c</color>
+</resources>

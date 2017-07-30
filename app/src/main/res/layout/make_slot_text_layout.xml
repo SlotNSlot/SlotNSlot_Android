@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/make_slot_step_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16.2dp"
+        android:letterSpacing="0.04"
+        android:text="STEP 1 of 4"
+        android:textColor="#6e62ee"
+        android:textSize="14.2sp" />
+
+    <TextView
+        android:id="@+id/make_slot_step_title_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/make_slot_step_textview"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:letterSpacing="0.04"
+        android:text="SET HIT RATIO"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/make_slot_step_description_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/make_slot_step_title_textview"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4.8dp"
+        android:letterSpacing="0.04"
+        android:lineSpacingExtra="5sp"
+        android:text="The hit ratio is an ideal probability\nthat a hit occurs in a slot. "
+        android:textAlignment="center"
+        android:textColor="#b7b5cc"
+        android:textSize="12.5sp" />
+
+</RelativeLayout>

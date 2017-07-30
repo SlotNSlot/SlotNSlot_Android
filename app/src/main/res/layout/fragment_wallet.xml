@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1e0d44">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/wallet_account_background">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+            <ImageView
+                android:id="@+id/wallet_ethereum_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/bitmap"/>
+            <TextView
+                android:id="@+id/wallet_current_amount_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/wallet_ethereum_image"
+                android:layout_marginLeft="10dp"
+                android:textSize="25sp"
+                android:textColor="@color/white"
+                />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/wallet_change_eth_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="Charge ETH"
+            android:background="@drawable/charge_button_background"/>
+        <Button
+            android:id="@+id/wallet_withdraw_eth_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="Withdraw ETH"
+            android:background="@drawable/withdraw_button_background"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13.8sp"
+        android:textColor="#7c70c8"
+        android:text="Address"
+        android:layout_marginTop="30.5dp"
+        android:layout_marginLeft="21.5dp"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp">
+        <ImageButton
+            android:id="@+id/wallet_more_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/more"
+            android:background="#00000000"
+            android:padding="10dp"
+            android:layout_marginRight="6.5dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:id="@+id/wallet_address_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:layout_toLeftOf="@id/wallet_more_button"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="24dp"
+            android:lines="1"
+            android:layout_centerVertical="true"
+            />
+    </RelativeLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="13.8sp"
+        android:textColor="#7c70c8"
+        android:text="History"
+        android:layout_marginTop="17dp"
+        android:layout_marginLeft="21.5dp"
+        />
+
+</LinearLayout>

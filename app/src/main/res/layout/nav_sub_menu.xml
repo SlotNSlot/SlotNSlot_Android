@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#1e0d44">
+
+    <RelativeLayout
+        android:id="@+id/nav_wallet_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14.5sp"
+            android:textColor="@color/white"
+            android:text="My wallet"
+            android:layout_marginLeft="24dp"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/nav_amount_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/nav_wallet_layout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14.5sp"
+            android:textColor="@color/white"
+            android:text="Account"
+            android:layout_marginLeft="24dp"
+            android:layout_centerVertical="true"
+            />
+
+        <TextView
+            android:id="@+id/nav_amount_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="#6e60ff"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="17.2dp"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/nav_address_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/nav_amount_layout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14.5sp"
+            android:textColor="@color/white"
+            android:text="Address"
+            android:layout_marginLeft="24dp"
+            android:layout_centerVertical="true"
+            />
+
+        <ImageButton
+            android:id="@+id/nav_address_more_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/more_button"
+            android:background="#00000000"
+            android:padding="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="2dp"
+            android:layout_alignParentRight="true"/>
+
+        <TextView
+            android:id="@+id/nav_address_textview"
+            android:layout_width="138dp"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/nav_address_more_button"
+            android:layout_marginRight="13.8dp"
+            />
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/nav_notification_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/nav_address_layout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14.5sp"
+            android:textColor="@color/white"
+            android:text="Notification"
+            android:layout_marginLeft="24dp"
+            android:layout_centerVertical="true"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/nav_push_alert_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/nav_notification_layout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14.5sp"
+            android:textColor="@color/white"
+            android:text="Push Alert"
+            android:layout_marginLeft="24dp"
+            android:layout_centerVertical="true"
+            />
+
+        <Switch
+            android:id="@+id/nav_push_alert_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+</RelativeLayout>

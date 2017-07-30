@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1e0d44">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/make_slot_complete_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16.5dp"
+                android:letterSpacing="0.04"
+                android:text="COMPLETE"
+                android:textColor="#ff1c71"
+                android:textSize="14.2sp" />
+
+            <TextView
+                android:id="@+id/make_slot_complete_title_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/make_slot_complete_textview"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="4.2dp"
+                android:letterSpacing="0.04"
+                android:text="SET SLOT NAME"
+                android:textColor="@color/white"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/make_slot_complete_description_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/make_slot_complete_title_textview"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="12.8dp"
+                android:letterSpacing="0.04"
+                android:lineSpacingExtra="5sp"
+                android:text="Give your slot a name"
+                android:textColor="#b7b5cc"
+                android:textSize="12.5sp" />
+
+            <LinearLayout
+                android:id="@+id/make_slot_complete_slot_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/make_slot_complete_description_textview"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/make_step_background"
+                android:orientation="horizontal"
+                android:paddingBottom="12.7dp"
+                android:paddingLeft="26.8dp"
+                android:paddingRight="26.8dp"
+                android:paddingTop="12.7dp"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/make_slot_complete_ratio_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.04"
+                        android:text="HIT RATIO : 25%"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/make_slot_complete_stake_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/make_slot_complete_ratio_textview"
+                        android:layout_marginTop="7.5dp"
+                        android:letterSpacing="0.04"
+                        android:text="HIT RATIO : 25%"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/make_slot_complete_bet_range_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:letterSpacing="0.04"
+                        android:text="HIT RATIO : 25%"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/make_slot_complete_max_prize_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/make_slot_complete_bet_range_textview"
+                        android:layout_marginTop="7.5dp"
+                        android:letterSpacing="0.04"
+                        android:text="HIT RATIO : 25%"
+                        android:textColor="@color/white"
+                        android:textSize="10sp" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/make_slot_complete_room_name_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/make_slot_complete_slot_container"
+                android:layout_marginLeft="70dp"
+                android:layout_marginRight="70dp"
+                android:layout_marginTop="36dp"
+                android:background="@android:color/transparent"
+                android:hint="SLOT NAME"
+                android:includeFontPadding="false"
+                android:textCursorDrawable="@drawable/room_name_cursor_drawable"
+                android:textColor="@color/white"
+                android:textColorHint="#524c62"
+                android:textSize="24sp">
+
+                <requestFocus />
+            </EditText>
+
+            <View
+                android:id="@+id/make_slot_complete_underline"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_alignEnd="@id/make_slot_complete_room_name_edittext"
+                android:layout_alignStart="@id/make_slot_complete_room_name_edittext"
+                android:layout_below="@id/make_slot_complete_room_name_edittext"
+                android:background="#ff1c71" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@id/make_slot_complete_underline">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true">
+
+                    <include layout="@layout/make_slot_bottom_button" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

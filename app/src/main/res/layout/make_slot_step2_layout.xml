@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginRight="10dp"
+    android:background="@drawable/make_step_background">
+
+    <RelativeLayout
+        android:id="@+id/make_slot_text_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/make_slot_text_layout"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/make_slot_stake_container"
+        android:layout_below="@id/make_slot_text_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp"
+        android:layout_marginTop="18dp">
+        
+        <TextView
+            android:id="@+id/make_slot_text_eth"
+            android:layout_width="wrap_content"
+            android:layout_height="41dp"
+            android:textSize="30sp"
+            android:textColor="@color/neon_mint"
+            android:letterSpacing="0.04"
+            android:layout_alignParentRight="true"
+            android:text="ETH"/>
+        
+        <EditText
+            android:id="@+id/make_slot_stake_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textCursorDrawable="@drawable/cursor_drawable"
+            android:layout_toLeftOf="@id/make_slot_text_eth"
+            android:backgroundTint="@android:color/transparent"
+            android:includeFontPadding="false"
+            android:textColor="@color/white"
+            android:inputType="numberDecimal">
+
+            <requestFocus />
+        </EditText>
+
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/make_slot_underline"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_alignStart="@id/make_slot_stake_container"
+        android:layout_alignEnd="@id/make_slot_stake_container"
+        android:layout_below="@id/make_slot_stake_container"
+        android:background="@color/neon_mint"/>
+
+    <TextView
+        android:id="@+id/make_slot_current_balance_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12.5sp"
+        android:textColor="#b7b5cc"
+        android:letterSpacing="0.04"
+        android:lineSpacingExtra="5sp"
+        android:layout_below="@id/make_slot_underline"
+        android:layout_alignStart="@id/make_slot_underline"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="24dp"
+        android:text="Current balance : 48.230"
+        />
+
+</RelativeLayout>

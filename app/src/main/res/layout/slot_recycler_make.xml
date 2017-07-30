@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="51dp"
+    android:layout_marginLeft="10.5dp"
+    android:layout_marginRight="10.5dp"
+    android:background="@drawable/slot_make_button_background">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+        <ImageView
+            android:id="@+id/slot_make_add_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@drawable/group_3"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/slot_make_add_image"
+            android:layout_marginLeft="7.5dp"
+            android:layout_centerVertical="true"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            android:text="ADD SLOT"/>
+    </RelativeLayout>
+
+</RelativeLayout>
