@@ -6,6 +6,7 @@ import org.ethereum.geth.Context;
 import org.ethereum.geth.EthereumClient;
 import org.ethereum.geth.Node;
 
+import io.reactivex.CompletableEmitter;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class GethManager {
@@ -26,13 +27,9 @@ public class GethManager {
 
     private boolean nodeStarted = false;
 
-    public static GethManager getInstance() {
-        return instance;
-    }
-
-    public static GethManager initialize(GethManager gethManager) {
+    public static GethManager getInstance(android.content.Context context) {
         if (instance == null) {
-            instance = gethManager;
+            instance = new GethManager.Builder(context.getFilesDir().getPath()).build();
         }
         return instance;
     }
@@ -41,7 +38,7 @@ public class GethManager {
         return nodeStartedObservable;
     }
 
-    public void startNode() {
+    public void startNode(CompletableEmitter emitter) {
         if (this.nodeStarted) {
             return;
         }
@@ -51,10 +48,12 @@ public class GethManager {
             this.nodeStarted = true;
             this.client = this.node.getEthereumClient();
             nodeStartedObservable.onNext(true);
+            emitter.onComplete();
         } catch (Exception e) {
             this.nodeStarted = false;
             nodeStartedObservable.onNext(false);
             Log.e(TAG, e.getLocalizedMessage());
+            emitter.onError(new Throwable());
         }
     }
 
@@ -115,7 +114,7 @@ public class GethManager {
             return this;
         }
 
-        public GethManager build() throws Exception {
+        public GethManager build() {
             this.manager.node = new Node(
                     this.fileDirPath + getDataDir(this.manager.networkConfig.getNetwork()),
                     this.manager.networkConfig.getNodeConfig());
