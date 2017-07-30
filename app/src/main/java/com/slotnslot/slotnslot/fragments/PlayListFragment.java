@@ -12,6 +12,7 @@ public class PlayListFragment extends SlotRoomListFragment {
     @Override
     void setItemList() {
         RxSlotRooms.rxSlotRoomMapSubject
+                .compose(bindToLifecycle())
                 .subscribe(rxSlotRoomMap -> {
                     getItems().clear();
                     List<SlotRoomViewModel> makeList = new ArrayList<>();

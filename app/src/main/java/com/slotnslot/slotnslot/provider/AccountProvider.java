@@ -30,6 +30,10 @@ public class AccountProvider {
         accountSubject.onNext(account);
     }
 
+    public static void updateBalance() {
+        TransactionManager.getBalanceAt().subscribe(AccountProvider::updateBalance);
+    }
+
     public static void getBalance() {
         TransactionManager
                 .getBalanceAt()

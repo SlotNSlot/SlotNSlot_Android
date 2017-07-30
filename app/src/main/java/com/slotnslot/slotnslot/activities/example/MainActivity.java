@@ -10,6 +10,7 @@ import com.slotnslot.slotnslot.BuildConfig;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.geth.CredentialManager;
 import com.slotnslot.slotnslot.geth.GethManager;
+import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import org.ethereum.geth.EthereumClient;

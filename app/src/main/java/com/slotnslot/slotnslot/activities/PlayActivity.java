@@ -184,7 +184,6 @@ public class PlayActivity extends SlotRootActivity {
             if ("test".equals(viewModel.getRxSlotRoom().getSlotAddress())) {
                 return;
             }
-            viewModel.setPreviousBetEth(viewModel.getCurrentBetEth());
             viewModel.initGame();
         });
         RxView.clicks(autoButton).subscribe(o -> tapStop(false));

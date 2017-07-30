@@ -12,6 +12,7 @@ public class MakeListFragment extends SlotRoomListFragment {
     @Override
     void setItemList() {
         RxSlotRooms.rxSlotRoomMapSubject
+                .compose(bindToLifecycle())
                 .subscribe(rxSlotRoomMap -> {
                     getItems().clear();
                     List<SlotRoomViewModel> makeList = new ArrayList<>();
@@ -19,6 +20,8 @@ public class MakeListFragment extends SlotRoomListFragment {
                         if (AccountProvider.identical(slotRoom.getSlotRoom().getBankerAddress())) {
                             SlotRoomViewModel model = new SlotRoomViewModel(slotRoom.getSlotAddress());
                             makeList.add(model);
+
+                            slotRoom.setBankerEvent();
                         }
                     }
                     getItems().addAll(makeList);
