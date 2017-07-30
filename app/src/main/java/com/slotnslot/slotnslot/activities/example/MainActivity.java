@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.slotnslot.slotnslot.BuildConfig;
 import com.slotnslot.slotnslot.R;
@@ -99,22 +97,26 @@ public class MainActivity extends RxAppCompatActivity {
         startActivity(intent);
     }
 
-    public void getAccountActivity(View view) {
-        Intent intent = new Intent(getApplicationContext(), AccountActivity.class);
-        startActivity(intent);
-    }
-
-    public void getTransactionActivity(View view) {
-        Intent intent = new Intent(getApplicationContext(), TransactionActivity.class);
-        startActivity(intent);
-    }
-
-    public void getContractActivity(View view) {
+    @OnClick(R.id.contract_test)
+    void getContractActivity() {
         Intent intent = new Intent(getApplicationContext(), ContractActivity.class);
         startActivity(intent);
     }
 
-    public void checkSyncProgress(View view) {
+    @OnClick(R.id.tx_test)
+    void getTransactionActivity() {
+        Intent intent = new Intent(getApplicationContext(), TransactionActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.account_test)
+    void getAccountActivity() {
+        Intent intent = new Intent(getApplicationContext(), AccountActivity.class);
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.progress_check)
+    void checkSyncProgress() {
         Observable
                 .create(subscriber -> {
                     try {
@@ -136,9 +138,9 @@ public class MainActivity extends RxAppCompatActivity {
                         subscriber.onError(e);
                     }
                 })
+                .compose(bindToLifecycle())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .compose(bindToLifecycle())
                 .subscribe(
                         result -> syncProg.setText(result.toString()),
                         error -> Log.i(TAG, "Fail to get progress..." + error.getLocalizedMessage()));
@@ -147,6 +149,5 @@ public class MainActivity extends RxAppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Toast.makeText(getApplicationContext(), "Stop Node...", Toast.LENGTH_SHORT).show();
     }
 }

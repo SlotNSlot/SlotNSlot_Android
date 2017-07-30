@@ -2,7 +2,6 @@ package com.slotnslot.slotnslot.activities.example;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -40,14 +40,12 @@ public class AccountActivity extends RxAppCompatActivity {
     EditText accPassword;
     @BindView(R.id.del_acc_num)
     EditText delAccNum;
-    @BindView(R.id.acc_list_btn)
-    Button accListBtn;
-    @BindView(R.id.del_btn)
-    Button delBtn;
     @BindView(R.id.acc_check_acc_btn)
     Button accCheckAccBtn;
     @BindView(R.id.acc_create_btn)
     Button accCreateBtn;
+    @BindView(R.id.del_btn)
+    Button delBtn;
 
     private GethManager manager;
     private Node node;
@@ -77,7 +75,8 @@ public class AccountActivity extends RxAppCompatActivity {
                 .subscribe(aLong -> accAsyncTxt.setText("" + aLong));
     }
 
-    public void getAccountList(View view) {
+    @OnClick(R.id.acc_list_btn)
+    void getAccountList() {
         try {
             List<Account> accounts = CredentialManager.getAccounts();
             accListTxt.setText("account list...\n");
@@ -93,7 +92,7 @@ public class AccountActivity extends RxAppCompatActivity {
         }
     }
 
-    public void createAccount() {
+    void createAccount() {
         RxView
                 .clicks(accCreateBtn)
                 .compose(bindToLifecycle())
@@ -107,11 +106,11 @@ public class AccountActivity extends RxAppCompatActivity {
                     Log.i(TAG, account.getAddress().getHex());
                     Log.i(TAG, account.getURL());
 
-                    accListBtn.callOnClick();
+                    getAccountList();
                 }, err -> Log.e(TAG, err.getLocalizedMessage()));
     }
 
-    public void deleteAccount() {
+    void deleteAccount() {
         RxView
                 .clicks(delBtn)
                 .compose(bindToLifecycle())
@@ -128,11 +127,11 @@ public class AccountActivity extends RxAppCompatActivity {
 
                     keyStore.deleteAccount(account, password);
 
-                    accListBtn.callOnClick();
+                    getAccountList();
                 }, err -> Log.e(TAG, err.getLocalizedMessage()));
     }
 
-    public void checkBalance() {
+    void checkBalance() {
         RxView
                 .clicks(accCheckAccBtn)
                 .compose(bindToLifecycle())

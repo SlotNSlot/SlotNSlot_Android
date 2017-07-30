@@ -2,7 +2,6 @@ package com.slotnslot.slotnslot.activities.example;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -18,6 +17,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class TransactionActivity extends RxAppCompatActivity {
     private static final String TAG = TransactionActivity.class.getSimpleName();
@@ -40,7 +40,8 @@ public class TransactionActivity extends RxAppCompatActivity {
         Toast.makeText(getApplicationContext(), "Welcome to Transaction Test Activity...", Toast.LENGTH_SHORT).show();
     }
 
-    public void sendTransaction(View view) {
+    @OnClick(R.id.tx_send_btn)
+    void sendTransaction() {
         String password = txPassword.getText().toString();
         int senderNum = Integer.parseInt((txSenderNum).getText().toString());
         int receiverNum = Integer.parseInt((txReceiverNum).getText().toString());
