@@ -2,6 +2,8 @@ package com.slotnslot.slotnslot.geth;
 
 import android.util.Log;
 
+import com.slotnslot.slotnslot.MainApplication;
+
 import org.ethereum.geth.Context;
 import org.ethereum.geth.EthereumClient;
 import org.ethereum.geth.Node;
@@ -27,9 +29,9 @@ public class GethManager {
 
     private boolean nodeStarted = false;
 
-    public static GethManager getInstance(android.content.Context context) {
+    public static GethManager getInstance() {
         if (instance == null) {
-            instance = new GethManager.Builder(context.getFilesDir().getPath()).build();
+            instance = new GethManager.Builder(MainApplication.getContext().getFilesDir().getPath()).build();
         }
         return instance;
     }
