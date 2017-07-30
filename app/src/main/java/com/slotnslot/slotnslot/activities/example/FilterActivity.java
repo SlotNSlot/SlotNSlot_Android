@@ -12,6 +12,7 @@ import com.slotnslot.slotnslot.contract.SlotMachineStorage;
 import com.slotnslot.slotnslot.geth.CredentialManager;
 import com.slotnslot.slotnslot.geth.GethConstants;
 import com.slotnslot.slotnslot.geth.Utils;
+import com.slotnslot.slotnslot.models.Seed;
 import com.slotnslot.slotnslot.utils.Convert;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
@@ -30,6 +31,9 @@ public class FilterActivity extends RxAppCompatActivity {
 
     private SlotMachine machine;
 
+    private Seed playerSeed = new Seed();
+    private Seed bankerSeed = new Seed();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,69 +43,23 @@ public class FilterActivity extends RxAppCompatActivity {
     }
 
     @OnClick(R.id.filter_start)
-    void filterStart() {
-        CredentialManager.setDefault(0, "asdf");
-        SlotMachineManager
-                .load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS)
-                .getStorageAddr()
-                .flatMap(address -> {
-                    Log.i(TAG, "slot storage address : " + address.toString());
-                    return SlotMachineStorage
-                            .load(address.toString())
-                            .getSlotMachine(new Address(CredentialManager.getDefaultAccountHex()), new Uint256(0));
-                })
-                .subscribe(address -> {
-                    Log.i(TAG, "slot machine address : " + address.toString());
-                    if (Utils.isValidAddress(address.toString())) {
-                        machine = SlotMachine.load(address.toString());
-
-                        machine
-                                .gameInitializedEventObservable()
-                                .subscribe(response -> {
-                                    Log.i(TAG, "player address : " + response.player.toString());
-                                    Log.i(TAG, "bet : " + response.bet.getValue());
-                                    Log.i(TAG, "lines : " + response.lines.getValue());
-
-                                    CredentialManager.setDefault(0, "asdf");
-                                    machine
-                                            .setBankerSeed(null, null)
-                                            .subscribe();
-                                });
-
-                        machine
-                                .bankerSeedSetEventObservable()
-                                .subscribe(response -> {
-                                    Log.i(TAG, "banker seed : " + Utils.byteToHex(response.bankerSeed.getValue()));
-
-                                    CredentialManager.setDefault(1, "asdf");
-                                    machine
-                                            .setPlayerSeed(null, null)
-                                            .subscribe();
-                                });
-
-                        machine
-                                .gameConfirmedEventObservable()
-                                .subscribe(response -> Log.i(TAG, "reward : " + response.reward.getValue()));
-                    }
-                });
-    }
-
-    @OnClick(R.id.filter_ob)
     void filterObservable() {
         Hello
                 .load(HELLO_CONTRACT_ADDR)
                 .printEventObservable()
+                .compose(bindToLifecycle())
                 .subscribe(
-                        printEventResponse -> System.out.println("event : output : " + printEventResponse.out.getValue()),
+                        printEventResponse -> Log.i(TAG, "event : output : " + printEventResponse.out.getValue()),
                         Throwable::printStackTrace);
 
         Fibonacci
                 .load(FIB_CONTRACT_ADDR)
                 .notifyEventObservable()
+                .compose(bindToLifecycle())
                 .subscribe(notifyEventResponse -> {
                     Log.i(TAG, "event : fib input : " + notifyEventResponse.input.getValue());
                     Log.i(TAG, "event : fib result : " + notifyEventResponse.result.getValue());
-                });
+                }, Throwable::printStackTrace);
     }
 
     @OnClick(R.id.send_tx)
@@ -114,7 +72,7 @@ public class FilterActivity extends RxAppCompatActivity {
                         printEvents -> {
                             if (printEvents != null && !printEvents.isEmpty()) {
                                 Uint256 out = printEvents.get(0).out;
-                                System.out.println("say2 output : " + out.getValue());
+                                Log.i(TAG, "say2 output : " + out.getValue());
                             }
                         },
                         Throwable::printStackTrace);
@@ -137,11 +95,120 @@ public class FilterActivity extends RxAppCompatActivity {
                         Throwable::printStackTrace);
     }
 
+    @OnClick(R.id.event_set)
+    void gameEventSet() {
+        CredentialManager.setDefault(0, "asdf");
+        SlotMachineManager
+                .load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS)
+                .getStorageAddr()
+                .flatMap(address -> {
+                    Log.i(TAG, "slot storage address : " + address.toString());
+                    return SlotMachineStorage
+                            .load(address.toString())
+                            .getSlotMachine(new Address(CredentialManager.getDefaultAccountHex()), new Uint256(0));
+                })
+                .subscribe(address -> {
+                    Log.i(TAG, "slot machine address : " + address.toString());
+                    if (!Utils.isValidAddress(address.toString())) {
+                        Log.e(TAG, "invalid slot machie address");
+                        return;
+                    }
+                    machine = SlotMachine.load(address.toString());
+
+                    machine
+                            .gameOccupiedEventObservable()
+                            .compose(bindToLifecycle())
+                            .subscribe(response -> {
+                                Log.i(TAG, "game occupied by : " + response.player.toString());
+                                Log.i(TAG, "player seed1 : " + Utils.byteToHex(response.playerSeed.getValue().get(0).getValue()));
+                                Log.i(TAG, "player seed2 : " + Utils.byteToHex(response.playerSeed.getValue().get(1).getValue()));
+                                Log.i(TAG, "player seed3 : " + Utils.byteToHex(response.playerSeed.getValue().get(2).getValue()));
+
+                                CredentialManager.setDefault(0, "asdf");
+                                machine
+                                        .initBankerSeed(bankerSeed.getInitialSeed())
+                                        .subscribe();
+                            });
+
+                    machine
+                            .bankerSeedInitializedEventObservable()
+                            .compose(bindToLifecycle())
+                            .subscribe(response -> {
+                                Log.i(TAG, "banker seed initialized");
+                                Log.i(TAG, "banker seed1 : " + Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue()));
+                                Log.i(TAG, "banker seed2 : " + Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue()));
+                                Log.i(TAG, "banker seed3 : " + Utils.byteToHex(response._bankerSeed.getValue().get(2).getValue()));
+                            });
+
+                    machine
+                            .gameInitializedEventObservable()
+                            .compose(bindToLifecycle())
+                            .subscribe(response -> {
+                                Log.i(TAG, "player address : " + response.player.toString());
+                                Log.i(TAG, "bet : " + response.bet.getValue());
+                                Log.i(TAG, "lines : " + response.lines.getValue());
+                                Log.i(TAG, "idx : " + response.idx.getValue());
+
+                                CredentialManager.setDefault(0, "asdf");
+                                machine
+                                        .setBankerSeed(bankerSeed.getSeed(), new Uint256(bankerSeed.getIndex()))
+                                        .subscribe();
+                            });
+
+                    machine
+                            .bankerSeedSetEventObservable()
+                            .compose(bindToLifecycle())
+                            .subscribe(response -> {
+                                Log.i(TAG, "banker seed : " + Utils.byteToHex(response.bankerSeed.getValue()));
+                                Log.i(TAG, "idx : " + response.idx.getValue());
+
+                                CredentialManager.setDefault(1, "asdf");
+                                machine
+                                        .setPlayerSeed(playerSeed.getSeed(), new Uint256(bankerSeed.getIndex()))
+                                        .subscribe();
+                            });
+
+                    machine
+                            .gameConfirmedEventObservable()
+                            .compose(bindToLifecycle())
+                            .subscribe(response -> {
+                                Log.i(TAG, "reward : " + response.reward.getValue());
+                                Log.i(TAG, "idx : " + response.idx.getValue());
+
+                                playerSeed.nextRound();
+                                bankerSeed.nextRound();
+                            });
+
+                    machine
+                            .playerLeftEventObservable()
+                            .compose(bindToLifecycle())
+                            .subscribe(response -> {
+                                Log.i(TAG, "player left : " + response.player.toString());
+                                Log.i(TAG, "player's initial balance: " + response.playerBalance.getValue());
+                            });
+                }, Throwable::printStackTrace);
+    }
+
+    @OnClick(R.id.occupy)
+    void occupy() {
+        CredentialManager.setDefault(1, "asdf");
+        machine.occupy(playerSeed.getInitialSeed(), Convert.toWei(0.1, Convert.Unit.ETHER)).subscribe();
+    }
+
+    @OnClick(R.id.leave)
+    void leave() {
+        CredentialManager.setDefault(1, "asdf");
+        machine.leave().subscribe();
+    }
+
     @OnClick(R.id.game_start)
     void gameStart() {
         CredentialManager.setDefault(1, "asdf");
         machine
-                .initGameForPlayer(new Uint256(Convert.toWei(0.02, Convert.Unit.ETHER)), new Uint256(1), new Uint256(0))
+                .initGameForPlayer(
+                        new Uint256(Convert.toWei(0.001, Convert.Unit.ETHER)),
+                        new Uint256(20),
+                        new Uint256(playerSeed.getIndex()))
                 .subscribe();
     }
 }

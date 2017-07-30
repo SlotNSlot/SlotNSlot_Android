@@ -48,6 +48,14 @@ public class Seed {
     }
 
     public StaticArray<Bytes32> getInitialSeed() {
+        this.seed1 = String.valueOf(Math.random());
+        this.seed2 = String.valueOf(Math.random());
+        this.seed3 = String.valueOf(Math.random());
+
+        this.repeat1 = 100;
+        this.repeat2 = 100;
+        this.repeat3 = 100;
+
         return new StaticArray<>(
                 new Bytes32(Utils.generateRandom(seed1, repeat1--)),
                 new Bytes32(Utils.generateRandom(seed2, repeat2--)),
@@ -64,38 +72,38 @@ public class Seed {
     }
 
     private String selectSeed() {
-        int mod = round % 3;
+        int idx = round % 3;
         String seed;
-        if (mod == 0) {
+        if (idx == 0) {
             seed = seed1;
-        } else if (mod == 1) {
+        } else if (idx == 1) {
             seed = seed2;
         } else {
             seed = seed3;
         }
-        System.out.println("round : " + round + " mod : " + mod + " seed : " + seed);
+        System.out.println("round : " + round + ", idx : " + idx + ", seed : " + seed);
         return seed;
     }
 
     private int selectRepeat() {
-        int mod = round % 3;
+        int idx = round % 3;
         int repeat;
-        if (mod == 0) {
+        if (idx == 0) {
             repeat = repeat1;
-        } else if (mod == 1) {
+        } else if (idx == 1) {
             repeat = repeat2;
         } else {
             repeat = repeat3;
         }
-        System.out.println("round : " + round + " mod : " + mod + " repeat : " + repeat);
+        System.out.println("round : " + round + ", idx : " + idx + ", repeat : " + repeat);
         return repeat;
     }
 
     public int nextRound() {
-        int mod = round % 3;
-        if (mod == 0) {
+        int idx = round % 3;
+        if (idx == 0) {
             repeat1--;
-        } else if (mod == 1) {
+        } else if (idx == 1) {
             repeat2--;
         } else {
             repeat3--;
