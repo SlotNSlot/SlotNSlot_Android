@@ -18,6 +18,7 @@ import com.slotnslot.slotnslot.geth.GethConstants;
 import com.slotnslot.slotnslot.geth.GethException;
 import com.slotnslot.slotnslot.geth.TransactionManager;
 import com.slotnslot.slotnslot.models.SlotRoom;
+import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
@@ -118,6 +119,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                             Convert.fromWei(responses.get(0)._minBet.getValue(), Convert.Unit.ETHER).doubleValue(),
                             Convert.fromWei(responses.get(0)._maxBet.getValue(), Convert.Unit.ETHER).doubleValue()
                     );
+                    slotRoom.setBankerAddress(AccountProvider.getAccount().getAddressHex());
 
                     RxSlotRooms.addSlot(slotRoom);
 

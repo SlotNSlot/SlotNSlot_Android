@@ -4,8 +4,6 @@ import android.util.Log;
 
 import com.slotnslot.slotnslot.activities.PlayActivity;
 import com.slotnslot.slotnslot.contract.SlotMachine;
-import com.slotnslot.slotnslot.geth.CredentialManager;
-import com.slotnslot.slotnslot.geth.TransactionManager;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRoom;
@@ -49,7 +47,7 @@ public class PlaySlotViewModel {
     public BehaviorSubject<Boolean> seedReadySubject = BehaviorSubject.createDefault(false);
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
-    //    private PlayActivity playActivity;
+
     private SlotMachine machine;
     private RxSlotRoom rxSlotRoom;
 
@@ -61,7 +59,6 @@ public class PlaySlotViewModel {
     private boolean seedReady = false;
 
     private Seed playerSeed = new Seed();
-    private Seed bankerSeed = new Seed();
 
     public PlaySlotViewModel(PlayActivity playActivity, String slotAddress) {
         this.rxSlotRoom = RxSlotRooms.getSlotRoom(slotAddress);
@@ -131,6 +128,7 @@ public class PlaySlotViewModel {
 
     private void setGameEvents() {
         setSeedReadyEvent();
+
         setOccupiedEvent();
         setBankerSeedInitializedEvent();
         setGameInitializedEvent();
@@ -149,11 +147,10 @@ public class PlaySlotViewModel {
 
                     if (playerSeedReady.getValue() && bankerSeedReady.getValue()) {
                         seedReadySubject.onNext(true);
-                        return false;
+                        return true;
                     }
 
-                    if (isTest() || (!isBanker() && !playerSeedReady.getValue())) {
-                        CredentialManager.setDefault(1, "asdf");
+                    if (!isBanker() && !playerSeedReady.getValue()) {
                         machine
                                 .occupy(playerSeed.getInitialSeed(), Convert.toWei(0.1, Convert.Unit.ETHER))
                                 .subscribe();
@@ -175,14 +172,10 @@ public class PlaySlotViewModel {
 
                         rxSlotRoom.updateBalance();
                         seedReadySubject.onNext(false);
-                    } else {
-                        TransactionManager.getBalanceAt()
-                                .subscribe(balance -> {
-                                    Account account = AccountProvider.getAccount();
-                                    account.setBalance(balance);
-                                    AccountProvider.accountSubject.onNext(account);
-                                });
+                        return;
                     }
+
+                    AccountProvider.updateBalance(); // for player only
                 });
         compositeDisposable.add(disposable);
     }
@@ -191,19 +184,20 @@ public class PlaySlotViewModel {
         Disposable disposable = machine
                 .gameConfirmedEventObservable()
                 .subscribe(response -> {
-                    Log.i(TAG, "reward : " + response.reward.getValue());
+                    BigInteger reward = response.reward.getValue();
+                    BigInteger winRate = reward.divide(Convert.toWei(previousBetEth, Convert.Unit.ETHER));
+
+                    Log.i(TAG, "reward : " + reward);
                     Log.i(TAG, "bet : " + previousBetEth);
                     Log.i(TAG, "idx : " + response.idx.getValue());
 
-//                    Toast.makeText(playActivity.getApplicationContext(), "game confirmed. reward : " + Convert.fromWei(response.reward.getValue(), Convert.Unit.ETHER), Toast.LENGTH_LONG).show();
+                    toastSubject.onNext("game confirmed. reward : " + Convert.fromWei(reward, Convert.Unit.ETHER));
 
-                    lastWinSubject.onNext(Convert.fromWei(response.reward.getValue(), Convert.Unit.ETHER).doubleValue());
-                    drawResultSubject.onNext(response.reward.getValue().divide(Convert.toWei(previousBetEth, Convert.Unit.ETHER)).intValue());
+                    lastWinSubject.onNext(Convert.fromWei(reward, Convert.Unit.ETHER).doubleValue());
+                    drawResultSubject.onNext(winRate.intValue());
 
                     rxSlotRoom.updateBalance();
-
                     playerSeed.nextRound();
-                    bankerSeed.nextRound();
                 });
         compositeDisposable.add(disposable);
     }
@@ -217,10 +211,7 @@ public class PlaySlotViewModel {
 
                     toastSubject.onNext("banker seed set.");
 
-                    if (isTest() || !isBanker()) {
-                        if (isTest()) {
-                            CredentialManager.setDefault(1, "asdf");
-                        }
+                    if (!isBanker()) {
                         machine
                                 .setPlayerSeed(playerSeed.getSeed(), new Uint256(playerSeed.getIndex()))
                                 .subscribe();
@@ -238,23 +229,16 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "lines : " + response.lines.getValue());
                     Log.i(TAG, "idx : " + response.idx.getValue());
 
-                    toastSubject.onNext("game initialized. bet : " + response.bet.getValue() + " lines : " + response.lines.getValue());
+                    toastSubject.onNext("game initialized.");
 
                     betEthSubject.onNext(Convert.fromWei(response.bet.getValue(), Convert.Unit.ETHER).doubleValue());
+                    currentLine = response.lines.getValue().intValue();
                     betLineSubject.onNext(response.lines.getValue().intValue());
 
                     rxSlotRoom.updateBalance();
 
-                    if (isTest() || isBanker()) {
-                        if (isTest()) {
-                            CredentialManager.setDefault(0, "asdf");
-                        }
-                        if (!isTest()) {
-                            startSpin.onNext(true);
-                        }
-                        machine
-                                .setBankerSeed(bankerSeed.getSeed(), new Uint256(bankerSeed.getIndex()))
-                                .subscribe();
+                    if (isBanker()) {
+                        startSpin.onNext(true);
                     }
                 });
         compositeDisposable.add(disposable);
@@ -268,8 +252,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "banker initial seed2 : " + Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue()));
                     Log.i(TAG, "banker initial seed3 : " + Utils.byteToHex(response._bankerSeed.getValue().get(2).getValue()));
 
-                    toastSubject.onNext("banker seed initialized");
-
+                    toastSubject.onNext("banker seed initialized.");
                     seedReadySubject.onNext(true);
                 });
         compositeDisposable.add(disposable);
@@ -285,22 +268,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "player seed3 : " + Utils.byteToHex(response.playerSeed.getValue().get(2).getValue()));
 
                     toastSubject.onNext("slot occupied by : " + response.player.toString());
-
                     rxSlotRoom.updateBalance();
-
-                    if (seedReady) {
-                        Log.i(TAG, "banker seed : already initialized");
-                        return;
-                    }
-
-                    if (isTest() || isBanker()) {
-                        if (isTest()) {
-                            CredentialManager.setDefault(0, "asdf");
-                        }
-                        machine
-                                .initBankerSeed(bankerSeed.getInitialSeed())
-                                .subscribe();
-                    }
                 });
         compositeDisposable.add(disposable);
     }
@@ -310,14 +278,12 @@ public class PlaySlotViewModel {
                 .initialBankerSeedReady()
                 .subscribe(bool -> {
                     if (!bool.getValue()) {
-                        Log.e(TAG, "banker seed is not initialized");
+                        Log.e(TAG, "banker seed is not initialized yet");
 //                            spinButton.setEnabled(true);
                         return;
                     }
 
-                    if (isTest()) {
-                        CredentialManager.setDefault(1, "asdf");
-                    }
+                    previousBetEth = currentBetEth;
                     machine
                             .initGameForPlayer(
                                     new Uint256(Convert.toWei(getCurrentBetEth(), Convert.Unit.ETHER)),
@@ -343,9 +309,6 @@ public class PlaySlotViewModel {
             return;
         }
 
-        if (isTest()) {
-            CredentialManager.setDefault(1, "asdf");
-        }
         machine
                 .leave()
                 .flatMap(receipt -> machine.mPlayer())

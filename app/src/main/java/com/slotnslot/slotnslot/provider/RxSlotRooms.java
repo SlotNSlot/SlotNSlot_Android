@@ -47,6 +47,14 @@ public class RxSlotRooms {
         updateSlotMachines();
     }
 
+    public static void destroy() {
+        for (RxSlotRoom rxSlotRoom : rxSlotRoomMap.values()) {
+            rxSlotRoom.removeBankerEvent();
+        }
+        rxSlotRoomMap.clear();
+        notifyChange();
+    }
+
     public static void updateSlotMachines() {
         SlotRoom test = new SlotRoom("test", "test", 1.0, 0.15, 1000, 0.001, 0.1);
         addSlot(test);

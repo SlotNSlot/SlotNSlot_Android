@@ -156,4 +156,10 @@ public class SlotMainActivity extends SlotRootActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RxSlotRooms.destroy();
+    }
 }

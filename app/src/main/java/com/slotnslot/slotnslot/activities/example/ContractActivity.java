@@ -2,7 +2,6 @@ package com.slotnslot.slotnslot.activities.example;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -58,7 +58,8 @@ public class ContractActivity extends RxAppCompatActivity {
     }
 
 
-    public void callMessageOnContract(View view) {
+    @OnClick(R.id.call_test)
+    void callContract() {
         Hello hello = Hello.load(HELLO_CONTRACT_ADDR);
 
         hello.say2(new Uint256(10))
@@ -73,7 +74,8 @@ public class ContractActivity extends RxAppCompatActivity {
                 });
     }
 
-    public void sendTransactionToContract(View view) {
+    @OnClick(R.id.send_test)
+    void sendTransaction() {
         Hello hello = Hello.load(HELLO_CONTRACT_ADDR);
 
         hello.say1(new Uint256(10))
@@ -98,7 +100,8 @@ public class ContractActivity extends RxAppCompatActivity {
                         });
     }
 
-    public void callFixedRev(View view) {
+    @OnClick(R.id.fixed_reverse)
+    void callFixedRev() {
         Arrays arrays = Arrays.load(ARRAY_CONTRACT_ADDR);
 
         arrays.fixedReverse(new StaticArray<>(
@@ -123,7 +126,8 @@ public class ContractActivity extends RxAppCompatActivity {
                 }, Throwable::printStackTrace);
     }
 
-    public void callDynamicRev(View view) {
+    @OnClick(R.id.dynamic_reverse)
+    void callDynamicRev() {
         Arrays arrays = Arrays.load(ARRAY_CONTRACT_ADDR);
 
         arrays.dynamicReverse(new DynamicArray<>(new Uint256(1), new Uint256(2), new Uint256(3)))
@@ -138,7 +142,8 @@ public class ContractActivity extends RxAppCompatActivity {
                 }, Throwable::printStackTrace);
     }
 
-    public void callFibonacci(View view) {
+    @OnClick(R.id.fib_call)
+    void callFibonacci() {
         Fibonacci fibonacci = Fibonacci.load(FIB_CONTRACT_ADDR);
 
         fibonacci.fibonacci(new Uint256(11))
@@ -149,7 +154,8 @@ public class ContractActivity extends RxAppCompatActivity {
                 }, Throwable::printStackTrace);
     }
 
-    public void sendFibonacci(View view) {
+    @OnClick(R.id.fib_tx)
+    void sendFibonacci() {
         Fibonacci fibonacci = Fibonacci.load(FIB_CONTRACT_ADDR);
 
         fibonacci.fibonacciNotify(new Uint256(11))

@@ -15,6 +15,7 @@ import com.slotnslot.slotnslot.geth.TransactionManager;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.Seed;
 import com.slotnslot.slotnslot.utils.Convert;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import org.ethereum.geth.BigInt;
 import org.ethereum.geth.Transaction;
@@ -32,7 +33,7 @@ import butterknife.OnClick;
 import io.reactivex.Completable;
 import io.reactivex.schedulers.Schedulers;
 
-public class PlayExampleActivity extends AppCompatActivity {
+public class PlayExampleActivity extends RxAppCompatActivity {
     public static final String TAG = PlayExampleActivity.class.getSimpleName();
 
     private SlotMachine machine;
@@ -77,6 +78,7 @@ public class PlayExampleActivity extends AppCompatActivity {
 
                         machine
                                 .gameConfirmedEventObservable()
+                                .compose(bindToLifecycle())
                                 .subscribe(response -> {
                                     Log.i(TAG, "reward : " + response.reward.getValue());
                                     Log.i(TAG, "idx : " + response.idx.getValue());
