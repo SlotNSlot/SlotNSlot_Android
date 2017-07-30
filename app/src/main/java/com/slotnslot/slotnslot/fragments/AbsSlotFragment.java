@@ -1,26 +1,21 @@
-package com.slotnslot.slotnslot.activities;
+package com.slotnslot.slotnslot.fragments;
 
 import android.graphics.LinearGradient;
 import android.graphics.Shader;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
+import com.slotnslot.slotnslot.SlotType;
 import com.slotnslot.slotnslot.Wheel.WheelView;
 import com.slotnslot.slotnslot.Wheel.adapters.SlotAdapter;
 import com.slotnslot.slotnslot.geth.Utils;
@@ -39,163 +34,98 @@ import butterknife.ButterKnife;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
-public class PlayActivity extends SlotRootActivity {
-    public static final String TAG = PlayActivity.class.getSimpleName();
+public abstract class AbsSlotFragment extends SlotRootFragment {
 
-    @BindView(R.id.play_slot_container)
+    @BindView(R.id.slot_common_slot_container)
     RelativeLayout slotContainer;
-    @BindView(R.id.play_slot_background)
+    @BindView(R.id.slot_common_slot_background)
     LinearLayout slotLayout;
-    @BindView(R.id.play_big_win_container)
+    @BindView(R.id.slot_common_big_win_container)
     RelativeLayout bigWinContainer;
-    @BindView(R.id.play_big_win_imageview)
-    ImageView bigWinImageView;
-    @BindView(R.id.play_big_win_textview)
+    @BindView(R.id.slot_common_big_win_textview)
     TextView bigWinTextView;
-    @BindView(R.id.play_current_balance_textview)
+    @BindView(R.id.slot_common_current_balance_textview)
     TextView currentBalanceTextView;
-    @BindView(R.id.play_banker_stake_textview)
+    @BindView(R.id.slot_common_banker_stake_textview)
     TextView bankerStakeTextView;
-    @BindView(R.id.play_last_win_container)
-    RelativeLayout lastWinContainer;
-    @BindView(R.id.play_last_win_textview)
+    @BindView(R.id.slot_common_last_win_textview)
     TextView lastWinTextView;
-    @BindView(R.id.play_bet_line_textview)
     TextView betLineTextView;
-    @BindView(R.id.play_total_bet_textview)
     TextView totalBetTextView;
-    @BindView(R.id.play_bet_eth_textview)
     TextView betETHTextView;
-    @BindView(R.id.toolbar_center_tetview)
-    TextView centerTextView;
-    @BindView(R.id.play_bet_line_plus_button)
-    ImageButton linePlusButton;
-    @BindView(R.id.play_bet_line_minus_button)
-    ImageButton lineMinusButton;
-    @BindView(R.id.play_bet_eth_plus_button)
-    ImageButton ethPlusButton;
-    @BindView(R.id.play_bet_eth_minus_button)
-    ImageButton ethMinusButton;
-    @BindView(R.id.play_max_bet_button)
-    RelativeLayout maxBetButton;
-    @BindView(R.id.play_auto_button)
-    Button autoButton;
-    @BindView(R.id.play_spin_button)
-    Button spinButton;
-    @BindView(R.id.global_loading_container)
-    RelativeLayout loadingView;
 
-    private PlaySlotViewModel viewModel;
-    private ArrayList<SlotAdapter> adapterList = new ArrayList<>();
-    private ArrayList<DrawView> payLineView = new ArrayList<>();
+    protected PlaySlotViewModel viewModel;
+    protected ArrayList<SlotAdapter> adapterList = new ArrayList<>();
+    protected ArrayList<DrawView> payLineView = new ArrayList<>();
+    private String slotRoomAddress;
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        slotRoomAddress = (String) getArguments().getSerializable(Constants.BUNDLE_KEY_SLOT_ROOM);
+        if (TextUtils.isEmpty(slotRoomAddress)) {
+            Utils.showToast("error! slot room address is empty.");
+            getActivity().finish();
+        }
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_play);
-        ButterKnife.bind(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(getViewID(), container, false);
+        ButterKnife.bind(this, view);
+
+        SlotType type = (SlotType) getArguments().getSerializable(Constants.ACTIVITY_EXTRA_KEY_SLOT_TYPE);
+
+        betLineTextView = view.findViewById(type == SlotType.BANKER ? R.id.slot_banker_bet_line_textview : R.id.play_bet_line_textview);
+        totalBetTextView = view.findViewById(type == SlotType.BANKER ? R.id.slot_banker_total_bet_textview : R.id.play_total_bet_textview);
+        betETHTextView = view.findViewById(type == SlotType.BANKER ? R.id.slot_banker_bet_eth_textview : R.id.play_bet_eth_textview);
 
         Shader textShader = new LinearGradient(0, 0, 0, 20,
-                new int[]{ContextCompat.getColor(this, R.color.big_win_start_color), ContextCompat.getColor(this, R.color.pink1)},
+                new int[]{ContextCompat.getColor(getContext(), R.color.big_win_start_color), ContextCompat.getColor(getContext(), R.color.pink1)},
                 new float[]{0, 1}, Shader.TileMode.CLAMP);
-
         bigWinTextView.getPaint().setShader(textShader);
 
-        setLoadingView(loadingView);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.back_button);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbar.setNavigationOnClickListener(v -> finish());
-
-        String slotRoomAddress = (String) getIntent().getExtras().getSerializable(Constants.BUNDLE_KEY_SLOT_ROOM);
-        if (TextUtils.isEmpty(slotRoomAddress)) {
-            Toast.makeText(getApplicationContext(), "error! slot room address is empty.", Toast.LENGTH_LONG).show();
-            finish();
-            return;
-        }
-
-        viewModel = new PlaySlotViewModel(this, slotRoomAddress);
-
-        modifyViewForBanker();
-
+        viewModel = new PlaySlotViewModel(slotRoomAddress);
         addSlot(0, false);
         addSlot(1, false);
         addSlot(2, false);
         addSlot(3, false);
         addSlot(4, false);
 
-
         subscribeTextChange();
         setClickEvents();
-
-        if ("test".equals(viewModel.getRxSlotRoom().getSlotAddress())) { // if test
-            return;
-        }
 
         // below do not need for test
         viewModel.onCreate();
         viewModel.getRxSlotRoom().updateBalance();
         viewModel.seedReadySubject.subscribe(ready -> loadingViewSetVisible(!ready));
         viewModel.drawResultSubject.subscribe(this::drawResult);
-        viewModel.toastSubject.subscribe(msg -> Toast.makeText(this, msg, Toast.LENGTH_LONG).show());
+        viewModel.toastSubject.subscribe(msg -> Utils.showToast(msg));
         viewModel.startSpin.subscribe(bool -> tapSpin());
+
+        return view;
     }
 
-    private void modifyViewForBanker() {
-        if (!viewModel.isBanker()) {
-            centerTextView.setText("PLAY");
-        } else {
-            centerTextView.setText("WATCHING");
-            autoButton.setVisibility(View.INVISIBLE);
-            spinButton.setVisibility(View.INVISIBLE);
-            maxBetButton.setVisibility(View.INVISIBLE);
-            linePlusButton.setVisibility(View.INVISIBLE);
-            lineMinusButton.setVisibility(View.INVISIBLE);
-            ethPlusButton.setVisibility(View.INVISIBLE);
-            ethMinusButton.setVisibility(View.INVISIBLE);
-        }
-    }
+    protected abstract void setClickEvents();
 
-    private void subscribeTextChange() {
-        viewModel.totalBetSubject.distinctUntilChanged()
-                .subscribe(total -> totalBetTextView.setText(String.format(Constants.PLAY_BET_TOTAL_BET_FORMAT, total)));
-        viewModel.betLineSubject.distinctUntilChanged()
-                .subscribe(lines -> betLineTextView.setText(String.format(Constants.PLAY_BET_LINES_TEXT_FORMAT, lines)));
-        viewModel.betEthSubject.distinctUntilChanged()
-                .subscribe(betEth -> betETHTextView.setText(String.format(Constants.PLAY_BET_ETH_TEXT_FORMAT, betEth)));
+    protected void subscribeTextChange() {
         viewModel.lastWinSubject.distinctUntilChanged()
                 .subscribe(lastWin -> lastWinTextView.setText(String.format(Constants.PLAY_LAST_WIN_TEXT_FFORMAT, lastWin)));
         viewModel.playerBalanceObservable.distinctUntilChanged()
                 .subscribe(balance -> currentBalanceTextView.setText(String.valueOf(Convert.fromWei(balance, Convert.Unit.ETHER))));
         viewModel.bankerBalanceObservable.distinctUntilChanged()
                 .subscribe(balance -> bankerStakeTextView.setText(String.valueOf(Convert.fromWei(balance, Convert.Unit.ETHER))));
+        viewModel.totalBetSubject.distinctUntilChanged()
+                .subscribe(total -> totalBetTextView.setText(String.format(Constants.PLAY_BET_TOTAL_BET_FORMAT, total)));
+        viewModel.betLineSubject.distinctUntilChanged()
+                .subscribe(lines -> betLineTextView.setText(String.format(Constants.PLAY_BET_LINES_TEXT_FORMAT, lines)));
+        viewModel.betEthSubject.distinctUntilChanged()
+                .subscribe(betEth -> betETHTextView.setText(String.format(Constants.PLAY_BET_ETH_TEXT_FORMAT, betEth)));
     }
 
-    private void setClickEvents() {
-        RxView.clicks(spinButton).subscribe(o -> {
-//            spinButton.setEnabled(false);
-            tapSpin();
-            for (DrawView view : payLineView) {
-                slotContainer.removeView(view);
-            }
-            slotContainer.invalidate();
-            if ("test".equals(viewModel.getRxSlotRoom().getSlotAddress())) {
-                return;
-            }
-            viewModel.initGame();
-        });
-        RxView.clicks(autoButton).subscribe(o -> tapStop(false));
-        RxView.clicks(linePlusButton).subscribe(o -> viewModel.linePlus());
-        RxView.clicks(lineMinusButton).subscribe(o -> viewModel.lineMinus());
-        RxView.clicks(ethPlusButton).subscribe(o -> viewModel.betPlus());
-        RxView.clicks(ethMinusButton).subscribe(o -> viewModel.betMinus());
-        RxView.clicks(maxBetButton).subscribe(o -> viewModel.maxBet());
-    }
+    protected abstract int getViewID();
 
     private void addSlot(int id, boolean setListener) {
-        SlotAdapter slotAdapter = new SlotAdapter(this);
+        SlotAdapter slotAdapter = new SlotAdapter();
         adapterList.add(slotAdapter);
 
         WheelView wheel = /* getWheel(id); */addWheel(id);
@@ -209,7 +139,7 @@ public class PlayActivity extends SlotRootActivity {
     }
 
     private WheelView addWheel(int id) {
-        WheelView wheelView = new WheelView(this);
+        WheelView wheelView = new WheelView(getContext());
         wheelView.setId(id);
         return wheelView;
     }
@@ -230,7 +160,7 @@ public class PlayActivity extends SlotRootActivity {
         view.startScrolling();
     }
 
-    private void tapStop(boolean isDelay) {
+    protected void tapStop(boolean isDelay) {
         int delay = isDelay ? 2000 : 0;
 
         Completable complete = Completable.complete();
@@ -327,7 +257,7 @@ public class PlayActivity extends SlotRootActivity {
                 points[j][1] = (int) y;
             }
 
-            DrawView payLine = new DrawView(this, points);
+            DrawView payLine = new DrawView(getContext(), points);
             payLineView.add(payLine);
 
             slotContainer.addView(payLine, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, slotContainer.getMeasuredHeight()));
@@ -336,18 +266,7 @@ public class PlayActivity extends SlotRootActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.play_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         viewModel.onDestroy();
     }

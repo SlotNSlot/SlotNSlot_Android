@@ -2,7 +2,6 @@ package com.slotnslot.slotnslot.models;
 
 import android.util.Log;
 
-import com.slotnslot.slotnslot.activities.PlayActivity;
 import com.slotnslot.slotnslot.contract.SlotMachine;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.provider.AccountProvider;
@@ -60,7 +59,7 @@ public class PlaySlotViewModel {
 
     private Seed playerSeed = new Seed();
 
-    public PlaySlotViewModel(PlayActivity playActivity, String slotAddress) {
+    public PlaySlotViewModel(String slotAddress) {
         this.rxSlotRoom = RxSlotRooms.getSlotRoom(slotAddress);
 
         // init bet line, eth
@@ -81,6 +80,10 @@ public class PlaySlotViewModel {
         bankerBalanceObservable = rxSlotRoom.getSlotRoomSubject().map(SlotRoom::getBankerBalance);
 
         seedReadySubject.subscribe(ready -> this.seedReady = ready);
+    }
+
+    public void kickPlayer() {
+        //TODO Implement kick player
     }
 
     public void linePlus() {
