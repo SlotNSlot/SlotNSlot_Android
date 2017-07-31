@@ -61,8 +61,7 @@ public class MainActivity extends RxAppCompatActivity {
                 .filter(aBoolean -> aBoolean)
                 .take(1)
                 .map(e -> {
-                    GethManager manager = GethManager.getInstance();
-                    EthereumClient ec = manager.getClient();
+                    EthereumClient ec = GethManager.getClient();
 
                     NewHeadHandler handler = new NewHeadHandler() {
                         @Override
@@ -74,7 +73,7 @@ public class MainActivity extends RxAppCompatActivity {
                             MainActivity.this.runOnUiThread(() -> syncText.setText("#" + header.getNumber() + ": " + header.getHash().getHex().substring(0, 10) + " sync...\n"));
                         }
                     };
-                    ec.subscribeNewHead(manager.getMainContext(), handler, 16);
+                    ec.subscribeNewHead(GethManager.getMainContext(), handler, 16);
                     return true;
                 })
                 .subscribe(

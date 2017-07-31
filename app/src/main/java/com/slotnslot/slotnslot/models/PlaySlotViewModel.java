@@ -57,7 +57,7 @@ public class PlaySlotViewModel {
 
     private boolean seedReady = false;
 
-    private Seed playerSeed = new Seed();
+    private PlayerSeed playerSeed = new PlayerSeed();
 
     public PlaySlotViewModel(String slotAddress) {
         this.rxSlotRoom = RxSlotRooms.getSlotRoom(slotAddress);
@@ -164,63 +164,53 @@ public class PlaySlotViewModel {
         compositeDisposable.add(disposable);
     }
 
-    private void setPlayerLeftEvent() {
+    private void setOccupiedEvent() {
         Disposable disposable = machine
-                .playerLeftEventObservable()
+                .gameOccupiedEventObservable()
                 .subscribe(response -> {
-                    if (isBanker()) {
-                        Log.i(TAG, "player : " + response.player.toString() + " has left");
+                    Log.i(TAG, "occupied by : " + response.player.toString());
+                    Log.i(TAG, "player seed1 : " + Utils.byteToHex(response.playerSeed.getValue().get(0).getValue()));
+                    Log.i(TAG, "player seed2 : " + Utils.byteToHex(response.playerSeed.getValue().get(1).getValue()));
+                    Log.i(TAG, "player seed3 : " + Utils.byteToHex(response.playerSeed.getValue().get(2).getValue()));
 
-                        toastSubject.onNext("player : " + response.player.toString() + " has left");
+                    toastSubject.onNext("slot occupied by : " + response.player.toString());
+                    rxSlotRoom.updateBalance();
+                });
+        compositeDisposable.add(disposable);
+    }
 
-                        rxSlotRoom.updateBalance();
-                        seedReadySubject.onNext(false);
+    private void setBankerSeedInitializedEvent() {
+        Disposable disposable = machine
+                .bankerSeedInitializedEventObservable()
+                .subscribe(response -> {
+                    Log.i(TAG, "banker initial seed1 : " + Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue()));
+                    Log.i(TAG, "banker initial seed2 : " + Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue()));
+                    Log.i(TAG, "banker initial seed3 : " + Utils.byteToHex(response._bankerSeed.getValue().get(2).getValue()));
+
+                    toastSubject.onNext("banker seed initialized.");
+                    seedReadySubject.onNext(true);
+                });
+        compositeDisposable.add(disposable);
+    }
+
+    public void initGame() {
+        machine
+                .initialBankerSeedReady()
+                .subscribe(bool -> {
+                    if (!bool.getValue()) {
+                        Log.e(TAG, "banker seed is not initialized yet");
+//                            spinButton.setEnabled(true);
                         return;
                     }
 
-                    AccountProvider.updateBalance(); // for player only
+                    previousBetEth = currentBetEth;
+                    machine
+                            .initGameForPlayer(
+                                    new Uint256(Convert.toWei(getCurrentBetEth(), Convert.Unit.ETHER)),
+                                    new Uint256(currentLine),
+                                    new Uint256(playerSeed.getIndex()))
+                            .subscribe();
                 });
-        compositeDisposable.add(disposable);
-    }
-
-    private void setGameConfirmedEvent() {
-        Disposable disposable = machine
-                .gameConfirmedEventObservable()
-                .subscribe(response -> {
-                    BigInteger reward = response.reward.getValue();
-                    BigInteger winRate = reward.divide(Convert.toWei(previousBetEth, Convert.Unit.ETHER));
-
-                    Log.i(TAG, "reward : " + reward);
-                    Log.i(TAG, "bet : " + previousBetEth);
-                    Log.i(TAG, "idx : " + response.idx.getValue());
-
-                    toastSubject.onNext("game confirmed. reward : " + Convert.fromWei(reward, Convert.Unit.ETHER));
-
-                    lastWinSubject.onNext(Convert.fromWei(reward, Convert.Unit.ETHER).doubleValue());
-                    drawResultSubject.onNext(winRate.intValue());
-
-                    rxSlotRoom.updateBalance();
-                    playerSeed.nextRound();
-                });
-        compositeDisposable.add(disposable);
-    }
-
-    private void setBankerSeedSetEvent() {
-        Disposable disposable = machine
-                .bankerSeedSetEventObservable()
-                .subscribe(response -> {
-                    Log.i(TAG, "banker seed : " + Utils.byteToHex(response.bankerSeed.getValue()));
-                    Log.i(TAG, "idx : " + response.idx.getValue());
-
-                    toastSubject.onNext("banker seed set.");
-
-                    if (!isBanker()) {
-                        machine
-                                .setPlayerSeed(playerSeed.getSeed(), new Uint256(playerSeed.getIndex()))
-                                .subscribe();
-                    }
-                });
-        compositeDisposable.add(disposable);
     }
 
     private void setGameInitializedEvent() {
@@ -247,53 +237,72 @@ public class PlaySlotViewModel {
         compositeDisposable.add(disposable);
     }
 
-    private void setBankerSeedInitializedEvent() {
+    private void setBankerSeedSetEvent() {
         Disposable disposable = machine
-                .bankerSeedInitializedEventObservable()
+                .bankerSeedSetEventObservable()
                 .subscribe(response -> {
-                    Log.i(TAG, "banker initial seed1 : " + Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue()));
-                    Log.i(TAG, "banker initial seed2 : " + Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue()));
-                    Log.i(TAG, "banker initial seed3 : " + Utils.byteToHex(response._bankerSeed.getValue().get(2).getValue()));
+                    String bankerSeed = Utils.byteToHex(response.bankerSeed.getValue());
+                    Log.i(TAG, "banker seed : " + bankerSeed);
+                    Log.i(TAG, "idx : " + response.idx.getValue());
 
-                    toastSubject.onNext("banker seed initialized.");
-                    seedReadySubject.onNext(true);
+                    toastSubject.onNext("banker seed set.");
+
+                    if (!playerSeed.isValidSeed(bankerSeed)) {
+                        Log.e(TAG, "banker seed is invalid : " + bankerSeed);
+                        Log.e(TAG, "previous banker seed : " + playerSeed.getBankerSeeds()[playerSeed.getIndex()]);
+                        Log.e(TAG, "player seed index : " + playerSeed.getIndex());
+                        return;
+                    }
+                    playerSeed.setNextBankerSeed(bankerSeed);
+
+                    if (!isBanker()) {
+                        machine
+                                .setPlayerSeed(playerSeed.getSeed(), new Uint256(playerSeed.getIndex()))
+                                .subscribe();
+                    }
                 });
         compositeDisposable.add(disposable);
     }
 
-    private void setOccupiedEvent() {
+    private void setGameConfirmedEvent() {
         Disposable disposable = machine
-                .gameOccupiedEventObservable()
+                .gameConfirmedEventObservable()
                 .subscribe(response -> {
-                    Log.i(TAG, "occupied by : " + response.player.toString());
-                    Log.i(TAG, "player seed1 : " + Utils.byteToHex(response.playerSeed.getValue().get(0).getValue()));
-                    Log.i(TAG, "player seed2 : " + Utils.byteToHex(response.playerSeed.getValue().get(1).getValue()));
-                    Log.i(TAG, "player seed3 : " + Utils.byteToHex(response.playerSeed.getValue().get(2).getValue()));
+                    BigInteger reward = response.reward.getValue();
+                    BigInteger winRate = reward.divide(Convert.toWei(previousBetEth, Convert.Unit.ETHER));
 
-                    toastSubject.onNext("slot occupied by : " + response.player.toString());
+                    Log.i(TAG, "reward : " + reward);
+                    Log.i(TAG, "bet : " + previousBetEth);
+                    Log.i(TAG, "idx : " + response.idx.getValue());
+
+                    toastSubject.onNext("game confirmed. reward : " + Convert.fromWei(reward, Convert.Unit.ETHER));
+
+                    lastWinSubject.onNext(Convert.fromWei(reward, Convert.Unit.ETHER).doubleValue());
+                    drawResultSubject.onNext(winRate.intValue());
+
                     rxSlotRoom.updateBalance();
+                    playerSeed.confirm();
                 });
         compositeDisposable.add(disposable);
     }
 
-    public void initGame() {
-        machine
-                .initialBankerSeedReady()
-                .subscribe(bool -> {
-                    if (!bool.getValue()) {
-                        Log.e(TAG, "banker seed is not initialized yet");
-//                            spinButton.setEnabled(true);
+    private void setPlayerLeftEvent() {
+        Disposable disposable = machine
+                .playerLeftEventObservable()
+                .subscribe(response -> {
+                    if (isBanker()) {
+                        Log.i(TAG, "player : " + response.player.toString() + " has left");
+
+                        toastSubject.onNext("player : " + response.player.toString() + " has left");
+
+                        rxSlotRoom.updateBalance();
+                        seedReadySubject.onNext(false);
                         return;
                     }
 
-                    previousBetEth = currentBetEth;
-                    machine
-                            .initGameForPlayer(
-                                    new Uint256(Convert.toWei(getCurrentBetEth(), Convert.Unit.ETHER)),
-                                    new Uint256(currentLine),
-                                    new Uint256(playerSeed.getIndex()))
-                            .subscribe();
+                    AccountProvider.updateBalance(); // for player only
                 });
+        compositeDisposable.add(disposable);
     }
 
     public void onCreate() {

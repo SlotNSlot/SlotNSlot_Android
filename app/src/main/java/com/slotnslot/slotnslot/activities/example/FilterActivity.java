@@ -12,6 +12,7 @@ import com.slotnslot.slotnslot.contract.SlotMachineStorage;
 import com.slotnslot.slotnslot.geth.CredentialManager;
 import com.slotnslot.slotnslot.geth.GethConstants;
 import com.slotnslot.slotnslot.geth.Utils;
+import com.slotnslot.slotnslot.models.PlayerSeed;
 import com.slotnslot.slotnslot.models.Seed;
 import com.slotnslot.slotnslot.utils.Convert;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
@@ -31,7 +32,7 @@ public class FilterActivity extends RxAppCompatActivity {
 
     private SlotMachine machine;
 
-    private Seed playerSeed = new Seed();
+    private PlayerSeed playerSeed = new PlayerSeed();
     private Seed bankerSeed = new Seed();
 
     @Override
@@ -120,9 +121,9 @@ public class FilterActivity extends RxAppCompatActivity {
                             .compose(bindToLifecycle())
                             .subscribe(response -> {
                                 Log.i(TAG, "game occupied by : " + response.player.toString());
-                                Log.i(TAG, "player seed1 : " + Utils.byteToHex(response.playerSeed.getValue().get(0).getValue()));
-                                Log.i(TAG, "player seed2 : " + Utils.byteToHex(response.playerSeed.getValue().get(1).getValue()));
-                                Log.i(TAG, "player seed3 : " + Utils.byteToHex(response.playerSeed.getValue().get(2).getValue()));
+                                Log.i(TAG, "player seed0 : " + Utils.byteToHex(response.playerSeed.getValue().get(0).getValue()));
+                                Log.i(TAG, "player seed1 : " + Utils.byteToHex(response.playerSeed.getValue().get(1).getValue()));
+                                Log.i(TAG, "player seed2 : " + Utils.byteToHex(response.playerSeed.getValue().get(2).getValue()));
 
                                 CredentialManager.setDefault(0, "asdf");
                                 machine
@@ -134,10 +135,16 @@ public class FilterActivity extends RxAppCompatActivity {
                             .bankerSeedInitializedEventObservable()
                             .compose(bindToLifecycle())
                             .subscribe(response -> {
+                                String seed0 = Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue());
+                                String seed1 = Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue());
+                                String seed2 = Utils.byteToHex(response._bankerSeed.getValue().get(2).getValue());
+
                                 Log.i(TAG, "banker seed initialized");
-                                Log.i(TAG, "banker seed1 : " + Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue()));
-                                Log.i(TAG, "banker seed2 : " + Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue()));
-                                Log.i(TAG, "banker seed3 : " + Utils.byteToHex(response._bankerSeed.getValue().get(2).getValue()));
+                                Log.i(TAG, "banker seed0 : " + seed0);
+                                Log.i(TAG, "banker seed1 : " + seed1);
+                                Log.i(TAG, "banker seed2 : " + seed2);
+
+                                playerSeed.setBankerSeeds(seed0, seed1, seed2);
                             });
 
                     machine
@@ -147,11 +154,13 @@ public class FilterActivity extends RxAppCompatActivity {
                                 Log.i(TAG, "player address : " + response.player.toString());
                                 Log.i(TAG, "bet : " + response.bet.getValue());
                                 Log.i(TAG, "lines : " + response.lines.getValue());
-                                Log.i(TAG, "idx : " + response.idx.getValue());
+
+                                int idx = response.idx.getValue().intValue();
+                                Log.i(TAG, "idx : " + idx);
 
                                 CredentialManager.setDefault(0, "asdf");
                                 machine
-                                        .setBankerSeed(bankerSeed.getSeed(), new Uint256(bankerSeed.getIndex()))
+                                        .setBankerSeed(bankerSeed.getSeed(idx), new Uint256(idx))
                                         .subscribe();
                             });
 
@@ -159,12 +168,21 @@ public class FilterActivity extends RxAppCompatActivity {
                             .bankerSeedSetEventObservable()
                             .compose(bindToLifecycle())
                             .subscribe(response -> {
-                                Log.i(TAG, "banker seed : " + Utils.byteToHex(response.bankerSeed.getValue()));
+                                String bankerSeed = Utils.byteToHex(response.bankerSeed.getValue());
+                                Log.i(TAG, "banker seed : " + bankerSeed);
                                 Log.i(TAG, "idx : " + response.idx.getValue());
+
+                                if (!playerSeed.isValidSeed(bankerSeed)) {
+                                    Log.e(TAG, "banker seed is invalid : " + bankerSeed);
+                                    Log.e(TAG, "previous banker seed : " + playerSeed.getBankerSeeds()[playerSeed.getIndex()]);
+                                    Log.e(TAG, "player seed index : " + playerSeed.getIndex());
+                                    return;
+                                }
+                                playerSeed.setNextBankerSeed(bankerSeed);
 
                                 CredentialManager.setDefault(1, "asdf");
                                 machine
-                                        .setPlayerSeed(playerSeed.getSeed(), new Uint256(bankerSeed.getIndex()))
+                                        .setPlayerSeed(playerSeed.getSeed(), new Uint256(this.playerSeed.getIndex()))
                                         .subscribe();
                             });
 
@@ -175,8 +193,8 @@ public class FilterActivity extends RxAppCompatActivity {
                                 Log.i(TAG, "reward : " + response.reward.getValue());
                                 Log.i(TAG, "idx : " + response.idx.getValue());
 
-                                playerSeed.nextRound();
-                                bankerSeed.nextRound();
+                                bankerSeed.confirm(response.idx.getValue().intValue());
+                                playerSeed.confirm();
                             });
 
                     machine

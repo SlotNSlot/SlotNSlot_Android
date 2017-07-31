@@ -1,7 +1,6 @@
 package com.slotnslot.slotnslot.activities.example;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.slotnslot.slotnslot.R;
@@ -13,6 +12,7 @@ import com.slotnslot.slotnslot.geth.GethConstants;
 import com.slotnslot.slotnslot.geth.GethManager;
 import com.slotnslot.slotnslot.geth.TransactionManager;
 import com.slotnslot.slotnslot.geth.Utils;
+import com.slotnslot.slotnslot.models.PlayerSeed;
 import com.slotnslot.slotnslot.models.Seed;
 import com.slotnslot.slotnslot.utils.Convert;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
@@ -41,7 +41,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
     private static long playerNonce = 0;
     private static long bankerNonce = 0;
 
-    private Seed playerSeed = new Seed();
+    private PlayerSeed playerSeed = new PlayerSeed();
     private Seed bankerSeed = new Seed();
 
     @Override
@@ -66,7 +66,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
 
                     String bankerHex = CredentialManager.getDefaultAccountHex();
                     storage.getNumOfSlotMachine(new Address(bankerHex))
-                            .subscribe(result -> Log.i(TAG, "address " + bankerHex + " has" + result.getValue() + " slot machines"));
+                            .subscribe(result -> Log.i(TAG, "address " + bankerHex + " has " + result.getValue() + " slot machines"));
 
                     return storage.getSlotMachine(new Address(bankerHex), new Uint256(0));
                 })
@@ -244,8 +244,8 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                     Function function = new Function(
                             "setBankerSeed",
                             Arrays.asList(
-                                    bankerSeed.getSeed(),
-                                    new Uint256(bankerSeed.getIndex())),
+                                    bankerSeed.getSeed(playerSeed.getIndex()),
+                                    new Uint256(playerSeed.getIndex())),
                             Collections.emptyList());
                     Transaction tx = new Transaction(
                             bankerNonce++, // nonce
@@ -258,7 +258,6 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                     Transaction signed = CredentialManager.getDefault().sign(tx);
                     GethManager.getClient().sendTransaction(GethManager.getMainContext(), signed);
 
-                    bankerSeed.nextRound();
                     e.onComplete();
                 })
                 .subscribeOn(Schedulers.io())
@@ -303,7 +302,8 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                     Transaction signed = CredentialManager.getDefault().sign(tx);
                     GethManager.getClient().sendTransaction(GethManager.getMainContext(), signed);
 
-                    playerSeed.nextRound();
+                    bankerSeed.confirm(playerSeed.getIndex());
+                    playerSeed.confirm();
                     e.onComplete();
                 })
                 .subscribeOn(Schedulers.io())
