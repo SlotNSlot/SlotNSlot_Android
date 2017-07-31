@@ -84,6 +84,12 @@ public class MainActivity extends RxAppCompatActivity {
                 );
     }
 
+    @OnClick(R.id.pending_test)
+    void pendingActivity() {
+        Intent intent = new Intent(getApplicationContext(), PendingExampleActivity.class);
+        startActivity(intent);
+    }
+
     @OnClick(R.id.filter_test)
     void filterActivity() {
         Intent intent = new Intent(getApplicationContext(), FilterExampleActivity.class);

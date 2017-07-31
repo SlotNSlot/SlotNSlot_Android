@@ -5,6 +5,7 @@ import java.math.BigInteger;
 public class GethConstants {
     public static final String SLOT_MANAGER_CONTRACT_ADDRESS = "0x4d43f38f7b698ef64ba5c5d23311f36a3cc3ef86";
     public static final int LATEST_BLOCK = -1;
+    public static final int PENDING_BLOCK = -2;
 
     public static final BigInteger FUND_GAS_LIMIT = BigInteger.valueOf(90000);
     public static final BigInteger DEFAULT_VALUE = BigInteger.ZERO;

@@ -56,22 +56,17 @@ public class NetworkConfig {
 
         public Builder(EthereumNetwork network) {
             config = new NetworkConfig();
-
             setNetwork(network);
             setNetworkID(network.getNetworkId());
             setGenesis(network.getGenesis());
             setBootnodes(network.getBootnodes());
-
-            setWhisper(true);
         }
 
         public Builder(long networkID, String genesis, Enodes bootnodes) {
             config = new NetworkConfig();
-
             setNetworkID(networkID);
             setGenesis(genesis);
             setBootnodes(bootnodes);
-//            setWhisper(true);
         }
 
         public Builder setNetwork(EthereumNetwork network) {

@@ -21,7 +21,7 @@ public class LandingPageActivity extends SlotRootActivity {
         Observable.timer(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe((interval) -> {
-                    Intent intent = new Intent(getApplicationContext(), SignInUpActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                     finish();
                 });
