@@ -12,8 +12,9 @@ import android.view.ViewGroup;
 import com.baoyz.actionsheet.ActionSheet;
 import com.slotnslot.slotnslot.ListType;
 import com.slotnslot.slotnslot.R;
+import com.slotnslot.slotnslot.SlotType;
 import com.slotnslot.slotnslot.activities.MakeSlotActivity;
-import com.slotnslot.slotnslot.activities.PlayActivity;
+import com.slotnslot.slotnslot.activities.SlotGameActivity;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.SlotRoomViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
@@ -101,8 +102,9 @@ public class SlotListAdapter extends RecyclerView.Adapter {
 
     private void enterSlotRoom(SlotRoomViewModel viewModel) {
         if ("test".equals(viewModel.getSlotAddress())) {
-            Intent intent = new Intent(fragment.getContext(), PlayActivity.class);
+            Intent intent = new Intent(fragment.getContext(), SlotGameActivity.class);
             Bundle bundle = new Bundle();
+            bundle.putSerializable(Constants.ACTIVITY_EXTRA_KEY_SLOT_TYPE, type == ListType.PLAY ? SlotType.PLAYER : SlotType.BANKER);
             bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, viewModel.getRxSlotRoom().getSlotAddress());
             intent.putExtras(bundle);
             fragment.getContext().startActivity(intent);
@@ -131,7 +133,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                                 return;
                             }
 
-                            Intent intent = new Intent(fragment.getContext(), PlayActivity.class);
+                            Intent intent = new Intent(fragment.getContext(), SlotGameActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, viewModel.getSlotAddress());
                             intent.putExtras(bundle);

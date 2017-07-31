@@ -58,4 +58,7 @@ public class Constants {
     public static final String ACTIVITY_EXTRA_KEY_MY_PAGE_TYPE = "MYPAGETYPE";
     public static final String MY_PAGE_TITLE_WALLET = "Wallet";
     public static final String MY_PAGE_TITLE_WITHDRAW_ETH = "Withdraw ETH";
+    public static final String ACTIVITY_EXTRA_KEY_SLOT_TYPE = "SLOT_TYPE";
+    public static final String SLOT_PLAYER_TITLE = "Play";
+    public static final String SLOT_BANKER_TITLE = "Watch Game";
 }

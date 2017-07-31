@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
+import com.slotnslot.slotnslot.MainApplication;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.SlotUtil;
 
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class SlotAdapter extends AbstractWheelAdapter {
-    private Activity mActivity;
     private ArrayList<SoftReference<Bitmap>> mImages;
     private int width;
     private int height;
@@ -27,10 +27,9 @@ public class SlotAdapter extends AbstractWheelAdapter {
     private Integer[] itemIndexs = {0, 1, 2};
 
     @SuppressWarnings("deprecation")
-    public SlotAdapter(Activity activity) {
-        mActivity = activity;
-        width = SlotUtil.convertDpToPixel(327.1f, activity);
-        height = SlotUtil.convertDpToPixel(194.8f, activity);
+    public SlotAdapter() {
+        width = SlotUtil.convertDpToPixel(327.1f, MainApplication.getContext());
+        height = SlotUtil.convertDpToPixel(194.8f, MainApplication.getContext());
         IMAGE_WIDTH = width / 5;
         IMAGE_HEIGHT = height / 3;
         params = new LayoutParams(IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -41,7 +40,7 @@ public class SlotAdapter extends AbstractWheelAdapter {
     }
 
     private Bitmap loadImage(int id) {
-        Bitmap bitmap = decodeSampledBitmapFromResource(mActivity.getResources(), id, 90, 90);
+        Bitmap bitmap = decodeSampledBitmapFromResource(MainApplication.getContext().getResources(), id, 90, 90);
         return bitmap;
     }
 
@@ -56,11 +55,11 @@ public class SlotAdapter extends AbstractWheelAdapter {
         if (convertView != null) {
             img = (ImageView) convertView;
         } else {
-            img = new ImageView(mActivity);
+            img = new ImageView(MainApplication.getContext());
         }
         img.setLayoutParams(params);
-        int sidePadding = SlotUtil.convertDpToPixel(10f, mActivity);
-        int topBottomPadding = SlotUtil.convertDpToPixel(8.1f, mActivity);
+        int sidePadding = SlotUtil.convertDpToPixel(10f, MainApplication.getContext());
+        int topBottomPadding = SlotUtil.convertDpToPixel(8.1f, MainApplication.getContext());
         img.setPadding(sidePadding, topBottomPadding, sidePadding, topBottomPadding);
         SoftReference<Bitmap> bitmapRef = mImages.get(getImageIndex(index));
         Bitmap bitmap = bitmapRef.get();

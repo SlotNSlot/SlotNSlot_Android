@@ -33,7 +33,7 @@
             android:name="com.slotnslot.slotnslot.activities.MakeSlotActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="com.slotnslot.slotnslot.activities.PlayActivity">
+        <activity android:name="com.slotnslot.slotnslot.activities.SlotGameActivity">
         </activity>
         <activity
             android:name="com.slotnslot.slotnslot.activities.SignInUpActivity"

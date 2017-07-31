@@ -1,7 +1,9 @@
 package com.slotnslot.slotnslot.geth;
 
 import android.text.TextUtils;
+import android.widget.Toast;
 
+import com.slotnslot.slotnslot.MainApplication;
 import com.slotnslot.slotnslot.models.DrawingLine;
 import com.slotnslot.slotnslot.models.PayLineTuple;
 import com.slotnslot.slotnslot.models.SlotResultDrawingLine;
@@ -36,6 +38,10 @@ import io.reactivex.schedulers.Schedulers;
 public class Utils {
     private static final int DEFAULT_SLEEP_DURATION = 5000; // ms
     private static final int DEFAULT_ATTEMPTS = 40;
+
+    public static void showToast(String msg){
+        Toast.makeText(MainApplication.getContext(), msg, Toast.LENGTH_LONG).show();
+    }
 
     public static byte[] hexToByte(String hex) {
         if (TextUtils.isEmpty(hex)) {

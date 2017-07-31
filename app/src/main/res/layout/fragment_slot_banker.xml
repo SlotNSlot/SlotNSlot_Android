@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#1e0d44">
+
+    <RelativeLayout
+        android:id="@+id/slot_common_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <include layout="@layout/slot_common_layout" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/slot_banker_total_bet_container"
+        android:layout_width="220dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/slot_common_layout"
+        android:layout_centerHorizontal="true"
+        android:padding="6dp"
+        android:background="@drawable/common_slot_clear_box_background"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:id="@+id/slot_banker_total_bet_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:textColor="#ffffff"
+            android:layout_centerHorizontal="true"
+            android:text="Total BET"
+            />
+
+        <TextView
+            android:id="@+id/slot_banker_total_bet_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="#ffffff"
+            android:layout_centerHorizontal="true"
+            android:text="0.5 ETH"
+            android:layout_below="@id/slot_banker_total_bet_text"
+            />
+        
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/slot_banker_total_bet_container"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp">
+
+        <TextView
+            android:id="@+id/slot_banker_bet_line_textview"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:text="5 Line"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:background="@drawable/bet_select_container_background"
+            android:layout_marginRight="20dp"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/slot_banker_bet_eth_textview"
+            android:layout_width="100dp"
+            android:layout_height="45dp"
+            android:text="0.1 ETH"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:background="@drawable/bet_select_container_background"
+            android:textColor="@color/white"
+            android:layout_toRightOf="@id/slot_banker_bet_line_textview"/>
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/slot_banker_kick_button"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="KICK PLAYER"
+        android:background="@color/purple2"
+        android:layout_alignParentBottom="true"
+        android:textColor="@color/white"/>
+
+</RelativeLayout>
