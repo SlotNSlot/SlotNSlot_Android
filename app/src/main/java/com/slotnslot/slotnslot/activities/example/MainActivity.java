@@ -10,7 +10,6 @@ import com.slotnslot.slotnslot.BuildConfig;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.geth.CredentialManager;
 import com.slotnslot.slotnslot.geth.GethManager;
-import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import org.ethereum.geth.EthereumClient;
@@ -87,7 +86,7 @@ public class MainActivity extends RxAppCompatActivity {
 
     @OnClick(R.id.filter_test)
     void filterActivity() {
-        Intent intent = new Intent(getApplicationContext(), FilterActivity.class);
+        Intent intent = new Intent(getApplicationContext(), FilterExampleActivity.class);
         startActivity(intent);
     }
 
@@ -100,12 +99,6 @@ public class MainActivity extends RxAppCompatActivity {
     @OnClick(R.id.contract_test)
     void getContractActivity() {
         Intent intent = new Intent(getApplicationContext(), ContractActivity.class);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.tx_test)
-    void getTransactionActivity() {
-        Intent intent = new Intent(getApplicationContext(), TransactionActivity.class);
         startActivity(intent);
     }
 

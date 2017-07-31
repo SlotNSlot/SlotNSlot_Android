@@ -10,110 +10,110 @@
         android:id="@+id/load"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="load"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="8dp"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="load"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="create"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/load"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="create"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/load" />
 
     <Button
         android:id="@+id/send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="send ether"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/create"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="send ether"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/create" />
 
     <Button
         android:id="@+id/occupy"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="occupy , init player seed"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/send"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="occupy , init player seed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/send" />
 
     <Button
         android:id="@+id/init_banker_seed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="init banker seed"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/occupy"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="init banker seed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/occupy" />
 
     <Button
         android:id="@+id/init_game"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="init game"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/init_banker_seed"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="init game"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/init_banker_seed" />
 
     <Button
         android:id="@+id/set_banker_seed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="set banker seed"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/init_game"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="set banker seed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/init_game" />
 
     <Button
         android:id="@+id/set_player_seed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="set player seed"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/set_banker_seed"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="set player seed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/set_banker_seed" />
 
     <Button
         android:id="@+id/leave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="leave"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/set_player_seed"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="leave"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/set_player_seed" />
 
     <Button
         android:id="@+id/remove"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="remove"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/leave"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="remove"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/leave" />
 
     <Button
         android:id="@+id/get_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="get info"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/remove"
         android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="get info"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remove" />
 
 </android.support.constraint.ConstraintLayout>

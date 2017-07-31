@@ -23,8 +23,8 @@ import org.web3j.abi.datatypes.generated.Uint256;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class FilterActivity extends RxAppCompatActivity {
-    public static final String TAG = FilterActivity.class.getSimpleName();
+public class FilterExampleActivity extends RxAppCompatActivity {
+    public static final String TAG = FilterExampleActivity.class.getSimpleName();
 
     public static final String HELLO_CONTRACT_ADDR = "0x947d154D99b5497800B9250134Ea83701e11bf45";
     public static final String FIB_CONTRACT_ADDR = "0x4612920e12f4301fb940DD70C2002c0921909716";

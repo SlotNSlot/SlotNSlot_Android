@@ -1,7 +1,5 @@
 package com.slotnslot.slotnslot.geth;
 
-import com.slotnslot.slotnslot.activities.example.TransactionActivity;
-
 import org.ethereum.geth.Address;
 import org.ethereum.geth.Hash;
 import org.ethereum.geth.Receipt;
@@ -11,8 +9,6 @@ import java.math.BigInteger;
 import io.reactivex.Observable;
 
 public class TransactionManager {
-    private static final String TAG = TransactionActivity.class.getSimpleName();
-
     private TransactionManager() {
     }
 

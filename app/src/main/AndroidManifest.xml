@@ -48,10 +48,9 @@
             android:theme="@style/AppTheme">
         </activity>
         <activity android:name="com.slotnslot.slotnslot.activities.example.AccountActivity" />
-        <activity android:name="com.slotnslot.slotnslot.activities.example.TransactionActivity" />
         <activity android:name="com.slotnslot.slotnslot.activities.example.ContractActivity" />
         <activity android:name="com.slotnslot.slotnslot.activities.example.PlayExampleActivity" />
-        <activity android:name="com.slotnslot.slotnslot.activities.example.FilterActivity" />
+        <activity android:name="com.slotnslot.slotnslot.activities.example.FilterExampleActivity" />
     </application>
 
 </manifest>
