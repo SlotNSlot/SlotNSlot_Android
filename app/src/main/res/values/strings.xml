@@ -21,7 +21,7 @@
     <string name="menu_play_pay_line">Pay Line</string>
     <string name="menu_play_contract">Contract</string>
     <string name="delete">Delete</string>
-    <string name="shared_preferences_seed_round">shared_preferences_seed_round</string>
+    <string name="shared_preferences_seed_index">shared_preferences_seed_index</string>
     <string name="shared_preferences_seed_seed1">shared_preferences_seed_seed1</string>
     <string name="shared_preferences_seed_seed2">shared_preferences_seed_seed2</string>
     <string name="shared_preferences_seed_seed3">shared_preferences_seed_seed3</string>

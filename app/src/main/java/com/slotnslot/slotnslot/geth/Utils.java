@@ -44,7 +44,7 @@ public class Utils {
     }
 
     public static byte[] hexToByte(String hex) {
-        if (TextUtils.isEmpty(hex)) {
+        if (Utils.isEmpty(hex)) {
             return null;
         }
         return Numeric.hexStringToByteArray(hex);
@@ -124,16 +124,19 @@ public class Utils {
     }
 
     public static byte[] generateRandom(String seed, int recursive) {
-        String shaValue = "";
-
-        for (int i = 0; i < recursive; i++) {
-            if (!TextUtils.isEmpty(shaValue)) {
-                shaValue = Hash.sha3(shaValue);
-            } else {
-                shaValue = Hash.sha3(seed);
-            }
+        if (isEmpty(seed)) {
+            throw new GethException("seed is empty");
         }
-        return hexToByte(shaValue);
+
+        byte[] sha = hexToByte(seed);
+        for (int i = 0; i < recursive; i++) {
+            sha = Hash.sha3(sha);
+        }
+        return sha;
+    }
+
+    public static boolean isEmpty(CharSequence str) {
+        return str == null || str.length() == 0;
     }
 
     public static List<EventValues> extractEventParameters(Event event, Receipt transactionReceipt) throws Exception {

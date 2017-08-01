@@ -114,9 +114,11 @@ public class RxSlotRoom {
                 .gameConfirmedEventObservable()
                 .subscribe(response -> {
                     Log.i(TAG, "reward : " + response.reward.getValue());
-                    Log.i(TAG, "idx : " + response.idx.getValue());
 
-                    bankerSeed.nextRound();
+                    int index = response.idx.getValue().intValue();
+                    Log.i(TAG, "idx : " + index);
+
+                    bankerSeed.confirm(index);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
@@ -138,10 +140,12 @@ public class RxSlotRoom {
                     Log.i(TAG, "player address : " + response.player.toString());
                     Log.i(TAG, "bet : " + response.bet.getValue());
                     Log.i(TAG, "lines : " + response.lines.getValue());
-                    Log.i(TAG, "idx : " + response.idx.getValue());
+
+                    int index = response.idx.getValue().intValue();
+                    Log.i(TAG, "idx : " + index);
 
                     machine
-                            .setBankerSeed(bankerSeed.getSeed(), new Uint256(bankerSeed.getIndex()))
+                            .setBankerSeed(bankerSeed.getSeed(index), new Uint256(index))
                             .subscribe();
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
