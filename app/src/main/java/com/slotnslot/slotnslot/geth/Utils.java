@@ -303,12 +303,11 @@ public class Utils {
                     else if (minLength > length) minLength = length;
                 }
 
-                ArrayList<Integer[]> lineIndexList = new ArrayList<>();
+                List<Integer> lineIndexList = new ArrayList<>();
                 for (int p = 0; p < usableLines.size(); p++) {
-                    Integer[] lineIndex = {p};
-                    lineIndexList.add(lineIndex);
+                    lineIndexList.add(p);
                 }
-                ArrayList<Integer[]> combList = kComb(lineIndexList, sameSymbolLinesNum);
+                List<List<Integer>> combList = step(lineIndexList, sameSymbolLinesNum, new ArrayList<>());
 
                 int minDist = 15;
                 int minCombIndex = Constants.UNDEFINE;
@@ -322,8 +321,8 @@ public class Utils {
                         }
                     }
                     int distance = 0;
-                    for (int k = 0; k < combList.get(j).length; k++) {
-                        int lineIndex = combList.get(j)[k];
+                    for (int k = 0; k < combList.get(j).size(); k++) {
+                        int lineIndex = combList.get(j).get(k);
                         for (int l = 0; l < 5; l++) {
                             int slotY = usableLines.get(lineIndex)[l];
                             if (slotLineInfo[l][slotY] != Constants.UNDEFINE) {
@@ -359,8 +358,8 @@ public class Utils {
                     impossibleList.add(minCombIndex);
                 }
 
-                for (int j = 0; j < combList.get(minCombIndex).length; j++) {
-                    int lineIndex = combList.get(minCombIndex)[j];
+                for (int j = 0; j < combList.get(minCombIndex).size(); j++) {
+                    int lineIndex = combList.get(minCombIndex).get(j);
                     int length = sameSymbolObj.get(symbol).get(j).LENGTH;
                     for (int k = 0; k < length; k++) {
                         int slotY = usableLines.get(lineIndex)[k];
@@ -411,32 +410,34 @@ public class Utils {
         }
     }
 
-    private static ArrayList<Integer[]> kComb(ArrayList<Integer[]> set, int k) {
-        if (k > set.size() || k <= 0) {
-            return null;
+    public static List<List<Integer>> step(List<Integer> input,
+                                           int k,
+                                           List<List<Integer>> result) {
+        if (k == 0) {
+            return result;
         }
-        if (k == set.size()) {
-            return set;
-        }
-        if (k == 1) {
-            ArrayList<Integer[]> comb = new ArrayList<>();
-            for (int i = 0; i < set.size(); i++) {
-                comb.add(set.get(i));
+
+        if (result.size() == 0) {
+            for (Integer i : input) {
+                ArrayList<Integer> subList = new ArrayList<>();
+                subList.add(i);
+                result.add(subList);
             }
-            return comb;
+
+            return step(input, k - 1, result);
         }
-        ArrayList<Integer[]> comb = new ArrayList<>();
-        for (int i = 0; i < set.size() - k + 1; i++) {
-            ArrayList<Integer[]> head = new ArrayList<>(set.subList(i, i + 1));
-            ArrayList<Integer[]> tailcombs = kComb(new ArrayList<>(set.subList(i + 1, set.size())), k - 1);
-            for (int j = 0; j < tailcombs.size(); j++) {
-                Integer[] concat = new Integer[head.get(0).length + tailcombs.get(j).length];
-                System.arraycopy(head.get(0), 0, concat, 0, head.get(0).length);
-                System.arraycopy(tailcombs.get(j), 0, concat, head.get(0).length, tailcombs.get(j).length);
-                comb.add(concat);
+
+        List<List<Integer>> newResult = new ArrayList<>();
+        for (List<Integer> subList : result) {
+            for(Integer i : input) {
+                List<Integer> newSubList = new ArrayList<>();
+                newSubList.addAll(subList);
+                newSubList.add(i);
+                newResult.add(newSubList);
             }
         }
-        return comb;
+
+        return step(input, k - 1, newResult);
     }
 
     private static ArrayList<PayLineTuple> getPayLineTuples(int slotResult) {
@@ -445,22 +446,22 @@ public class Utils {
         int[][] duplicateList = new int[Constants.LINE_CASE_2000.length][2];
         for (int i = 0; i < lineCaseList.size(); i++) {
             for (int j = 0; j < Constants.LINE_CASE_2000[lineCaseList.get(i)].length; j++) {
-                duplicateList[Constants.LINE_CASE_2000[lineCaseList.get(i)][j][0]][0] += 1; // symbol의 갯수
-                duplicateList[Constants.LINE_CASE_2000[lineCaseList.get(i)][j][0]][1] += Constants.LINE_CASE_2000[lineCaseList.get(i)][j][1]; // symbol의 모든 length의 합
+                duplicateList[Constants.LINE_CASE_2000[lineCaseList.get(i)][j][0]][0] += 1;
+                duplicateList[Constants.LINE_CASE_2000[lineCaseList.get(i)][j][0]][1] += Constants.LINE_CASE_2000[lineCaseList.get(i)][j][1];
             }
         }
         for (int i = 0; i < lineCaseList.size(); i++) {
-            int maxDuplicate = 0;
+            int minDuplicate = 100;
             int minLength = 0;
             int resultSymbol = Constants.UNDEFINE;
             for (int j = 0; j < Constants.LINE_CASE_2000[lineCaseList.get(i)].length; j++) {
                 int[] lineCase = Constants.LINE_CASE_2000[lineCaseList.get(i)][j];
                 int symbol = lineCase[0];
-                if (maxDuplicate < duplicateList[symbol][0]) {
-                    maxDuplicate = duplicateList[symbol][0];
+                if (minDuplicate > duplicateList[symbol][0]) {
+                    minDuplicate = duplicateList[symbol][0];
                     minLength = duplicateList[symbol][1];
                     resultSymbol = symbol;
-                } else if (maxDuplicate == duplicateList[symbol][0]) {
+                } else if (minDuplicate == duplicateList[symbol][0]) {
                     if (minLength > duplicateList[symbol][1]) {
                         minLength = duplicateList[symbol][1];
                         resultSymbol = symbol;
