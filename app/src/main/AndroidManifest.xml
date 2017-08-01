@@ -8,50 +8,48 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
 
     <application
-        android:name="com.slotnslot.slotnslot.MainApplication"
+        android:name=".MainApplication"
         android:allowBackup="true"
         android:icon="@drawable/slot_coin"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <service android:name="com.slotnslot.slotnslot.service.GethNodeService" />
+        <service android:name=".service.GethNodeService" />
 
         <activity
-            android:name="com.slotnslot.slotnslot.activities.LandingPageActivity"
+            android:name=".activities.LandingPageActivity"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.slotnslot.slotnslot.activities.SlotMainActivity"
+            android:name=".activities.SlotMainActivity"
             android:theme="@style/AppTheme" />
         <activity
-            android:name="com.slotnslot.slotnslot.activities.MakeSlotActivity"
+            android:name=".activities.MakeSlotActivity"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name="com.slotnslot.slotnslot.activities.SlotGameActivity">
-        </activity>
+        <activity android:name=".activities.SlotGameActivity"></activity>
         <activity
-            android:name="com.slotnslot.slotnslot.activities.SignInUpActivity"
+            android:name=".activities.SignInUpActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name="com.slotnslot.slotnslot.activities.MyPageActivity"
+            android:name=".activities.MyPageActivity"
             android:windowSoftInputMode="adjustResize" />
 
         <!-- for test -->
         <activity
-            android:name="com.slotnslot.slotnslot.activities.example.MainActivity"
-            android:theme="@style/AppTheme">
-        </activity>
-        <activity android:name="com.slotnslot.slotnslot.activities.example.AccountActivity" />
-        <activity android:name="com.slotnslot.slotnslot.activities.example.TransactionActivity" />
-        <activity android:name="com.slotnslot.slotnslot.activities.example.ContractActivity" />
-        <activity android:name="com.slotnslot.slotnslot.activities.example.PlayExampleActivity" />
-        <activity android:name="com.slotnslot.slotnslot.activities.example.FilterActivity" />
+            android:name=".activities.example.MainActivity"
+            android:theme="@style/AppTheme"></activity>
+        <activity android:name=".activities.example.AccountActivity" />
+        <activity android:name=".activities.example.ContractActivity" />
+        <activity android:name=".activities.example.PlayExampleActivity" />
+        <activity android:name=".activities.example.FilterExampleActivity" />
+        <activity android:name=".activities.example.PendingExampleActivity"></activity>
     </application>
 
 </manifest>

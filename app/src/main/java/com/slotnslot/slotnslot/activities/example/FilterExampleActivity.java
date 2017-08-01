@@ -23,8 +23,8 @@ import org.web3j.abi.datatypes.generated.Uint256;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class FilterActivity extends RxAppCompatActivity {
-    public static final String TAG = FilterActivity.class.getSimpleName();
+public class FilterExampleActivity extends RxAppCompatActivity {
+    public static final String TAG = FilterExampleActivity.class.getSimpleName();
 
     public static final String HELLO_CONTRACT_ADDR = "0x947d154D99b5497800B9250134Ea83701e11bf45";
     public static final String FIB_CONTRACT_ADDR = "0x4612920e12f4301fb940DD70C2002c0921909716";
@@ -128,8 +128,8 @@ public class FilterActivity extends RxAppCompatActivity {
                                 CredentialManager.setDefault(0, "asdf");
                                 machine
                                         .initBankerSeed(bankerSeed.getInitialSeed())
-                                        .subscribe();
-                            });
+                                        .subscribe(o -> {}, Throwable::printStackTrace);
+                            }, Throwable::printStackTrace);
 
                     machine
                             .bankerSeedInitializedEventObservable()
@@ -145,7 +145,7 @@ public class FilterActivity extends RxAppCompatActivity {
                                 Log.i(TAG, "banker seed2 : " + seed2);
 
                                 playerSeed.setBankerSeeds(seed0, seed1, seed2);
-                            });
+                            }, Throwable::printStackTrace);
 
                     machine
                             .gameInitializedEventObservable()
@@ -161,8 +161,8 @@ public class FilterActivity extends RxAppCompatActivity {
                                 CredentialManager.setDefault(0, "asdf");
                                 machine
                                         .setBankerSeed(bankerSeed.getSeed(idx), new Uint256(idx))
-                                        .subscribe();
-                            });
+                                        .subscribe(o -> {}, Throwable::printStackTrace);
+                            }, Throwable::printStackTrace);
 
                     machine
                             .bankerSeedSetEventObservable()
@@ -183,8 +183,8 @@ public class FilterActivity extends RxAppCompatActivity {
                                 CredentialManager.setDefault(1, "asdf");
                                 machine
                                         .setPlayerSeed(playerSeed.getSeed(), new Uint256(this.playerSeed.getIndex()))
-                                        .subscribe();
-                            });
+                                        .subscribe(o -> {}, Throwable::printStackTrace);
+                            }, Throwable::printStackTrace);
 
                     machine
                             .gameConfirmedEventObservable()
@@ -195,7 +195,7 @@ public class FilterActivity extends RxAppCompatActivity {
 
                                 bankerSeed.confirm(response.idx.getValue().intValue());
                                 playerSeed.confirm();
-                            });
+                            }, Throwable::printStackTrace);
 
                     machine
                             .playerLeftEventObservable()
@@ -203,20 +203,20 @@ public class FilterActivity extends RxAppCompatActivity {
                             .subscribe(response -> {
                                 Log.i(TAG, "player left : " + response.player.toString());
                                 Log.i(TAG, "player's initial balance: " + response.playerBalance.getValue());
-                            });
+                            }, Throwable::printStackTrace);
                 }, Throwable::printStackTrace);
     }
 
     @OnClick(R.id.occupy)
     void occupy() {
         CredentialManager.setDefault(1, "asdf");
-        machine.occupy(playerSeed.getInitialSeed(), Convert.toWei(0.1, Convert.Unit.ETHER)).subscribe();
+        machine.occupy(playerSeed.getInitialSeed(), Convert.toWei(0.1, Convert.Unit.ETHER)).subscribe(o -> {}, Throwable::printStackTrace);
     }
 
     @OnClick(R.id.leave)
     void leave() {
         CredentialManager.setDefault(1, "asdf");
-        machine.leave().subscribe();
+        machine.leave().subscribe(o -> {}, Throwable::printStackTrace);
     }
 
     @OnClick(R.id.game_start)
@@ -227,6 +227,6 @@ public class FilterActivity extends RxAppCompatActivity {
                         new Uint256(Convert.toWei(0.001, Convert.Unit.ETHER)),
                         new Uint256(20),
                         new Uint256(playerSeed.getIndex()))
-                .subscribe();
+                .subscribe(o -> {}, Throwable::printStackTrace);
     }
 }
