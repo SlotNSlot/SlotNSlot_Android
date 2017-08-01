@@ -391,7 +391,7 @@ public final class SlotMachine extends Contract {
     }
 
     public Observable<PlayerLeftEventResponse> playerLeftEventObservable() {
-        return filterLogs(PLAYER_LEFT)
+        return pendingFilterLogs(PLAYER_LEFT)
                 .map(eventValues -> {
                     PlayerLeftEventResponse typedResponse = new PlayerLeftEventResponse();
                     typedResponse.player = (Address) eventValues.getNonIndexedValues().get(0);
@@ -433,7 +433,7 @@ public final class SlotMachine extends Contract {
     }
 
     public Observable<GameOccupiedEventResponse> gameOccupiedEventObservable() {
-        return filterLogs(GAME_OCCUPIED)
+        return pendingFilterLogs(GAME_OCCUPIED)
                 .map(eventValues -> {
                     GameOccupiedEventResponse typedResponse = new GameOccupiedEventResponse();
                     typedResponse.player = (Address) eventValues.getNonIndexedValues().get(0);
@@ -454,7 +454,7 @@ public final class SlotMachine extends Contract {
     }
 
     public Observable<BankerSeedInitializedEventResponse> bankerSeedInitializedEventObservable() {
-        return filterLogs(BANKER_SEED_INITIALIZED)
+        return pendingFilterLogs(BANKER_SEED_INITIALIZED)
                 .map(eventValues -> {
                     BankerSeedInitializedEventResponse typedResponse = new BankerSeedInitializedEventResponse();
                     typedResponse._bankerSeed = (StaticArray<Bytes32>) eventValues.getNonIndexedValues().get(0);
@@ -477,7 +477,7 @@ public final class SlotMachine extends Contract {
     }
 
     public Observable<GameInitializedEventResponse> gameInitializedEventObservable() {
-        return filterLogs(GAME_INITIALIZED)
+        return pendingFilterLogs(GAME_INITIALIZED)
                 .map(eventValues -> {
                     GameInitializedEventResponse typedResponse = new GameInitializedEventResponse();
                     typedResponse.player = (Address) eventValues.getNonIndexedValues().get(0);
@@ -501,7 +501,7 @@ public final class SlotMachine extends Contract {
     }
 
     public Observable<BankerSeedSetEventResponse> bankerSeedSetEventObservable() {
-        return filterLogs(BANKER_SEED_SET)
+        return pendingFilterLogs(BANKER_SEED_SET)
                 .map(eventValues -> {
                     BankerSeedSetEventResponse typedResponse = new BankerSeedSetEventResponse();
                     typedResponse.bankerSeed = (Bytes32) eventValues.getNonIndexedValues().get(0);
@@ -523,7 +523,7 @@ public final class SlotMachine extends Contract {
     }
 
     public Observable<PlayerSeedSetEventResponse> playerSeedSetEventObservable() {
-        return filterLogs(PLAYER_SEED_SET)
+        return pendingFilterLogs(PLAYER_SEED_SET)
                 .map(eventValues -> {
                     PlayerSeedSetEventResponse typedResponse = new PlayerSeedSetEventResponse();
                     typedResponse.playerSeed = (Bytes32) eventValues.getNonIndexedValues().get(0);
@@ -545,7 +545,7 @@ public final class SlotMachine extends Contract {
     }
 
     public Observable<GameConfirmedEventResponse> gameConfirmedEventObservable() {
-        return filterLogs(GAME_CONFIRMED)
+        return pendingFilterLogs(GAME_CONFIRMED)
                 .map(eventValues -> {
                     GameConfirmedEventResponse typedResponse = new GameConfirmedEventResponse();
                     typedResponse.reward = (Uint256) eventValues.getNonIndexedValues().get(0);

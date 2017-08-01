@@ -82,4 +82,10 @@ public abstract class Contract {
         return FilterManager.filterLogs(filter)
                 .map(log -> Utils.extractEventParameters(event, log));
     }
+
+    protected Observable<EventValues> pendingFilterLogs(Event event) {
+        FilterManager.Filter filter = new FilterManager.Filter(event, contractAddress);
+        return FilterManager.pendingFilterLogs(filter)
+                .map(log -> Utils.extractEventParameters(event, log));
+    }
 }

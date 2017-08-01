@@ -37,6 +37,8 @@ public class FilterManager {
         // pending block setup
         filter.setFromBlock(GethConstants.PENDING_BLOCK);
         filter.setToBlock(GethConstants.PENDING_BLOCK);
+//        filter.setFromBlock(GethConstants.LATEST_BLOCK);
+//        filter.setToBlock(GethConstants.LATEST_BLOCK);
 
         return Observable
                 .<Log>create(e -> {

@@ -128,8 +128,8 @@ public class FilterExampleActivity extends RxAppCompatActivity {
                                 CredentialManager.setDefault(0, "asdf");
                                 machine
                                         .initBankerSeed(bankerSeed.getInitialSeed())
-                                        .subscribe();
-                            });
+                                        .subscribe(o -> {}, Throwable::printStackTrace);
+                            }, Throwable::printStackTrace);
 
                     machine
                             .bankerSeedInitializedEventObservable()
@@ -145,7 +145,7 @@ public class FilterExampleActivity extends RxAppCompatActivity {
                                 Log.i(TAG, "banker seed2 : " + seed2);
 
                                 playerSeed.setBankerSeeds(seed0, seed1, seed2);
-                            });
+                            }, Throwable::printStackTrace);
 
                     machine
                             .gameInitializedEventObservable()
@@ -161,8 +161,8 @@ public class FilterExampleActivity extends RxAppCompatActivity {
                                 CredentialManager.setDefault(0, "asdf");
                                 machine
                                         .setBankerSeed(bankerSeed.getSeed(idx), new Uint256(idx))
-                                        .subscribe();
-                            });
+                                        .subscribe(o -> {}, Throwable::printStackTrace);
+                            }, Throwable::printStackTrace);
 
                     machine
                             .bankerSeedSetEventObservable()
@@ -183,8 +183,8 @@ public class FilterExampleActivity extends RxAppCompatActivity {
                                 CredentialManager.setDefault(1, "asdf");
                                 machine
                                         .setPlayerSeed(playerSeed.getSeed(), new Uint256(this.playerSeed.getIndex()))
-                                        .subscribe();
-                            });
+                                        .subscribe(o -> {}, Throwable::printStackTrace);
+                            }, Throwable::printStackTrace);
 
                     machine
                             .gameConfirmedEventObservable()
@@ -195,7 +195,7 @@ public class FilterExampleActivity extends RxAppCompatActivity {
 
                                 bankerSeed.confirm(response.idx.getValue().intValue());
                                 playerSeed.confirm();
-                            });
+                            }, Throwable::printStackTrace);
 
                     machine
                             .playerLeftEventObservable()
@@ -203,20 +203,20 @@ public class FilterExampleActivity extends RxAppCompatActivity {
                             .subscribe(response -> {
                                 Log.i(TAG, "player left : " + response.player.toString());
                                 Log.i(TAG, "player's initial balance: " + response.playerBalance.getValue());
-                            });
+                            }, Throwable::printStackTrace);
                 }, Throwable::printStackTrace);
     }
 
     @OnClick(R.id.occupy)
     void occupy() {
         CredentialManager.setDefault(1, "asdf");
-        machine.occupy(playerSeed.getInitialSeed(), Convert.toWei(0.1, Convert.Unit.ETHER)).subscribe();
+        machine.occupy(playerSeed.getInitialSeed(), Convert.toWei(0.1, Convert.Unit.ETHER)).subscribe(o -> {}, Throwable::printStackTrace);
     }
 
     @OnClick(R.id.leave)
     void leave() {
         CredentialManager.setDefault(1, "asdf");
-        machine.leave().subscribe();
+        machine.leave().subscribe(o -> {}, Throwable::printStackTrace);
     }
 
     @OnClick(R.id.game_start)
@@ -227,6 +227,6 @@ public class FilterExampleActivity extends RxAppCompatActivity {
                         new Uint256(Convert.toWei(0.001, Convert.Unit.ETHER)),
                         new Uint256(20),
                         new Uint256(playerSeed.getIndex()))
-                .subscribe();
+                .subscribe(o -> {}, Throwable::printStackTrace);
     }
 }
