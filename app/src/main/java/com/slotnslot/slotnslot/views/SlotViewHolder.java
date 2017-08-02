@@ -54,7 +54,7 @@ public class SlotViewHolder extends RecyclerView.ViewHolder {
         disposables.add(viewModel.stake.subscribe(stake -> stackTextView.setText(String.format(TOTAL_STKE, stake))));
         disposables.add(viewModel.playTime.subscribe(playTime -> playTimeTextView.setText(String.format(PLAY_TIME, playTime))));
 
-        titleTextView.setText(viewModel.getSlotAddress());
+        titleTextView.setText(viewModel.getRxSlotRoom().getSlotRoom().getTitle());
         maxWinPrizeTextView.setText(String.format(MAX_PRIZE, viewModel.getRxSlotRoom().getSlotRoom().getMaxWinPrize()));
         hitRatioTextView.setText(String.format(HIT_RATIO, viewModel.getRxSlotRoom().getSlotRoom().getHitRatio()));
         betRangeTextView.setText(String.format(BET_RANGE, viewModel.getRxSlotRoom().getSlotRoom().getMinBet(), viewModel.getRxSlotRoom().getSlotRoom().getMaxBet()));

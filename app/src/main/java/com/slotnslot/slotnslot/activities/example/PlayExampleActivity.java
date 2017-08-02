@@ -22,6 +22,7 @@ import org.ethereum.geth.Transaction;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
+import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.abi.datatypes.generated.Uint16;
 import org.web3j.abi.datatypes.generated.Uint256;
 
@@ -104,7 +105,8 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                         new Uint16(150),
                         new Uint256(Convert.toWei(0.001, Convert.Unit.ETHER)),
                         new Uint256(Convert.toWei(0.1, Convert.Unit.ETHER)),
-                        new Uint16(1000))
+                        new Uint16(1000),
+                        new Bytes32("testtesttesttesttesttesttesttest".getBytes()))
                 .map(slotMachineManager::getSlotMachineCreatedEvents)
                 .subscribe(
                         responses -> {
@@ -303,7 +305,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                     GethManager.getClient().sendTransaction(GethManager.getMainContext(), signed);
 
                     bankerSeed.confirm(playerSeed.getIndex());
-                    playerSeed.confirm();
+                    playerSeed.confirm(playerSeed.getIndex());
                     e.onComplete();
                 })
                 .subscribeOn(Schedulers.io())
@@ -328,7 +330,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
         CredentialManager.setDefault(0, "asdf");
 
         SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
-        slotMachineManager.removeSlotMachine(new Uint256(0))
+        slotMachineManager.removeSlotMachine(new Address(machine.getContractAddress()))
                 .map(slotMachineManager::getSlotMachineRemovedEvents)
                 .subscribe(slotMachineRemovedEventResponses -> {
                     if (slotMachineRemovedEventResponses.isEmpty()) {
@@ -339,7 +341,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                     Log.i(TAG, "banker address : " + response._banker.toString());
                     Log.i(TAG, "removed slot address : " + response._slotAddr.toString());
                     Log.i(TAG, "total num of slots after removing : " + response._totalNum.getValue());
-                });
+                }, Throwable::printStackTrace);
     }
 
     @OnClick(R.id.get_info)

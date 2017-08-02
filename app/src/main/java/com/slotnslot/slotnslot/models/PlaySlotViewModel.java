@@ -281,7 +281,7 @@ public class PlaySlotViewModel {
                     drawResultSubject.onNext(winRate.intValue());
 
                     rxSlotRoom.updateBalance();
-                    playerSeed.confirm();
+                    playerSeed.confirm(response.idx.getValue().intValue());
                 });
         compositeDisposable.add(disposable);
     }

@@ -1,8 +1,7 @@
 package com.slotnslot.slotnslot.provider;
 
-import android.text.TextUtils;
-
 import com.slotnslot.slotnslot.geth.TransactionManager;
+import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.Account;
 
 import java.math.BigInteger;
@@ -44,9 +43,9 @@ public class AccountProvider {
     }
 
     public static boolean identical(String address) {
-        if (account == null || TextUtils.isEmpty(address)) {
+        if (account == null || Utils.isEmpty(address)) {
             return false;
         }
-        return address.equals(account.getAddressHex());
+        return address.toLowerCase().equals(account.getAddressHex().toLowerCase());
     }
 }

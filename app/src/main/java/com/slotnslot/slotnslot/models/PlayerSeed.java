@@ -36,12 +36,14 @@ public class PlayerSeed extends Seed {
         return getSeed(index);
     }
 
-    public int confirm() {
-        confirm(index);
+    public void confirm(int idx) {
+        if (index != idx) {
+            return;
+        }
+        super.confirm(index);
         bankerSeeds[index] = nextBankerSeed;
 
         index = ++index % 3;
-        return index;
     }
 
     public boolean isValidSeed(String bankerSeed) {

@@ -194,7 +194,7 @@ public class FilterExampleActivity extends RxAppCompatActivity {
                                 Log.i(TAG, "idx : " + response.idx.getValue());
 
                                 bankerSeed.confirm(response.idx.getValue().intValue());
-                                playerSeed.confirm();
+                                playerSeed.confirm(response.idx.getValue().intValue());
                             }, Throwable::printStackTrace);
 
                     machine

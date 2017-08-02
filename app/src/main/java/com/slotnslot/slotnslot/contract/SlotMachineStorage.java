@@ -36,18 +36,27 @@ public final class SlotMachineStorage extends Contract {
         return executeCallSingleValueReturnObservable(function);
     }
 
-    public Observable<Address> slotMachines(Address param0, Uint256 param1) {
+    public Observable<Uint256> totalNumOfSlotMachine() {
         Function function = new Function(
-                "slotMachines",
-                Arrays.asList(param0, param1),
+                "totalNumOfSlotMachine",
+                Collections.emptyList(),
+                Collections.singletonList(new TypeReference<Uint256>() {
+                }));
+        return executeCallSingleValueReturnObservable(function);
+    }
+
+    public Observable<Address> slotMachinesArray(Uint256 idx) {
+        Function function = new Function(
+                "slotMachinesArray",
+                Collections.singletonList(idx),
                 Collections.singletonList(new TypeReference<Address>() {
                 }));
         return executeCallSingleValueReturnObservable(function);
     }
 
-    public Observable<Uint256> totalNumOfSlotMachine() {
+    public Observable<Uint256> getLengthOfSlotMachinesArray() {
         Function function = new Function(
-                "totalNumOfSlotMachine",
+                "getLengthOfSlotMachinesArray",
                 Collections.emptyList(),
                 Collections.singletonList(new TypeReference<Uint256>() {
                 }));

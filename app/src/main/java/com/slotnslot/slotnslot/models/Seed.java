@@ -41,7 +41,7 @@ public class Seed {
         return repeat;
     }
 
-    public int confirm(int idx) {
-        return repeats[idx]--;
+    public void confirm(int idx) {
+        repeats[idx]--;
     }
 }

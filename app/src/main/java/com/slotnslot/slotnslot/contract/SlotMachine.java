@@ -142,6 +142,15 @@ public final class SlotMachine extends Contract {
         return executeCallSingleValueReturnObservable(function);
     }
 
+    public Observable<Bytes32> mName() {
+        Function function = new Function(
+                "mName",
+                Collections.emptyList(),
+                Collections.singletonList(new TypeReference<Bytes32>() {
+                }));
+        return executeCallSingleValueReturnObservable(function);
+    }
+
     public Observable<Uint16> mDecider() {
         Function function = new Function(
                 "mDecider",
@@ -307,7 +316,7 @@ public final class SlotMachine extends Contract {
         public Uint256 reward;
     }
 
-    public Observable<getInfoResponse> getInfo() {
+    public Observable<GetInfoResponse> getInfo() {
         Function function = new Function(
                 "getInfo",
                 Collections.emptyList(),
@@ -324,7 +333,7 @@ public final class SlotMachine extends Contract {
                         }));
         return executeCallMultipleValueReturnObservable(function)
                 .map(response -> {
-                    getInfoResponse getInfo = new getInfoResponse();
+                    GetInfoResponse getInfo = new GetInfoResponse();
                     getInfo.mDecider = (Uint16) response.get(0);
                     getInfo.mMinBet = (Uint256) response.get(1);
                     getInfo.mMaxBet = (Uint256) response.get(2);
@@ -334,7 +343,7 @@ public final class SlotMachine extends Contract {
                 });
     }
 
-    public static class getInfoResponse {
+    public static class GetInfoResponse {
         public Uint16 mDecider;
         public Uint256 mMinBet;
         public Uint256 mMaxBet;
