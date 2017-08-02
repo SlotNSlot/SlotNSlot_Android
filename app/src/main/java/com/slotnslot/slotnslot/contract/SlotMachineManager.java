@@ -8,7 +8,7 @@ import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Event;
 import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.generated.Bytes32;
+import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.abi.datatypes.generated.Uint16;
 import org.web3j.abi.datatypes.generated.Uint256;
 
@@ -63,7 +63,7 @@ public final class SlotMachineManager extends Contract {
     /**
      * methods
      **/
-    public Observable<Receipt> createSlotMachine(Uint16 _decider, Uint256 _minBet, Uint256 _maxBet, Uint16 _maxPrize, Bytes32 _name) {
+    public Observable<Receipt> createSlotMachine(Uint16 _decider, Uint256 _minBet, Uint256 _maxBet, Uint16 _maxPrize, Bytes16 _name) {
         Function function = new Function(
                 "createSlotMachine",
                 Arrays.asList(_decider, _minBet, _maxBet, _maxPrize, _name),

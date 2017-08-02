@@ -22,7 +22,7 @@ import org.ethereum.geth.Transaction;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.generated.Bytes32;
+import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.abi.datatypes.generated.Uint16;
 import org.web3j.abi.datatypes.generated.Uint256;
 
@@ -32,12 +32,14 @@ import java.util.Collections;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
 public class PlayExampleActivity extends RxAppCompatActivity {
     public static final String TAG = PlayExampleActivity.class.getSimpleName();
 
     private SlotMachine machine;
+    private SlotMachineStorage storage;
 
     private static long playerNonce = 0;
     private static long bankerNonce = 0;
@@ -60,7 +62,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                 .getStorageAddr()
                 .flatMap(address -> {
                     Log.i(TAG, "slot storage address : " + address.toString());
-                    SlotMachineStorage storage = SlotMachineStorage.load(address.toString());
+                    storage = SlotMachineStorage.load(address.toString());
 
                     storage.totalNumOfSlotMachine()
                             .subscribe(result -> Log.i(TAG, "total number of slot machines : " + result.getValue()));
@@ -106,7 +108,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                         new Uint256(Convert.toWei(0.001, Convert.Unit.ETHER)),
                         new Uint256(Convert.toWei(0.1, Convert.Unit.ETHER)),
                         new Uint16(1000),
-                        new Bytes32("testtesttesttesttesttesttesttest".getBytes()))
+                        new Bytes16("testtesttesttest".getBytes()))
                 .map(slotMachineManager::getSlotMachineCreatedEvents)
                 .subscribe(
                         responses -> {
@@ -366,6 +368,23 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                             });
                 })
                 .subscribe(() -> {
+                }, Throwable::printStackTrace);
+    }
+
+    @OnClick(R.id.slot_list)
+    void slotList() {
+        storage
+                .getLengthOfSlotMachinesArray()
+                .flatMap(length -> {
+                    int slotLength = length.getValue().intValue();
+                    Log.i(TAG, "length of slot machine array : " + slotLength);
+                    return storage.getSlotMachinesArray(new Uint256(0), new Uint256(slotLength - 1));
+                })
+                .mergeWith(storage.getSlotMachines(new Address(CredentialManager.getDefaultAccountHex())))
+                .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
+                .subscribe(address -> {
+                    String slotAddress = address.toString();
+                    Log.i(TAG, "slot address : " + slotAddress);
                 }, Throwable::printStackTrace);
     }
 }

@@ -19,6 +19,7 @@ import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.abi.datatypes.generated.Uint8;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -160,7 +161,7 @@ public class FilterExampleActivity extends RxAppCompatActivity {
 
                                 CredentialManager.setDefault(0, "asdf");
                                 machine
-                                        .setBankerSeed(bankerSeed.getSeed(idx), new Uint256(idx))
+                                        .setBankerSeed(bankerSeed.getSeed(idx), new Uint8(idx))
                                         .subscribe(o -> {}, Throwable::printStackTrace);
                             }, Throwable::printStackTrace);
 
@@ -182,7 +183,7 @@ public class FilterExampleActivity extends RxAppCompatActivity {
 
                                 CredentialManager.setDefault(1, "asdf");
                                 machine
-                                        .setPlayerSeed(playerSeed.getSeed(), new Uint256(this.playerSeed.getIndex()))
+                                        .setPlayerSeed(playerSeed.getSeed(), new Uint8(this.playerSeed.getIndex()))
                                         .subscribe(o -> {}, Throwable::printStackTrace);
                             }, Throwable::printStackTrace);
 
@@ -226,7 +227,7 @@ public class FilterExampleActivity extends RxAppCompatActivity {
                 .initGameForPlayer(
                         new Uint256(Convert.toWei(0.001, Convert.Unit.ETHER)),
                         new Uint256(20),
-                        new Uint256(playerSeed.getIndex()))
+                        new Uint8(playerSeed.getIndex()))
                 .subscribe(o -> {}, Throwable::printStackTrace);
     }
 }

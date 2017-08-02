@@ -6,12 +6,11 @@ import com.slotnslot.slotnslot.contract.SlotMachine;
 import com.slotnslot.slotnslot.contract.SlotMachineManager;
 import com.slotnslot.slotnslot.contract.SlotMachineStorage;
 import com.slotnslot.slotnslot.geth.GethConstants;
-import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.SlotRoom;
 import com.slotnslot.slotnslot.utils.Convert;
 
 import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.generated.Bytes32;
+import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.abi.datatypes.generated.Uint256;
 
 import java.util.HashMap;
@@ -76,27 +75,19 @@ public class RxSlotRooms {
             slotMachineStorage
                     .getLengthOfSlotMachinesArray()
                     .flatMap(length -> {
-                        Log.i(TAG, "length of slot machine array : " + length.getValue());
-                        return Observable.create(e -> {
-                            for (int i = 0; i < length.getValue().intValue(); i++) {
-                                slotMachineStorage
-                                        .slotMachinesArray(new Uint256(i))
-                                        .subscribe(slotAddress -> {
-                                            if (!e.isDisposed()) {
-                                                e.onNext(slotAddress);
-                                            }
-                                        }, Throwable::printStackTrace);
-                            }
-                        });
+                        int slotLength = length.getValue().intValue();
+                        Log.i(TAG, "length of slot machine array : " + slotLength);
+                        return slotMachineStorage.getSlotMachinesArray(new Uint256(0), new Uint256(slotLength - 1));
                     })
-                    .filter(address -> Utils.isValidAddress(address.toString()))
+                    .mergeWith(slotMachineStorage.getSlotMachines(new Address(AccountProvider.getAccount().getAddressHex())))
+                    .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
                     .subscribe(address -> {
                         String slotAddress = address.toString();
                         SlotMachine machine = SlotMachine.load(slotAddress);
 
                         Observable<SlotMachine.GetInfoResponse> infoOb = machine.getInfo();
                         Observable<Address> bankerAddressOb = machine.owner();
-                        Observable<Bytes32> nameOb = machine.mName();
+                        Observable<Bytes16> nameOb = machine.mName();
                         Observable
                                 .zip(infoOb, bankerAddressOb, nameOb, (info, bankerAddress, name) -> {
                                     SlotRoom slotRoom = new SlotRoom(

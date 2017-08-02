@@ -23,7 +23,7 @@ import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 
-import org.web3j.abi.datatypes.generated.Bytes32;
+import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.abi.datatypes.generated.Uint16;
 import org.web3j.abi.datatypes.generated.Uint256;
 
@@ -91,7 +91,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                 new Uint256(Convert.toWei(slotRoom.getMinBet(), Convert.Unit.ETHER)),
                 new Uint256(Convert.toWei(slotRoom.getMaxBet(), Convert.Unit.ETHER)),
                 new Uint16(slotRoom.getMaxWinPrize()),
-                new Bytes32(roomNameEditText.getText().toString().getBytes()))
+                new Bytes16(roomNameEditText.getText().toString().getBytes()))
                 .map(slotMachineManager::getSlotMachineCreatedEvents)
                 .compose(bindToLifecycle())
                 .flatMap(responses -> {

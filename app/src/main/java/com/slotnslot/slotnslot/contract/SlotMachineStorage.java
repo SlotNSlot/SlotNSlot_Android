@@ -5,6 +5,7 @@ import com.slotnslot.slotnslot.geth.Contract;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Bool;
+import org.web3j.abi.datatypes.DynamicArray;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.generated.Uint256;
 
@@ -29,7 +30,7 @@ public final class SlotMachineStorage extends Contract {
      **/
     public Observable<Address> bankerAddress(Uint256 param0) {
         Function function = new Function(
-                "bankeraddress",
+                "bankerAddress",
                 Collections.singletonList(param0),
                 Collections.singletonList(new TypeReference<Address>() {
                 }));
@@ -39,24 +40,6 @@ public final class SlotMachineStorage extends Contract {
     public Observable<Uint256> totalNumOfSlotMachine() {
         Function function = new Function(
                 "totalNumOfSlotMachine",
-                Collections.emptyList(),
-                Collections.singletonList(new TypeReference<Uint256>() {
-                }));
-        return executeCallSingleValueReturnObservable(function);
-    }
-
-    public Observable<Address> slotMachinesArray(Uint256 idx) {
-        Function function = new Function(
-                "slotMachinesArray",
-                Collections.singletonList(idx),
-                Collections.singletonList(new TypeReference<Address>() {
-                }));
-        return executeCallSingleValueReturnObservable(function);
-    }
-
-    public Observable<Uint256> getLengthOfSlotMachinesArray() {
-        Function function = new Function(
-                "getLengthOfSlotMachinesArray",
                 Collections.emptyList(),
                 Collections.singletonList(new TypeReference<Uint256>() {
                 }));
@@ -102,44 +85,32 @@ public final class SlotMachineStorage extends Contract {
         return executeCallSingleValueReturnObservable(function);
     }
 
-    public Observable<Address> getBankerAddresses(int numberOfBanker) {
-        return Observable.create(e -> {
-            for (int i = 0; i < numberOfBanker; i++) {
-                bankerAddress(new Uint256(i))
-                        .subscribe(
-                                address -> {
-                                    if (!e.isDisposed()) {
-                                        e.onNext(address);
-                                    }
-                                },
-                                Throwable::printStackTrace);
-            }
-        });
-    }
-
-    public Observable<BankerSlotMachineResponse> getSlotMachineAddresses(Address bankerAddress) {
-        return Observable.create(e -> getNumOfSlotMachine(bankerAddress)
-                .subscribe(numberOfSlotMachine -> {
-                    int slotNum = numberOfSlotMachine.getValue().intValue();
-                    System.out.println("banker " + bankerAddress.toString() + " has " + slotNum + " slot machines");
-                    for (int i = 0; i < slotNum; i++) {
-                        getSlotMachine(bankerAddress, new Uint256(i))
-                                .subscribe(slotAddress -> {
-                                            if (!e.isDisposed()) {
-                                                BankerSlotMachineResponse response = new BankerSlotMachineResponse();
-                                                response.bankerAddress = bankerAddress;
-                                                response.slotMachineAddress = slotAddress;
-                                                e.onNext(response);
-                                            }
-                                        },
-                                        Throwable::printStackTrace);
-                    }
+    public Observable<DynamicArray<Address>> getSlotMachinesArray(Uint256 from, Uint256 to) {
+        Function function = new Function(
+                "getSlotMachinesArray",
+                Arrays.asList(from, to),
+                Collections.singletonList(new TypeReference<DynamicArray<Address>>() {
                 }));
+        return executeCallSingleValueReturnObservable(function);
     }
 
-    public static class BankerSlotMachineResponse {
-        public Address bankerAddress;
-        public Address slotMachineAddress;
+    public Observable<DynamicArray<Address>> getSlotMachines(Address _banker) {
+        Function function = new Function(
+                "getSlotMachines",
+                Collections.singletonList(_banker),
+                Collections.singletonList(new TypeReference<DynamicArray<Address>>() {
+                }));
+        return executeCallSingleValueReturnObservable(function);
     }
+
+    public Observable<Uint256> getLengthOfSlotMachinesArray() {
+        Function function = new Function(
+                "getLengthOfSlotMachinesArray",
+                Collections.emptyList(),
+                Collections.singletonList(new TypeReference<Uint256>() {
+                }));
+        return executeCallSingleValueReturnObservable(function);
+    }
+
 }
 
