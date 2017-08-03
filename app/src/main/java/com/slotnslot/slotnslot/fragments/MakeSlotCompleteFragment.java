@@ -17,6 +17,7 @@ import com.slotnslot.slotnslot.contract.SlotMachineManager;
 import com.slotnslot.slotnslot.geth.GethConstants;
 import com.slotnslot.slotnslot.geth.GethException;
 import com.slotnslot.slotnslot.geth.TransactionManager;
+import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.SlotRoom;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
@@ -91,7 +92,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                 new Uint256(Convert.toWei(slotRoom.getMinBet(), Convert.Unit.ETHER)),
                 new Uint256(Convert.toWei(slotRoom.getMaxBet(), Convert.Unit.ETHER)),
                 new Uint16(slotRoom.getMaxWinPrize()),
-                new Bytes16(roomNameEditText.getText().toString().getBytes()))
+                Utils.stringToBytes16(roomNameEditText.getText().toString()))
                 .map(slotMachineManager::getSlotMachineCreatedEvents)
                 .compose(bindToLifecycle())
                 .flatMap(responses -> {

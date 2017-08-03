@@ -6,6 +6,7 @@ import com.slotnslot.slotnslot.contract.SlotMachine;
 import com.slotnslot.slotnslot.contract.SlotMachineManager;
 import com.slotnslot.slotnslot.contract.SlotMachineStorage;
 import com.slotnslot.slotnslot.geth.GethConstants;
+import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.SlotRoom;
 import com.slotnslot.slotnslot.utils.Convert;
 
@@ -92,7 +93,7 @@ public class RxSlotRooms {
                                 .zip(infoOb, bankerAddressOb, nameOb, (info, bankerAddress, name) -> {
                                     SlotRoom slotRoom = new SlotRoom(
                                             slotAddress,
-                                            new String(name.getValue()),
+                                            Utils.byteToString(name.getValue()),
                                             Convert.fromWei(info.bankerBalance.getValue(), Convert.Unit.ETHER).doubleValue(),
                                             info.mDecider.getValue().intValue() / 1000.0,
                                             info.mMaxPrize.getValue().intValue(),

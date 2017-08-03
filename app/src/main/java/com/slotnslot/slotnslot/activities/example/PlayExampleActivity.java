@@ -22,7 +22,6 @@ import org.ethereum.geth.Transaction;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.abi.datatypes.generated.Uint16;
 import org.web3j.abi.datatypes.generated.Uint256;
 
@@ -108,7 +107,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                         new Uint256(Convert.toWei(0.001, Convert.Unit.ETHER)),
                         new Uint256(Convert.toWei(0.1, Convert.Unit.ETHER)),
                         new Uint16(1000),
-                        new Bytes16("testtesttesttest".getBytes()))
+                        Utils.stringToBytes16("test"))
                 .map(slotMachineManager::getSlotMachineCreatedEvents)
                 .subscribe(
                         responses -> {
