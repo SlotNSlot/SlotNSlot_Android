@@ -19,6 +19,7 @@ import org.web3j.abi.FunctionReturnDecoder;
 import org.web3j.abi.TypeReference;
 import org.web3j.abi.datatypes.Event;
 import org.web3j.abi.datatypes.Type;
+import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.crypto.Hash;
 import org.web3j.utils.Numeric;
 
@@ -39,7 +40,7 @@ public class Utils {
     private static final int DEFAULT_SLEEP_DURATION = 5000; // ms
     private static final int DEFAULT_ATTEMPTS = 40;
 
-    public static void showToast(String msg){
+    public static void showToast(String msg) {
         Toast.makeText(MainApplication.getContext(), msg, Toast.LENGTH_LONG).show();
     }
 
@@ -55,6 +56,47 @@ public class Utils {
             return null;
         }
         return Numeric.toHexString(bytes);
+    }
+
+    public static Bytes16 stringToBytes16(String str) {
+        return new Bytes16(stringToByte(str, 16));
+    }
+
+    public static byte[] stringToByte(String str, int byteLength) {
+        byte[] strByteArray = str.getBytes();
+        byte strByteLength = (byte) strByteArray.length;
+        if (strByteArray.length > byteLength) {
+            strByteLength = (byte) byteLength;
+        }
+
+        byte[] newByteArray = new byte[byteLength];
+        System.arraycopy(strByteArray, 0, newByteArray, 0, strByteLength);
+
+        return newByteArray;
+    }
+
+    public static String byteToString(byte[] origin) {
+        if (origin.length == 0) {
+            return "";
+        }
+        int byteLength = findByteArrayLength(origin);
+        if (byteLength == 0) {
+            return "";
+        }
+
+        byte[] strByteArray = new byte[byteLength];
+        System.arraycopy(origin, 0, strByteArray, 0, byteLength);
+
+        return new String(strByteArray);
+    }
+
+    public static int findByteArrayLength(byte[] bytes) {
+        for (int i = 0; i < bytes.length; ++i) {
+            if (bytes[i] == 0) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     public static boolean isValidAddress(String address) {
@@ -313,7 +355,9 @@ public class Utils {
                 int minCombIndex = Constants.UNDEFINE;
 
                 for (int j = 0; j < combList.size(); j++) {
-                    if (impossibleList.contains(Integer.valueOf(j))) { continue; }
+                    if (impossibleList.contains(Integer.valueOf(j))) {
+                        continue;
+                    }
                     boolean overLapping = false;
                     for (int a = 0; a < distanceCompList.length; a++) {
                         for (int b = 0; b < distanceCompList[a].length; b++) {
@@ -369,9 +413,9 @@ public class Utils {
                 }
             }
 
-            for(int i=0; i<drawingLines.size(); i++) {
+            for (int i = 0; i < drawingLines.size(); i++) {
                 int drawingLineNum = drawingLines.get(i).lineNum;
-                for (int j=0; j<usableLines.size(); j++) {
+                for (int j = 0; j < usableLines.size(); j++) {
                     if (usableLines.get(j)[5] == drawingLineNum) {
                         usableLines.remove(j);
                         break;
@@ -495,8 +539,8 @@ public class Utils {
     }
 
     private static void initSlot(Integer[][] slot) {
-        for (int i=0; i<slot.length; i++) {
-            for (int j=0; j<slot[i].length; j++) {
+        for (int i = 0; i < slot.length; i++) {
+            for (int j = 0; j < slot[i].length; j++) {
                 slot[i][j] = Constants.UNDEFINE;
             }
         }

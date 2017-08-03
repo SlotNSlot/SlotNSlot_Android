@@ -9,7 +9,7 @@ import com.slotnslot.slotnslot.models.Seed;
 import com.slotnslot.slotnslot.models.SlotRoom;
 
 import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.abi.datatypes.generated.Uint8;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
@@ -145,7 +145,7 @@ public class RxSlotRoom {
                     Log.i(TAG, "idx : " + index);
 
                     machine
-                            .setBankerSeed(bankerSeed.getSeed(index), new Uint256(index))
+                            .setBankerSeed(bankerSeed.getSeed(index), new Uint8(index))
                             .subscribe();
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);

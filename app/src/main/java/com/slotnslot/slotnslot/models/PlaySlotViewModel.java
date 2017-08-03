@@ -12,6 +12,7 @@ import com.slotnslot.slotnslot.utils.Convert;
 
 import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.abi.datatypes.generated.Uint8;
 
 import java.math.BigInteger;
 
@@ -150,17 +151,11 @@ public class PlaySlotViewModel {
 
                     if (playerSeedReady.getValue() && bankerSeedReady.getValue()) {
                         seedReadySubject.onNext(true);
-                        return true;
                     }
 
-//                    if (!isBanker() && !playerSeedReady.getValue()) {
-//                        machine
-//                                .occupy(playerSeed.getInitialSeed(), Convert.toWei(0.1, Convert.Unit.ETHER))
-//                                .subscribe();
-//                    }
                     return true;
                 })
-                .subscribe();
+                .subscribe(o -> {}, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
 
@@ -175,7 +170,7 @@ public class PlaySlotViewModel {
 
                     toastSubject.onNext("slot occupied by : " + response.player.toString());
                     rxSlotRoom.updateBalance();
-                });
+                }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
 
@@ -189,7 +184,7 @@ public class PlaySlotViewModel {
 
                     toastSubject.onNext("banker seed initialized.");
                     seedReadySubject.onNext(true);
-                });
+                }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
 
@@ -208,9 +203,9 @@ public class PlaySlotViewModel {
                             .initGameForPlayer(
                                     new Uint256(Convert.toWei(getCurrentBetEth(), Convert.Unit.ETHER)),
                                     new Uint256(currentLine),
-                                    new Uint256(playerSeed.getIndex()))
-                            .subscribe();
-                });
+                                    new Uint8(playerSeed.getIndex()))
+                            .subscribe(o -> {}, Throwable::printStackTrace);
+                }, Throwable::printStackTrace);
     }
 
     private void setGameInitializedEvent() {
@@ -233,7 +228,7 @@ public class PlaySlotViewModel {
                     if (isBanker()) {
                         startSpin.onNext(true);
                     }
-                });
+                }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
 
@@ -257,10 +252,10 @@ public class PlaySlotViewModel {
 
                     if (!isBanker()) {
                         machine
-                                .setPlayerSeed(playerSeed.getSeed(), new Uint256(playerSeed.getIndex()))
-                                .subscribe();
+                                .setPlayerSeed(playerSeed.getSeed(), new Uint8(playerSeed.getIndex()))
+                                .subscribe(o -> {}, Throwable::printStackTrace);
                     }
-                });
+                }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
 
@@ -281,8 +276,8 @@ public class PlaySlotViewModel {
                     drawResultSubject.onNext(winRate.intValue());
 
                     rxSlotRoom.updateBalance();
-                    playerSeed.confirm();
-                });
+                    playerSeed.confirm(response.idx.getValue().intValue());
+                }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
 
@@ -301,7 +296,7 @@ public class PlaySlotViewModel {
                     }
 
                     AccountProvider.updateBalance(); // for player only
-                });
+                }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
 

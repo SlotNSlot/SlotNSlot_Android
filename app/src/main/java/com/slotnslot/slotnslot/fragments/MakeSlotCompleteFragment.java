@@ -17,12 +17,14 @@ import com.slotnslot.slotnslot.contract.SlotMachineManager;
 import com.slotnslot.slotnslot.geth.GethConstants;
 import com.slotnslot.slotnslot.geth.GethException;
 import com.slotnslot.slotnslot.geth.TransactionManager;
+import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.SlotRoom;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 
+import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.abi.datatypes.generated.Uint16;
 import org.web3j.abi.datatypes.generated.Uint256;
 
@@ -89,9 +91,10 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                 new Uint16(slotRoom.getHitRatio() * 10),
                 new Uint256(Convert.toWei(slotRoom.getMinBet(), Convert.Unit.ETHER)),
                 new Uint256(Convert.toWei(slotRoom.getMaxBet(), Convert.Unit.ETHER)),
-                new Uint16(slotRoom.getMaxWinPrize()))
+                new Uint16(slotRoom.getMaxWinPrize()),
+                Utils.stringToBytes16(roomNameEditText.getText().toString()))
                 .map(slotMachineManager::getSlotMachineCreatedEvents)
-//                .compose(bindToLifecycle())
+                .compose(bindToLifecycle())
                 .flatMap(responses -> {
                     if (responses.isEmpty()) {
                         Log.e(TAG, "event is empty.");
@@ -106,8 +109,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                     String slotAddress = responses.get(0)._slotAddr.toString();
                     Log.i(TAG, "slot created slot addr : " + slotAddress);
 
-//                    this.slotRoom.setTitle(roomNameEditText.getText().toString());
-                    this.slotRoom.setTitle(slotAddress);
+                    this.slotRoom.setTitle(roomNameEditText.getText().toString());
                     this.slotRoom.setAddress(slotAddress);
 
                     SlotRoom slotRoom = new SlotRoom(

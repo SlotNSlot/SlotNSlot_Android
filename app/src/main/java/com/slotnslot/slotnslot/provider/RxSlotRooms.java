@@ -6,13 +6,19 @@ import com.slotnslot.slotnslot.contract.SlotMachine;
 import com.slotnslot.slotnslot.contract.SlotMachineManager;
 import com.slotnslot.slotnslot.contract.SlotMachineStorage;
 import com.slotnslot.slotnslot.geth.GethConstants;
+import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.SlotRoom;
 import com.slotnslot.slotnslot.utils.Convert;
+
+import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.generated.Bytes16;
+import org.web3j.abi.datatypes.generated.Uint256;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.CompletableSubject;
 import lombok.Getter;
@@ -67,39 +73,38 @@ public class RxSlotRooms {
                         Log.i(TAG, "total number of slot machines : " + result.getValue());
                     }, Throwable::printStackTrace);
 
-            slotMachineStorage.getNumOfBanker()
-                    .flatMap(bankerNum -> {
-                        int numberOfBanker = bankerNum.getValue().intValue();
-                        RxSlotRooms.numberOfBanker = numberOfBanker;
-                        Log.i(TAG, "num of banker : " + numberOfBanker);
-                        return slotMachineStorage.getBankerAddresses(numberOfBanker);
+            slotMachineStorage
+                    .getLengthOfSlotMachinesArray()
+                    .flatMap(length -> {
+                        int slotLength = length.getValue().intValue();
+                        Log.i(TAG, "length of slot machine array : " + slotLength);
+                        return slotMachineStorage.getSlotMachinesArray(new Uint256(0), new Uint256(slotLength - 1));
                     })
-                    .flatMap(bankerAddress -> {
-                        Log.i(TAG, "banker address : " + bankerAddress.toString());
-                        return slotMachineStorage.getSlotMachineAddresses(bankerAddress);
-                    })
-                    .subscribe(bankerSlotMachineResponse -> {
-                        String bankerAddress = bankerSlotMachineResponse.bankerAddress.toString();
-                        String slotAddress = bankerSlotMachineResponse.slotMachineAddress.toString();
-                        Log.i(TAG, "banker address : " + bankerAddress + " , slot address : " + slotAddress);
+                    .mergeWith(slotMachineStorage.getSlotMachines(new Address(AccountProvider.getAccount().getAddressHex())))
+                    .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
+                    .subscribe(address -> {
+                        String slotAddress = address.toString();
+                        SlotMachine machine = SlotMachine.load(slotAddress);
 
-                        SlotMachine.load(slotAddress).getInfo()
-                                .subscribe(response -> {
+                        Observable<SlotMachine.GetInfoResponse> infoOb = machine.getInfo();
+                        Observable<Address> bankerAddressOb = machine.owner();
+                        Observable<Bytes16> nameOb = machine.mName();
+                        Observable
+                                .zip(infoOb, bankerAddressOb, nameOb, (info, bankerAddress, name) -> {
                                     SlotRoom slotRoom = new SlotRoom(
                                             slotAddress,
-                                            slotAddress,
-                                            Convert.fromWei(response.bankerBalance.getValue(), Convert.Unit.ETHER).doubleValue(),
-                                            response.mDecider.getValue().intValue() / 1000.0,
-                                            response.mMaxPrize.getValue().intValue(),
-                                            Convert.fromWei(response.mMinBet.getValue(), Convert.Unit.ETHER).doubleValue(),
-                                            Convert.fromWei(response.mMaxBet.getValue(), Convert.Unit.ETHER).doubleValue()
+                                            Utils.byteToString(name.getValue()),
+                                            Convert.fromWei(info.bankerBalance.getValue(), Convert.Unit.ETHER).doubleValue(),
+                                            info.mDecider.getValue().intValue() / 1000.0,
+                                            info.mMaxPrize.getValue().intValue(),
+                                            Convert.fromWei(info.mMinBet.getValue(), Convert.Unit.ETHER).doubleValue(),
+                                            Convert.fromWei(info.mMaxBet.getValue(), Convert.Unit.ETHER).doubleValue()
                                     );
-
-                                    slotRoom.setBankerAddress(bankerAddress);
-                                    slotRoom.setBankerBalance(response.bankerBalance.getValue());
-
-                                    addSlot(slotRoom);
-                                }, Throwable::printStackTrace);
+                                    slotRoom.setBankerAddress(bankerAddress.toString());
+                                    slotRoom.setBankerBalance(info.bankerBalance.getValue());
+                                    return slotRoom;
+                                })
+                                .subscribe(RxSlotRooms::addSlot, Throwable::printStackTrace);
                     }, Throwable::printStackTrace);
         });
     }

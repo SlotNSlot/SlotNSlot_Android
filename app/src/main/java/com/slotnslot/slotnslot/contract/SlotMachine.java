@@ -11,9 +11,11 @@ import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.Event;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.abi.datatypes.StaticArray;
+import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.abi.datatypes.generated.Uint16;
 import org.web3j.abi.datatypes.generated.Uint256;
+import org.web3j.abi.datatypes.generated.Uint8;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -64,7 +66,7 @@ public final class SlotMachine extends Contract {
                     },
                     new TypeReference<Uint256>() {
                     },
-                    new TypeReference<Uint256>() {
+                    new TypeReference<Uint8>() {
                     }
             ));
     private static final Event BANKER_SEED_SET = new Event(
@@ -73,7 +75,7 @@ public final class SlotMachine extends Contract {
             Arrays.asList(
                     new TypeReference<Bytes32>() {
                     },
-                    new TypeReference<Uint256>() {
+                    new TypeReference<Uint8>() {
                     }
             ));
     private static final Event PLAYER_SEED_SET = new Event(
@@ -82,7 +84,7 @@ public final class SlotMachine extends Contract {
             Arrays.asList(
                     new TypeReference<Bytes32>() {
                     },
-                    new TypeReference<Uint256>() {
+                    new TypeReference<Uint8>() {
                     }
             ));
     private static final Event GAME_CONFIRMED = new Event(
@@ -91,7 +93,7 @@ public final class SlotMachine extends Contract {
             Arrays.asList(
                     new TypeReference<Uint256>() {
                     },
-                    new TypeReference<Uint256>() {
+                    new TypeReference<Uint8>() {
                     }
             ));
 
@@ -138,6 +140,15 @@ public final class SlotMachine extends Contract {
                 "mPlayer",
                 Collections.emptyList(),
                 Collections.singletonList(new TypeReference<Address>() {
+                }));
+        return executeCallSingleValueReturnObservable(function);
+    }
+
+    public Observable<Bytes16> mName() {
+        Function function = new Function(
+                "mName",
+                Collections.emptyList(),
+                Collections.singletonList(new TypeReference<Bytes16>() {
                 }));
         return executeCallSingleValueReturnObservable(function);
     }
@@ -307,7 +318,7 @@ public final class SlotMachine extends Contract {
         public Uint256 reward;
     }
 
-    public Observable<getInfoResponse> getInfo() {
+    public Observable<GetInfoResponse> getInfo() {
         Function function = new Function(
                 "getInfo",
                 Collections.emptyList(),
@@ -324,7 +335,7 @@ public final class SlotMachine extends Contract {
                         }));
         return executeCallMultipleValueReturnObservable(function)
                 .map(response -> {
-                    getInfoResponse getInfo = new getInfoResponse();
+                    GetInfoResponse getInfo = new GetInfoResponse();
                     getInfo.mDecider = (Uint16) response.get(0);
                     getInfo.mMinBet = (Uint256) response.get(1);
                     getInfo.mMaxBet = (Uint256) response.get(2);
@@ -334,7 +345,7 @@ public final class SlotMachine extends Contract {
                 });
     }
 
-    public static class getInfoResponse {
+    public static class GetInfoResponse {
         public Uint16 mDecider;
         public Uint256 mMinBet;
         public Uint256 mMaxBet;
@@ -355,17 +366,17 @@ public final class SlotMachine extends Contract {
         return executeTransaction(function);
     }
 
-    public Observable<Receipt> initGameForPlayer(Uint256 _bet, Uint256 _lines, Uint256 _idx) {
+    public Observable<Receipt> initGameForPlayer(Uint256 _bet, Uint256 _lines, Uint8 _idx) {
         Function function = new Function("initGameForPlayer", Arrays.asList(_bet, _lines, _idx), Collections.emptyList());
         return executeTransaction(function);
     }
 
-    public Observable<Receipt> setBankerSeed(Bytes32 _bankerSeed, Uint256 _idx) {
+    public Observable<Receipt> setBankerSeed(Bytes32 _bankerSeed, Uint8 _idx) {
         Function function = new Function("setBankerSeed", Arrays.asList(_bankerSeed, _idx), Collections.emptyList());
         return executeTransaction(function);
     }
 
-    public Observable<Receipt> setPlayerSeed(Bytes32 _playerSeed, Uint256 _idx) {
+    public Observable<Receipt> setPlayerSeed(Bytes32 _playerSeed, Uint8 _idx) {
         Function function = new Function("setPlayerSeed", Arrays.asList(_playerSeed, _idx), Collections.emptyList());
         return executeTransaction(function);
     }
@@ -470,7 +481,7 @@ public final class SlotMachine extends Contract {
             typedResponse.player = (Address) eventValues.getNonIndexedValues().get(0);
             typedResponse.bet = (Uint256) eventValues.getNonIndexedValues().get(1);
             typedResponse.lines = (Uint256) eventValues.getNonIndexedValues().get(2);
-            typedResponse.idx = (Uint256) eventValues.getNonIndexedValues().get(3);
+            typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(3);
             responses.add(typedResponse);
         }
         return responses;
@@ -483,7 +494,7 @@ public final class SlotMachine extends Contract {
                     typedResponse.player = (Address) eventValues.getNonIndexedValues().get(0);
                     typedResponse.bet = (Uint256) eventValues.getNonIndexedValues().get(1);
                     typedResponse.lines = (Uint256) eventValues.getNonIndexedValues().get(2);
-                    typedResponse.idx = (Uint256) eventValues.getNonIndexedValues().get(3);
+                    typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(3);
                     return typedResponse;
                 });
     }
@@ -494,7 +505,7 @@ public final class SlotMachine extends Contract {
         for (EventValues eventValues : valueList) {
             BankerSeedSetEventResponse typedResponse = new BankerSeedSetEventResponse();
             typedResponse.bankerSeed = (Bytes32) eventValues.getNonIndexedValues().get(0);
-            typedResponse.idx = (Uint256) eventValues.getNonIndexedValues().get(1);
+            typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(1);
             responses.add(typedResponse);
         }
         return responses;
@@ -505,7 +516,7 @@ public final class SlotMachine extends Contract {
                 .map(eventValues -> {
                     BankerSeedSetEventResponse typedResponse = new BankerSeedSetEventResponse();
                     typedResponse.bankerSeed = (Bytes32) eventValues.getNonIndexedValues().get(0);
-                    typedResponse.idx = (Uint256) eventValues.getNonIndexedValues().get(1);
+                    typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(1);
                     return typedResponse;
                 });
     }
@@ -516,7 +527,7 @@ public final class SlotMachine extends Contract {
         for (EventValues eventValues : valueList) {
             PlayerSeedSetEventResponse typedResponse = new PlayerSeedSetEventResponse();
             typedResponse.playerSeed = (Bytes32) eventValues.getNonIndexedValues().get(0);
-            typedResponse.idx = (Uint256) eventValues.getNonIndexedValues().get(1);
+            typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(1);
             responses.add(typedResponse);
         }
         return responses;
@@ -527,7 +538,7 @@ public final class SlotMachine extends Contract {
                 .map(eventValues -> {
                     PlayerSeedSetEventResponse typedResponse = new PlayerSeedSetEventResponse();
                     typedResponse.playerSeed = (Bytes32) eventValues.getNonIndexedValues().get(0);
-                    typedResponse.idx = (Uint256) eventValues.getNonIndexedValues().get(1);
+                    typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(1);
                     return typedResponse;
                 });
     }
@@ -538,7 +549,7 @@ public final class SlotMachine extends Contract {
         for (EventValues eventValues : valueList) {
             GameConfirmedEventResponse typedResponse = new GameConfirmedEventResponse();
             typedResponse.reward = (Uint256) eventValues.getNonIndexedValues().get(0);
-            typedResponse.idx = (Uint256) eventValues.getNonIndexedValues().get(1);
+            typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(1);
             responses.add(typedResponse);
         }
         return responses;
@@ -549,7 +560,7 @@ public final class SlotMachine extends Contract {
                 .map(eventValues -> {
                     GameConfirmedEventResponse typedResponse = new GameConfirmedEventResponse();
                     typedResponse.reward = (Uint256) eventValues.getNonIndexedValues().get(0);
-                    typedResponse.idx = (Uint256) eventValues.getNonIndexedValues().get(1);
+                    typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(1);
                     return typedResponse;
                 });
     }
@@ -576,22 +587,22 @@ public final class SlotMachine extends Contract {
         public Address player;
         public Uint256 bet;
         public Uint256 lines;
-        public Uint256 idx;
+        public Uint8 idx;
     }
 
     public static class BankerSeedSetEventResponse {
         public Bytes32 bankerSeed;
-        public Uint256 idx;
+        public Uint8 idx;
     }
 
     public static class PlayerSeedSetEventResponse {
         public Bytes32 playerSeed;
-        public Uint256 idx;
+        public Uint8 idx;
     }
 
     public static class GameConfirmedEventResponse {
         public Uint256 reward;
-        public Uint256 idx;
+        public Uint8 idx;
     }
 }
 

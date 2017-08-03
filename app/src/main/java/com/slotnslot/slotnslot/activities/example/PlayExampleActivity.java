@@ -31,12 +31,14 @@ import java.util.Collections;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
 
 public class PlayExampleActivity extends RxAppCompatActivity {
     public static final String TAG = PlayExampleActivity.class.getSimpleName();
 
     private SlotMachine machine;
+    private SlotMachineStorage storage;
 
     private static long playerNonce = 0;
     private static long bankerNonce = 0;
@@ -59,7 +61,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                 .getStorageAddr()
                 .flatMap(address -> {
                     Log.i(TAG, "slot storage address : " + address.toString());
-                    SlotMachineStorage storage = SlotMachineStorage.load(address.toString());
+                    storage = SlotMachineStorage.load(address.toString());
 
                     storage.totalNumOfSlotMachine()
                             .subscribe(result -> Log.i(TAG, "total number of slot machines : " + result.getValue()));
@@ -104,7 +106,8 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                         new Uint16(150),
                         new Uint256(Convert.toWei(0.001, Convert.Unit.ETHER)),
                         new Uint256(Convert.toWei(0.1, Convert.Unit.ETHER)),
-                        new Uint16(1000))
+                        new Uint16(1000),
+                        Utils.stringToBytes16("test"))
                 .map(slotMachineManager::getSlotMachineCreatedEvents)
                 .subscribe(
                         responses -> {
@@ -303,7 +306,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                     GethManager.getClient().sendTransaction(GethManager.getMainContext(), signed);
 
                     bankerSeed.confirm(playerSeed.getIndex());
-                    playerSeed.confirm();
+                    playerSeed.confirm(playerSeed.getIndex());
                     e.onComplete();
                 })
                 .subscribeOn(Schedulers.io())
@@ -328,7 +331,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
         CredentialManager.setDefault(0, "asdf");
 
         SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
-        slotMachineManager.removeSlotMachine(new Uint256(0))
+        slotMachineManager.removeSlotMachine(new Address(machine.getContractAddress()))
                 .map(slotMachineManager::getSlotMachineRemovedEvents)
                 .subscribe(slotMachineRemovedEventResponses -> {
                     if (slotMachineRemovedEventResponses.isEmpty()) {
@@ -339,7 +342,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                     Log.i(TAG, "banker address : " + response._banker.toString());
                     Log.i(TAG, "removed slot address : " + response._slotAddr.toString());
                     Log.i(TAG, "total num of slots after removing : " + response._totalNum.getValue());
-                });
+                }, Throwable::printStackTrace);
     }
 
     @OnClick(R.id.get_info)
@@ -364,6 +367,23 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                             });
                 })
                 .subscribe(() -> {
+                }, Throwable::printStackTrace);
+    }
+
+    @OnClick(R.id.slot_list)
+    void slotList() {
+        storage
+                .getLengthOfSlotMachinesArray()
+                .flatMap(length -> {
+                    int slotLength = length.getValue().intValue();
+                    Log.i(TAG, "length of slot machine array : " + slotLength);
+                    return storage.getSlotMachinesArray(new Uint256(0), new Uint256(slotLength - 1));
+                })
+                .mergeWith(storage.getSlotMachines(new Address(CredentialManager.getDefaultAccountHex())))
+                .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
+                .subscribe(address -> {
+                    String slotAddress = address.toString();
+                    Log.i(TAG, "slot address : " + slotAddress);
                 }, Throwable::printStackTrace);
     }
 }
