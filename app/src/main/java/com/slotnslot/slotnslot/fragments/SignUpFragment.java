@@ -113,7 +113,6 @@ public class SignUpFragment extends SlotRootFragment {
             return;
         }
 
-        loadingViewSetVisible(true);
         Completable
                 .create(e -> {
                     KeyStore keyStore = CredentialManager.getKeyStore();
