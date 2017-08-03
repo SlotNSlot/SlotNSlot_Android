@@ -153,11 +153,11 @@ public class PlaySlotViewModel {
                         return true;
                     }
 
-                    if (!isBanker() && !playerSeedReady.getValue()) {
-                        machine
-                                .occupy(playerSeed.getInitialSeed(), Convert.toWei(0.1, Convert.Unit.ETHER))
-                                .subscribe();
-                    }
+//                    if (!isBanker() && !playerSeedReady.getValue()) {
+//                        machine
+//                                .occupy(playerSeed.getInitialSeed(), Convert.toWei(0.1, Convert.Unit.ETHER))
+//                                .subscribe();
+//                    }
                     return true;
                 })
                 .subscribe();

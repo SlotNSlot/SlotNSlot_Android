@@ -30,7 +30,7 @@ public class GethNodeService extends Service {
                     this.gethManager = GethManager.getInstance();
                     this.gethManager.startNode(e);
                 })
-                .retry()
+                .retry(5)
                 .subscribeOn(Schedulers.computation())
                 .subscribe();
 
