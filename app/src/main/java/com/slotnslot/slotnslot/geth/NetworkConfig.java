@@ -13,29 +13,17 @@ public class NetworkConfig {
     }
 
     public static NetworkConfig getMainnetConfig() {
-        return new Builder(
-                EthereumNetwork.MAIN.getNetworkId(),
-                EthereumNetwork.MAIN.getGenesis(),
-                EthereumNetwork.MAIN.getBootnodes())
-                .setNetwork(EthereumNetwork.MAIN)
+        return new Builder(EthereumNetwork.MAIN)
                 .build();
     }
 
     public static NetworkConfig getTestnetConfig() {
-        return new Builder(
-                EthereumNetwork.TESTNET.getNetworkId(),
-                EthereumNetwork.TESTNET.getGenesis(),
-                EthereumNetwork.TESTNET.getBootnodes())
-                .setNetwork(EthereumNetwork.TESTNET)
+        return new Builder(EthereumNetwork.TESTNET)
                 .build();
     }
 
     public static NetworkConfig getRinkebyConfig() {
-        return new Builder(
-                EthereumNetwork.RINKEBY.getNetworkId(),
-                EthereumNetwork.RINKEBY.getGenesis(),
-                EthereumNetwork.RINKEBY.getBootnodes())
-                .setNetwork(EthereumNetwork.RINKEBY)
+        return new Builder(EthereumNetwork.RINKEBY)
                 .build();
     }
 
@@ -58,15 +46,11 @@ public class NetworkConfig {
             config = new NetworkConfig();
             setNetwork(network);
             setNetworkID(network.getNetworkId());
-            setGenesis(network.getGenesis());
-            setBootnodes(network.getBootnodes());
         }
 
-        public Builder(long networkID, String genesis, Enodes bootnodes) {
+        public Builder(long networkID) {
             config = new NetworkConfig();
             setNetworkID(networkID);
-            setGenesis(genesis);
-            setBootnodes(bootnodes);
         }
 
         public Builder setNetwork(EthereumNetwork network) {
@@ -78,19 +62,6 @@ public class NetworkConfig {
         // decide if remote peers should be accepted or not.
         public Builder setNetworkID(long networkID) {
             config.nodeConfig.setEthereumNetworkID(networkID);
-            return this;
-        }
-
-        // EthereumGenesis is the genesis JSON to use to seed the blockchain with. An
-        // empty genesis state is equivalent to using the mainnet's state.
-        public Builder setGenesis(String genesis) {
-            config.nodeConfig.setEthereumGenesis(genesis);
-            return this;
-        }
-
-        // Bootstrap nodes used to establish connectivity with the rest of the network.
-        public Builder setBootnodes(Enodes bootnodes) {
-            config.nodeConfig.setBootstrapNodes(bootnodes);
             return this;
         }
 
