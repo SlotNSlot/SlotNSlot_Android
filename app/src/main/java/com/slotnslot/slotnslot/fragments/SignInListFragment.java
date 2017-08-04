@@ -47,6 +47,8 @@ public class SignInListFragment extends SlotRootFragment {
             ftrans.addToBackStack(null);
             ftrans.commit();
         });
+
+        adapter = new SignInAdapter(items, clickItem);
     }
 
     private ArrayList<Account> items = new ArrayList<>();
@@ -56,11 +58,11 @@ public class SignInListFragment extends SlotRootFragment {
         View view = inflater.inflate(R.layout.fragment_signin_list, container, false);
         ButterKnife.bind(this, view);
 
-        adapter = new SignInAdapter(items, clickItem);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addItemDecoration(new SpacesItemDecoration(SlotUtil.convertDpToPixel(10f, getContext())));
         recyclerView.setAdapter(adapter);
 
+        items.clear();
         //TODO Add Account & adapter.notifyDataSetChanged;
         List<org.ethereum.geth.Account> list = CredentialManager.getAccounts();
         for (org.ethereum.geth.Account account : list) {
