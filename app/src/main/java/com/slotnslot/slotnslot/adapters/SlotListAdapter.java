@@ -24,19 +24,27 @@ import com.slotnslot.slotnslot.SlotType;
 import com.slotnslot.slotnslot.activities.MakeSlotActivity;
 import com.slotnslot.slotnslot.activities.SlotGameActivity;
 import com.slotnslot.slotnslot.contract.SlotMachine;
+import com.slotnslot.slotnslot.contract.SlotMachineManager;
+import com.slotnslot.slotnslot.geth.GethConstants;
+import com.slotnslot.slotnslot.geth.GethException;
+import com.slotnslot.slotnslot.geth.TransactionManager;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.PlayerSeed;
 import com.slotnslot.slotnslot.models.SlotRoomViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
+import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 import com.slotnslot.slotnslot.views.SlotImageViewHolder;
 import com.slotnslot.slotnslot.views.SlotMakeViewHolder;
 import com.slotnslot.slotnslot.views.SlotViewHolder;
+import com.trello.rxlifecycle2.components.support.RxFragment;
 
+import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Bool;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.Observable;
 
@@ -49,10 +57,10 @@ public class SlotListAdapter extends RecyclerView.Adapter {
 
     private ArrayList<SlotRoomViewModel> items = new ArrayList<>();
     private ListType type;
-    private Fragment fragment;
+    private RxFragment fragment;
     private Double deposite;
 
-    public SlotListAdapter(ArrayList<SlotRoomViewModel> items, ListType type, Fragment fragment) {
+    public SlotListAdapter(ArrayList<SlotRoomViewModel> items, ListType type, RxFragment fragment) {
         this.items = items;
         this.type = type;
         this.fragment = fragment;
@@ -104,7 +112,22 @@ public class SlotListAdapter extends RecyclerView.Adapter {
 
                                 @Override
                                 public void onOtherButtonClick(ActionSheet actionSheet, int index) {
-                                    //TODO DELETE
+                                    SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
+                                    Address address = new Address(items.get(position - (type == ListType.PLAY ? 1 : 0)).getSlotAddress());
+                                    slotMachineManager.removeSlotMachine(address)
+                                            .compose(fragment.bindToLifecycle())
+                                            .map(slotMachineManager::getSlotMachineRemovedEvents)
+                                            .subscribe(responses -> {
+                                                if (responses.isEmpty()) {
+                                                    Log.e(TAG, "event is empty.");
+                                                    return;
+                                                }
+                                                Log.i(TAG, "slot created banker : " + responses.get(0)._banker.toString());
+                                                Log.i(TAG, "slot created total num : " + responses.get(0)._totalNum.getValue());
+                                                String slotAddress = responses.get(0)._slotAddr.toString();
+                                                Log.i(TAG, "slot created slot addr : " + slotAddress);
+                                                RxSlotRooms.removeSlot(slotAddress);
+                                            }, Throwable::printStackTrace);
                                     actionSheet.dismiss();
                                 }
                             }).show();
@@ -158,7 +181,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
             SlotMachine machine = viewModel.getRxSlotRoom().getMachine();
             Observable<Bool> playerSeedReadyObservable = machine.initialPlayerSeedReady().filter(isValid -> isValid.getValue());
             playerSeedReadyObservable.flatMap(playerSeed ->
-                machine.occupy(new PlayerSeed().getInitialSeed(), Convert.toWei(this.deposite, Convert.Unit.ETHER))
+                    machine.occupy(new PlayerSeed().getInitialSeed(), Convert.toWei(this.deposite, Convert.Unit.ETHER))
             ).subscribe();
         }
 
@@ -183,7 +206,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                                 Log.i(TAG, "slot machine is already occupied by other user : " + viewModel.getPlayerAddress());
                                 return;
                             }
-                            
+
                             Intent intent = new Intent(fragment.getContext(), SlotGameActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, viewModel.getSlotAddress());

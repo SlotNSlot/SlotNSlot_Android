@@ -109,6 +109,11 @@ public class RxSlotRooms {
         });
     }
 
+    public static void removeSlot(String address) {
+        rxSlotRoomMap.remove(address);
+        rxSlotRoomMapSubject.onNext(rxSlotRoomMap);
+    }
+
     public static void addSlot(SlotRoom slotRoom) {
         RxSlotRoom rxSlotRoom = new RxSlotRoom(slotRoom);
         rxSlotRoomMap.put(slotRoom.getAddress(), rxSlotRoom);
