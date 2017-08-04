@@ -9,11 +9,14 @@ import com.slotnslot.slotnslot.models.Seed;
 import com.slotnslot.slotnslot.models.SlotRoom;
 
 import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.abi.datatypes.generated.Uint8;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import lombok.Getter;
 
@@ -112,6 +115,7 @@ public class RxSlotRoom {
     private void setGameConfirmedEvent() {
         Disposable disposable = machine
                 .gameConfirmedEventObservable()
+                .distinctUntilChanged(response -> response.idx)
                 .subscribe(response -> {
                     Log.i(TAG, "reward : " + response.reward.getValue());
 
@@ -144,9 +148,13 @@ public class RxSlotRoom {
                     int index = response.idx.getValue().intValue();
                     Log.i(TAG, "idx : " + index);
 
-                    machine
-                            .setBankerSeed(bankerSeed.getSeed(index), new Uint8(index))
-                            .subscribe();
+                    Single
+                            .<Bytes32>create(e -> e.onSuccess(bankerSeed.getSeed(index)))
+                            .toObservable()
+                            .flatMap(bankerSeed -> machine.setBankerSeed(bankerSeed, new Uint8(index)))
+                            .subscribeOn(Schedulers.computation())
+                            .subscribe(o -> {
+                            }, Throwable::printStackTrace);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
@@ -172,9 +180,13 @@ public class RxSlotRoom {
                     Log.i(TAG, "player seed2 : " + Utils.byteToHex(response.playerSeed.getValue().get(1).getValue()));
                     Log.i(TAG, "player seed3 : " + Utils.byteToHex(response.playerSeed.getValue().get(2).getValue()));
 
-                    machine
-                            .initBankerSeed(bankerSeed.getInitialSeed())
-                            .subscribe();
+                    Single
+                            .create(e -> e.onSuccess(bankerSeed.getInitialSeed()))
+                            .toObservable()
+                            .flatMap(initialSeeds -> machine.initBankerSeed(bankerSeed.getInitialSeed()))
+                            .subscribeOn(Schedulers.computation())
+                            .subscribe(o -> {
+                            }, Throwable::printStackTrace);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }

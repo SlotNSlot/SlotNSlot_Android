@@ -226,7 +226,7 @@ public class FilterExampleActivity extends RxAppCompatActivity {
         machine
                 .initGameForPlayer(
                         new Uint256(Convert.toWei(0.001, Convert.Unit.ETHER)),
-                        new Uint256(20),
+                        new Uint8(20),
                         new Uint8(playerSeed.getIndex()))
                 .subscribe(o -> {}, Throwable::printStackTrace);
     }

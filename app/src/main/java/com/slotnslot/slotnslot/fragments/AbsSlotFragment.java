@@ -98,13 +98,16 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         if ("test".equals(viewModel.getRxSlotRoom().getSlotAddress())) { // if test
             return view;
         }
+        Double deposit = (Double) getArguments().getSerializable(Constants.BUNDLE_KEY_SLOT_ROOM_DEPOSIT);
 
         // below do not need for test
         viewModel.onCreate();
+        viewModel.gameOccupy(deposit);
+
         viewModel.getRxSlotRoom().updateBalance();
         viewModel.seedReadySubject.subscribe(ready -> loadingViewSetVisible(!ready));
         viewModel.drawResultSubject.subscribe(this::drawResult);
-        viewModel.toastSubject.subscribe(msg -> Utils.showToast(msg));
+//        viewModel.toastSubject.subscribe(msg -> Utils.showToast(msg));
         viewModel.startSpin.subscribe(bool -> tapSpin());
 
         return view;

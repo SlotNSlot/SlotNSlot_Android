@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,23 +22,19 @@ import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.SlotType;
 import com.slotnslot.slotnslot.activities.MakeSlotActivity;
 import com.slotnslot.slotnslot.activities.SlotGameActivity;
-import com.slotnslot.slotnslot.contract.SlotMachine;
 import com.slotnslot.slotnslot.contract.SlotMachineManager;
 import com.slotnslot.slotnslot.geth.GethConstants;
 import com.slotnslot.slotnslot.geth.Utils;
-import com.slotnslot.slotnslot.models.PlayerSeed;
 import com.slotnslot.slotnslot.models.SlotRoomViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
-import com.slotnslot.slotnslot.utils.Convert;
 import com.slotnslot.slotnslot.views.SlotImageViewHolder;
 import com.slotnslot.slotnslot.views.SlotMakeViewHolder;
 import com.slotnslot.slotnslot.views.SlotViewHolder;
 import com.trello.rxlifecycle2.components.support.RxFragment;
 
 import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.Bool;
 
 import java.util.ArrayList;
 
@@ -142,6 +139,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
         EditText editText = new EditText(context);
         editText.setTextColor(ContextCompat.getColor(context, R.color.pink1));
         editText.getBackground().setColorFilter(context.getResources().getColor(R.color.pink1), PorterDuff.Mode.SRC_ATOP);
+        editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.leftMargin = context.getResources().getDimensionPixelSize(R.dimen.input_deposite_margin);
@@ -173,18 +171,6 @@ public class SlotListAdapter extends RecyclerView.Adapter {
             return;
         }
 
-        if (type == ListType.PLAY && !viewModel.getRxSlotRoom().getSlotAddress().equals("test")) {
-            SlotMachine machine = viewModel.getRxSlotRoom().getMachine();
-            machine
-                    .initialPlayerSeedReady()
-                    .filter(Bool::getValue)
-                    .flatMap(playerSeed ->
-                            machine.occupy(new PlayerSeed().getInitialSeed(), Convert.toWei(this.deposit, Convert.Unit.ETHER))
-                    )
-                    .subscribe(o -> {
-                    }, Throwable::printStackTrace);
-        }
-
         viewModel
                 .getRxSlotRoom()
                 .updatePlayerObservable()
@@ -210,6 +196,9 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                             Intent intent = new Intent(fragment.getContext(), SlotGameActivity.class);
                             Bundle bundle = new Bundle();
                             bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, viewModel.getSlotAddress());
+                            if (type == ListType.PLAY && !viewModel.getRxSlotRoom().getSlotAddress().equals("test")) {
+                                bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM_DEPOSIT, this.deposit);
+                            }
                             intent.putExtras(bundle);
                             fragment.getContext().startActivity(intent);
                         },

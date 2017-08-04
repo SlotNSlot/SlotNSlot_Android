@@ -52,6 +52,7 @@ public class Constants {
 
     public static final String BUNDLE_KEY_LIST_TYPE = "LIST_TYPE";
     public static final String BUNDLE_KEY_SLOT_ROOM = "SLOT_ROOM";
+    public static final String BUNDLE_KEY_SLOT_ROOM_DEPOSIT = "SLOT_ROOM_DEPOSIT";
     public static final String BUNDLE_KEY_STEP_INDEX = "STEP_INDEX";
 
     public static final String MAKE_SLOT_STEP_TITLE_SUMMARY = "Summary";

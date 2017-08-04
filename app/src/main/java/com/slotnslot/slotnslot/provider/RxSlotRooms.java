@@ -82,6 +82,7 @@ public class RxSlotRooms {
                     })
                     .mergeWith(slotMachineStorage.getSlotMachines(new Address(AccountProvider.getAccount().getAddressHex())))
                     .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
+                    .filter(address -> Utils.isValidAddress(address.toString()))
                     .subscribe(address -> {
                         String slotAddress = address.toString();
                         SlotMachine machine = SlotMachine.load(slotAddress);
@@ -115,6 +116,9 @@ public class RxSlotRooms {
     }
 
     public static void addSlot(SlotRoom slotRoom) {
+        if (rxSlotRoomMap.containsKey(slotRoom.getAddress())) {
+            return;
+        }
         RxSlotRoom rxSlotRoom = new RxSlotRoom(slotRoom);
         rxSlotRoomMap.put(slotRoom.getAddress(), rxSlotRoom);
         notifyChange();
@@ -122,6 +126,9 @@ public class RxSlotRooms {
 
     public static void addSlots(List<SlotRoom> slotRoomList) {
         for (SlotRoom slotRoom : slotRoomList) {
+            if (rxSlotRoomMap.containsKey(slotRoom.getAddress())) {
+                continue;
+            }
             RxSlotRoom rxSlotRoom = new RxSlotRoom(slotRoom);
             rxSlotRoomMap.put(slotRoom.getAddress(), rxSlotRoom);
         }

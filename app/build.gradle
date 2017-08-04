@@ -57,7 +57,7 @@ dependencies {
 
     provided 'org.projectlombok:lombok:1.16.18'
 
-    compile(name: 'geth', ext: 'aar')
+    compile(name: 'geth', ext: 'aar') { changing = true }
 
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'com.android.support:design:26.+'
