@@ -154,6 +154,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
 
     public void tapSpin() {
         Completable complete = Completable.complete();
+        complete.delay(0, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> removePayLines());
         complete.delay(0, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(0));
         complete.delay(200, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(1));
         complete.delay(400, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(2));
@@ -271,6 +272,13 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
             slotContainer.addView(payLine, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, slotContainer.getMeasuredHeight()));
         }
         slotLayout.bringToFront();
+    }
+
+    private void removePayLines() {
+        for (DrawView view : payLineView) {
+            slotContainer.removeView(view);
+        }
+        slotContainer.invalidate();
     }
 
     @Override

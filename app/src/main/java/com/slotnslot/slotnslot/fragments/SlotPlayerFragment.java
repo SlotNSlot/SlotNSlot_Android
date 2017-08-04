@@ -55,10 +55,6 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         RxView.clicks(spinButton).subscribe(o -> {
 //            spinButton.setEnabled(false);
             tapSpin();
-            for (DrawView view : payLineView) {
-                slotContainer.removeView(view);
-            }
-            slotContainer.invalidate();
             if ("test".equals(viewModel.getRxSlotRoom().getSlotAddress())) {
                 return;
             }
