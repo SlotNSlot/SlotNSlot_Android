@@ -1,11 +1,9 @@
 package com.slotnslot.slotnslot.adapters;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -26,8 +24,6 @@ import com.slotnslot.slotnslot.activities.SlotGameActivity;
 import com.slotnslot.slotnslot.contract.SlotMachine;
 import com.slotnslot.slotnslot.contract.SlotMachineManager;
 import com.slotnslot.slotnslot.geth.GethConstants;
-import com.slotnslot.slotnslot.geth.GethException;
-import com.slotnslot.slotnslot.geth.TransactionManager;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.PlayerSeed;
 import com.slotnslot.slotnslot.models.SlotRoomViewModel;
@@ -44,9 +40,6 @@ import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.Bool;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import io.reactivex.Observable;
 
 public class SlotListAdapter extends RecyclerView.Adapter {
     public static final String TAG = SlotListAdapter.class.getSimpleName();
@@ -58,7 +51,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
     private ArrayList<SlotRoomViewModel> items = new ArrayList<>();
     private ListType type;
     private RxFragment fragment;
-    private Double deposite;
+    private Double deposit;
 
     public SlotListAdapter(ArrayList<SlotRoomViewModel> items, ListType type, RxFragment fragment) {
         this.items = items;
@@ -122,10 +115,10 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                                                     Log.e(TAG, "event is empty.");
                                                     return;
                                                 }
-                                                Log.i(TAG, "slot created banker : " + responses.get(0)._banker.toString());
-                                                Log.i(TAG, "slot created total num : " + responses.get(0)._totalNum.getValue());
+                                                Log.i(TAG, "slot removed: banker address: " + responses.get(0)._banker.toString());
+                                                Log.i(TAG, "slot removed: number of remaining slots: " + responses.get(0)._totalNum.getValue());
                                                 String slotAddress = responses.get(0)._slotAddr.toString();
-                                                Log.i(TAG, "slot created slot addr : " + slotAddress);
+                                                Log.i(TAG, "slot removed: removed address: " + slotAddress);
                                                 RxSlotRooms.removeSlot(slotAddress);
                                             }, Throwable::printStackTrace);
                                     actionSheet.dismiss();
@@ -135,7 +128,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                 holder.itemView.setOnClickListener(view -> {
                     SlotRoomViewModel slotRoomViewModel = items.get(position - (type == ListType.PLAY ? 1 : 0));
                     if (type == ListType.PLAY) {
-                        setDeposite(slotRoomViewModel);
+                        setDeposit(slotRoomViewModel);
                     } else {
                         enterSlotRoom(slotRoomViewModel);
                     }
@@ -143,27 +136,30 @@ public class SlotListAdapter extends RecyclerView.Adapter {
         }
     }
 
-    private void setDeposite(SlotRoomViewModel viewModel) {
+    private void setDeposit(SlotRoomViewModel viewModel) {
         Context context = MainApplication.getContext();
-        AlertDialog.Builder builder = new AlertDialog.Builder(fragment.getActivity());
+
         EditText editText = new EditText(context);
         editText.setTextColor(ContextCompat.getColor(context, R.color.pink1));
         editText.getBackground().setColorFilter(context.getResources().getColor(R.color.pink1), PorterDuff.Mode.SRC_ATOP);
-        FrameLayout container = new FrameLayout(context);
+
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.leftMargin = context.getResources().getDimensionPixelSize(R.dimen.input_deposite_margin);
         params.rightMargin = context.getResources().getDimensionPixelSize(R.dimen.input_deposite_margin);
         editText.setLayoutParams(params);
+
+        FrameLayout container = new FrameLayout(context);
         container.addView(editText);
-        builder.setView(container);
-        builder.setTitle("Input Deposite");
-        builder.setPositiveButton("OK", (dialogInterface, i) -> {
-            this.deposite = Double.parseDouble(editText.getText().toString());
-            enterSlotRoom(viewModel);
-        });
-        builder.setNegativeButton("CANCEL", (dialogInterface, i) -> {
-        });
-        builder.show();
+
+        new AlertDialog.Builder(fragment.getActivity())
+                .setView(container)
+                .setTitle("Please enter your initial deposit. (ether)")
+                .setPositiveButton("OK", (dialogInterface, i) -> {
+                    this.deposit = Double.parseDouble(editText.getText().toString());
+                    enterSlotRoom(viewModel);
+                })
+                .setNegativeButton("CANCEL", null)
+                .show();
     }
 
     private void enterSlotRoom(SlotRoomViewModel viewModel) {
@@ -177,12 +173,16 @@ public class SlotListAdapter extends RecyclerView.Adapter {
             return;
         }
 
-        if (type == ListType.PLAY) {
+        if (type == ListType.PLAY && !viewModel.getRxSlotRoom().getSlotAddress().equals("test")) {
             SlotMachine machine = viewModel.getRxSlotRoom().getMachine();
-            Observable<Bool> playerSeedReadyObservable = machine.initialPlayerSeedReady().filter(isValid -> isValid.getValue());
-            playerSeedReadyObservable.flatMap(playerSeed ->
-                    machine.occupy(new PlayerSeed().getInitialSeed(), Convert.toWei(this.deposite, Convert.Unit.ETHER))
-            ).subscribe();
+            machine
+                    .initialPlayerSeedReady()
+                    .filter(Bool::getValue)
+                    .flatMap(playerSeed ->
+                            machine.occupy(new PlayerSeed().getInitialSeed(), Convert.toWei(this.deposit, Convert.Unit.ETHER))
+                    )
+                    .subscribe(o -> {
+                    }, Throwable::printStackTrace);
         }
 
         viewModel

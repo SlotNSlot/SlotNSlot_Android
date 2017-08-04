@@ -58,6 +58,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
     protected ArrayList<SlotAdapter> adapterList = new ArrayList<>();
     protected ArrayList<DrawView> payLineView = new ArrayList<>();
     private String slotRoomAddress;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,6 +94,10 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
 
         subscribeTextChange();
         setClickEvents();
+
+        if ("test".equals(viewModel.getRxSlotRoom().getSlotAddress())) { // if test
+            return view;
+        }
 
         // below do not need for test
         viewModel.onCreate();

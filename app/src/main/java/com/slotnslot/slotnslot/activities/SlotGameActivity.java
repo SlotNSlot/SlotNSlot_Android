@@ -3,22 +3,21 @@ package com.slotnslot.slotnslot.activities;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.slotnslot.slotnslot.MyPageType;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.SlotType;
 import com.slotnslot.slotnslot.fragments.SlotBankerFragment;
 import com.slotnslot.slotnslot.fragments.SlotPlayerFragment;
-import com.slotnslot.slotnslot.fragments.WalletFragment;
-import com.slotnslot.slotnslot.fragments.WithDrawFragment;
 import com.slotnslot.slotnslot.utils.Constants;
 
 public class SlotGameActivity extends SlotFragmentActivity {
 
     private Fragment fragment;
     private SlotType slotType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,4 +50,12 @@ public class SlotGameActivity extends SlotFragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to exit game?")
+                .setPositiveButton("Yes", (dialog, id) -> finish())
+                .setNegativeButton("No", null)
+                .show();
+    }
 }
