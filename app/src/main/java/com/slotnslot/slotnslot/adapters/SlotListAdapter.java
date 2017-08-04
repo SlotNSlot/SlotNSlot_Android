@@ -165,7 +165,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
             Intent intent = new Intent(fragment.getContext(), SlotGameActivity.class);
             Bundle bundle = new Bundle();
             boolean isBanker = AccountProvider.identical(viewModel.getRxSlotRoom().getSlotRoom().getBankerAddress());
-            bundle.putSerializable(Constants.ACTIVITY_EXTRA_KEY_SLOT_TYPE, isBanker ? SlotType.PLAYER : SlotType.BANKER);
+            bundle.putSerializable(Constants.ACTIVITY_EXTRA_KEY_SLOT_TYPE, isBanker ? SlotType.BANKER : SlotType.PLAYER);
             bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, viewModel.getRxSlotRoom().getSlotAddress());
             intent.putExtras(bundle);
             fragment.getContext().startActivity(intent);
