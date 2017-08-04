@@ -7,10 +7,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
+import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.utils.DrawView;
 
 import butterknife.BindView;
@@ -38,7 +38,16 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         betLineTextView = view.findViewById(R.id.play_bet_line_textview);
         totalBetTextView = view.findViewById(R.id.play_total_bet_textview);
         betETHTextView = view.findViewById(R.id.play_bet_eth_textview);
+
+        invalidSeedEvent();
         return view;
+    }
+
+    private void invalidSeedEvent() {
+        viewModel.invalidSeedFound.subscribe(invalidSeed -> {
+            Utils.showToast("banker sent invalid seed. exit this game. seed : " + invalidSeed);
+            getActivity().finish();
+        }, Throwable::printStackTrace);
     }
 
     @Override
