@@ -40,6 +40,7 @@ public class PlaySlotViewModel {
     public PublishSubject<Integer> drawResultSubject = PublishSubject.create();
     public PublishSubject<String> toastSubject = PublishSubject.create();
     public PublishSubject<Boolean> startSpin = PublishSubject.create();
+    public PublishSubject<String> invalidSeedFound = PublishSubject.create();
 
     public Observable<BigInteger> playerBalanceObservable;
     public Observable<BigInteger> bankerBalanceObservable;
@@ -155,7 +156,8 @@ public class PlaySlotViewModel {
 
                     return true;
                 })
-                .subscribe(o -> {}, Throwable::printStackTrace);
+                .subscribe(o -> {
+                }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
 
@@ -204,7 +206,8 @@ public class PlaySlotViewModel {
                                     new Uint256(Convert.toWei(getCurrentBetEth(), Convert.Unit.ETHER)),
                                     new Uint256(currentLine),
                                     new Uint8(playerSeed.getIndex()))
-                            .subscribe(o -> {}, Throwable::printStackTrace);
+                            .subscribe(o -> {
+                            }, Throwable::printStackTrace);
                 }, Throwable::printStackTrace);
     }
 
@@ -246,6 +249,7 @@ public class PlaySlotViewModel {
                         Log.e(TAG, "banker seed is invalid : " + bankerSeed);
                         Log.e(TAG, "previous banker seed : " + playerSeed.getBankerSeeds()[playerSeed.getIndex()]);
                         Log.e(TAG, "player seed index : " + playerSeed.getIndex());
+                        invalidSeedFound.onNext(bankerSeed); // invalid seed event
                         return;
                     }
                     playerSeed.setNextBankerSeed(bankerSeed);
@@ -253,7 +257,8 @@ public class PlaySlotViewModel {
                     if (!isBanker()) {
                         machine
                                 .setPlayerSeed(playerSeed.getSeed(), new Uint8(playerSeed.getIndex()))
-                                .subscribe(o -> {}, Throwable::printStackTrace);
+                                .subscribe(o -> {
+                                }, Throwable::printStackTrace);
                     }
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
