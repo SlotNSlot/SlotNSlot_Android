@@ -304,10 +304,6 @@ public class Utils {
             drawingLines.add(new DrawingLine(usableLines.get(0)[5], payLineTuples.get(0).SYMBOL_INDEX, payLineTuples.get(0).LENGTH));
             boolean drawable = true;
             for (int i = 1; i < payLineTuples.size(); i++) {
-                if (drawingLines.size() < 1) {
-                    drawable = false;
-                    break;
-                }
                 for (int j = 1; j < lineNum; j++) {
                     boolean overLapping = false;
                     for (int k = 0; k < payLineTuples.get(i).LENGTH; k++) {
@@ -326,6 +322,9 @@ public class Utils {
                         break;
                     }
                 }
+            }
+            if (drawingLines.size() < payLineTuples.size()) {
+                drawable = false;
             }
             if (drawable) {
                 return new SlotResultDrawingLine(SlotResultDrawingLine.Drawable.DRAWABLE, slotLineInfo, drawingLines);

@@ -196,14 +196,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
 
     public void drawResult(int slotResult) {
         if (slotResult == 0) {
-            Integer[][] slotLines = new Integer[5][3];
-            for (int i = 0; i < slotLines.length; i++) {
-                for (int j = 0; j < slotLines[i].length; j++) {
-                    slotLines[i][j] = Constants.UNDEFINE;
-                }
-            }
-            drawSlot(new SlotResultDrawingLine(SlotResultDrawingLine.Drawable.LOOSE, slotLines, null));
-            tapStop(false);
+            drawDefeatLine(false);
             return;
         }
         SlotResultDrawingLine slotResultDrawline = Utils.getDrawLine(viewModel.getCurrentLine(), slotResult);
@@ -214,10 +207,21 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         }
     }
 
+    private void drawDefeatLine(boolean isBigwin) {
+        Integer[][] slotLines = new Integer[5][3];
+        for (int i = 0; i < slotLines.length; i++) {
+            for (int j = 0; j < slotLines[i].length; j++) {
+                slotLines[i][j] = Constants.UNDEFINE;
+            }
+        }
+        drawSlot(new SlotResultDrawingLine(SlotResultDrawingLine.Drawable.DEFEAT, slotLines, null));
+        tapStop(isBigwin);
+    }
+
     private void drawBigWin(int slotResult) {
+        drawDefeatLine(true);
         bigWinContainer.setVisibility(View.VISIBLE);
         bigWinTextView.setText("+" + slotResult);
-        tapStop(true);
     }
 
     private void drawSlot(SlotResultDrawingLine slotResultDrawingLine) {
