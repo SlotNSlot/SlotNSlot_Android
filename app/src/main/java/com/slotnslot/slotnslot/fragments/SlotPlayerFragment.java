@@ -11,7 +11,6 @@ import android.widget.RelativeLayout;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.geth.Utils;
-import com.slotnslot.slotnslot.utils.DrawView;
 
 import butterknife.BindView;
 
@@ -40,6 +39,10 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         betETHTextView = view.findViewById(R.id.play_bet_eth_textview);
 
         invalidSeedEvent();
+        viewModel.drawResultSubject.subscribe(result -> {
+            drawResult(result);
+            spinButton.setEnabled(true);
+        });
         return view;
     }
 
@@ -53,7 +56,7 @@ public class SlotPlayerFragment extends AbsSlotFragment {
     @Override
     protected void setClickEvents() {
         RxView.clicks(spinButton).subscribe(o -> {
-//            spinButton.setEnabled(false);
+            spinButton.setEnabled(false);
             tapSpin();
             if ("test".equals(viewModel.getRxSlotRoom().getSlotAddress())) {
                 return;

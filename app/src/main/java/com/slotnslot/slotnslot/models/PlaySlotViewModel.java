@@ -6,7 +6,6 @@ import com.slotnslot.slotnslot.contract.SlotMachine;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRoom;
-import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 
@@ -40,10 +39,9 @@ public class PlaySlotViewModel {
     public BehaviorSubject<Double> lastWinSubject = BehaviorSubject.createDefault(0.0);
 
     public PublishSubject<Integer> drawResultSubject = PublishSubject.create();
-    //    public PublishSubject<String> toastSubject = PublishSubject.create();
     public PublishSubject<Boolean> startSpin = PublishSubject.create();
     public PublishSubject<String> invalidSeedFound = PublishSubject.create();
-    public PublishSubject<Boolean> stopSpin = PublishSubject.create();
+    public PublishSubject<Boolean> clearSpin = PublishSubject.create();
 
     public Observable<BigInteger> playerBalanceObservable;
     public Observable<BigInteger> bankerBalanceObservable;
@@ -166,7 +164,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "player seed2 : " + Utils.byteToHex(response.playerSeed.getValue().get(1).getValue()));
                     Log.i(TAG, "player seed3 : " + Utils.byteToHex(response.playerSeed.getValue().get(2).getValue()));
 
-//                    toastSubject.onNext("slot occupied by : " + response.player.toString());
+                    Utils.showToast("slot occupied by : " + response.player.toString());
                     rxSlotRoom.updateBalance();
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
@@ -186,7 +184,7 @@ public class PlaySlotViewModel {
 
                     playerSeed.setBankerSeeds(seed0, seed1, seed3);
 
-//                    toastSubject.onNext("banker seed initialized.");
+                    Utils.showToast("banker seed initialized.");
                     seedReadySubject.onNext(true);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
@@ -198,7 +196,6 @@ public class PlaySlotViewModel {
                 .subscribe(bool -> {
                     if (!bool.getValue()) {
                         Log.e(TAG, "banker seed is not initialized yet");
-//                            spinButton.setEnabled(true);
                         return;
                     }
 
@@ -222,7 +219,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "lines : " + response.lines.getValue());
                     Log.i(TAG, "idx : " + response.idx.getValue());
 
-//                    toastSubject.onNext("game initialized.");
+                    Utils.showToast("game initialized.");
 
                     betEthSubject.onNext(Convert.fromWei(response.bet.getValue(), Convert.Unit.ETHER).doubleValue());
                     currentLine = response.lines.getValue().intValue();
@@ -245,7 +242,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "banker seed : " + bankerSeed);
                     Log.i(TAG, "idx : " + response.idx.getValue());
 
-//                    toastSubject.onNext("banker seed set.");
+                    Utils.showToast("banker seed set.");
 
                     if (isBanker()) {
                         return;
@@ -283,7 +280,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "bet : " + previousBetEth);
                     Log.i(TAG, "idx : " + response.idx.getValue());
 
-//                    toastSubject.onNext("game confirmed. reward : " + Convert.fromWei(reward, Convert.Unit.ETHER));
+                    Utils.showToast("game confirmed. reward : " + Convert.fromWei(reward, Convert.Unit.ETHER));
 
                     lastWinSubject.onNext(Convert.fromWei(reward, Convert.Unit.ETHER).doubleValue());
                     drawResultSubject.onNext(winRate.intValue());
@@ -303,11 +300,11 @@ public class PlaySlotViewModel {
                     if (isBanker()) {
                         Log.i(TAG, "player : " + response.player.toString() + " has left");
 
-//                        toastSubject.onNext("player : " + response.player.toString() + " has left");
+                        Utils.showToast("player : " + response.player.toString() + " has left");
 
                         rxSlotRoom.updateBalance();
                         seedReadySubject.onNext(false);
-                        stopSpin.onNext(true);
+                        clearSpin.onNext(true);
                         return;
                     }
 
