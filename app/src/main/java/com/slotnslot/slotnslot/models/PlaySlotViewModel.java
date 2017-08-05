@@ -43,6 +43,7 @@ public class PlaySlotViewModel {
     //    public PublishSubject<String> toastSubject = PublishSubject.create();
     public PublishSubject<Boolean> startSpin = PublishSubject.create();
     public PublishSubject<String> invalidSeedFound = PublishSubject.create();
+    public PublishSubject<Boolean> stopSpin = PublishSubject.create();
 
     public Observable<BigInteger> playerBalanceObservable;
     public Observable<BigInteger> bankerBalanceObservable;
@@ -306,6 +307,7 @@ public class PlaySlotViewModel {
 
                         rxSlotRoom.updateBalance();
                         seedReadySubject.onNext(false);
+                        stopSpin.onNext(true);
                         return;
                     }
 

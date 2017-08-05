@@ -109,6 +109,10 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         viewModel.drawResultSubject.subscribe(this::drawResult);
 //        viewModel.toastSubject.subscribe(msg -> Utils.showToast(msg));
         viewModel.startSpin.subscribe(bool -> tapSpin());
+        viewModel.stopSpin.subscribe(bool -> {
+            removePayLines();
+            tapStop(false);
+        });
 
         return view;
     }
