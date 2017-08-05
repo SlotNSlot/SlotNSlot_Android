@@ -56,6 +56,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     provided 'org.projectlombok:lombok:1.16.18'
+    compile 'com.google.code.gson:gson:2.8.1'
 
     compile(name: 'geth', ext: 'aar') { changing = true }
 

@@ -14,7 +14,9 @@ import com.slotnslot.slotnslot.geth.GethConstants;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.PlayerSeed;
 import com.slotnslot.slotnslot.models.Seed;
+import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
+import com.slotnslot.slotnslot.utils.StorageUtil;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import org.web3j.abi.datatypes.Address;
@@ -23,6 +25,8 @@ import org.web3j.abi.datatypes.generated.Uint8;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 
 public class FilterExampleActivity extends RxAppCompatActivity {
     public static final String TAG = FilterExampleActivity.class.getSimpleName();
@@ -189,14 +193,27 @@ public class FilterExampleActivity extends RxAppCompatActivity {
 
                     machine
                             .gameConfirmedEventObservable()
+                            .distinctUntilChanged(response -> response.idx)
                             .compose(bindToLifecycle())
-                            .subscribe(response -> {
+                            .observeOn(Schedulers.computation())
+                            .flatMap(response -> {
                                 Log.i(TAG, "reward : " + response.reward.getValue());
                                 Log.i(TAG, "idx : " + response.idx.getValue());
 
                                 bankerSeed.confirm(response.idx.getValue().intValue());
                                 playerSeed.confirm(response.idx.getValue().intValue());
-                            }, Throwable::printStackTrace);
+
+                                StorageUtil.save(Constants.BANKER_SEED_KEY, machine.getContractAddress(), bankerSeed);
+                                StorageUtil.save(Constants.PLAYER_SEED_KEY, machine.getContractAddress(), playerSeed);
+
+                                bankerSeed = null;
+                                playerSeed = null;
+
+                                bankerSeed = StorageUtil.load(Constants.BANKER_SEED_KEY, machine.getContractAddress(), Seed.class);
+                                playerSeed = StorageUtil.load(Constants.PLAYER_SEED_KEY, machine.getContractAddress(), PlayerSeed.class);
+                                return Observable.just(true);
+                            })
+                            .subscribe(o -> {}, Throwable::printStackTrace);
 
                     machine
                             .playerLeftEventObservable()
