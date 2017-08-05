@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 
@@ -149,7 +150,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
         FrameLayout container = new FrameLayout(context);
         container.addView(editText);
 
-        new AlertDialog.Builder(fragment.getActivity())
+        AlertDialog dialog = new AlertDialog.Builder(fragment.getActivity())
                 .setView(container)
                 .setTitle("Please enter your initial deposit. (ether)")
                 .setPositiveButton("OK", (dialogInterface, i) -> {
@@ -157,7 +158,9 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                     enterSlotRoom(viewModel);
                 })
                 .setNegativeButton("CANCEL", null)
-                .show();
+                .create();
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
+        dialog.show();
     }
 
     private void enterSlotRoom(SlotRoomViewModel viewModel) {
