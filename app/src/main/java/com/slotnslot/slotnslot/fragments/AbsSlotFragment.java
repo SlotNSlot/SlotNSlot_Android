@@ -22,6 +22,8 @@ import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.DrawingLine;
 import com.slotnslot.slotnslot.models.PlaySlotViewModel;
 import com.slotnslot.slotnslot.models.SlotResultDrawingLine;
+import com.slotnslot.slotnslot.provider.RxSlotRoom;
+import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 import com.slotnslot.slotnslot.utils.DrawView;
@@ -85,7 +87,11 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
                 new float[]{0, 1}, Shader.TileMode.CLAMP);
         bigWinTextView.getPaint().setShader(textShader);
 
-        viewModel = new PlaySlotViewModel(slotRoomAddress);
+        RxSlotRoom rxSlotRoom = SlotType.BANKER.equals(type)
+                ? RxSlotRooms.getMakeSlotRoom(slotRoomAddress)
+                : RxSlotRooms.getSlotRoom(slotRoomAddress);
+        viewModel = new PlaySlotViewModel(rxSlotRoom);
+
         addSlot(0, false);
         addSlot(1, false);
         addSlot(2, false);

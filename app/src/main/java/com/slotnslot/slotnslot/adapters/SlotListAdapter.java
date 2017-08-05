@@ -116,7 +116,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                                                 Log.i(TAG, "slot removed: number of remaining slots: " + responses.get(0)._totalNum.getValue());
                                                 String slotAddress = responses.get(0)._slotAddr.toString();
                                                 Log.i(TAG, "slot removed: removed address: " + slotAddress);
-                                                RxSlotRooms.removeSlot(slotAddress);
+                                                RxSlotRooms.removeMakeSlot(slotAddress);
                                             }, Throwable::printStackTrace);
                                     actionSheet.dismiss();
                                 }

@@ -64,8 +64,8 @@ public class PlaySlotViewModel {
 
     private PlayerSeed playerSeed = new PlayerSeed();
 
-    public PlaySlotViewModel(String slotAddress) {
-        this.rxSlotRoom = RxSlotRooms.getSlotRoom(slotAddress);
+    public PlaySlotViewModel(RxSlotRoom rxSlotRoom) {
+        this.rxSlotRoom = rxSlotRoom;
 
         // init bet line, eth
         betLineSubject.onNext(Constants.BET_MIN_LINE);

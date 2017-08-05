@@ -13,10 +13,10 @@ public class SlotRoomViewModel {
     public Observable<Double> stake;
     public Observable<Integer> playTime;
 
-    public SlotRoomViewModel(String slotRoomAddress) {
-        this.rxSlotRoom = RxSlotRooms.getSlotRoom(slotRoomAddress);
-        this.stake = rxSlotRoom.getSlotRoomSubject().map(SlotRoom::getStake);
-        this.playTime = rxSlotRoom.getSlotRoomSubject().map(SlotRoom::getPlayTime);
+    public SlotRoomViewModel(RxSlotRoom rxSlotRoom) {
+        this.rxSlotRoom = rxSlotRoom;
+        this.stake = this.rxSlotRoom.getSlotRoomSubject().map(SlotRoom::getStake);
+        this.playTime = this.rxSlotRoom.getSlotRoomSubject().map(SlotRoom::getPlayTime);
     }
 
     public String getSlotAddress() {
