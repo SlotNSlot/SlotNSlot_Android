@@ -4,6 +4,7 @@ import android.widget.TextView;
 
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.utils.Constants;
+import com.slotnslot.slotnslot.utils.Convert;
 
 import butterknife.BindView;
 
@@ -21,7 +22,7 @@ public class MakeSlotSummaryFragment extends MakeSlotStepFragment {
     public void initView() {
         hitRatioTextView.setText(String.format(Constants.HIT_RATIO_TEXT_FORMAT, slotRoom.getHitRatio()));
         betRangeTextView.setText(String.format(Constants.BET_RANGE_TEXT_FORMAT, slotRoom.getMinBet(), slotRoom.getMaxBet()));
-        totalStakeTextView.setText(String.format(Constants.TOTAL_STKE_TEXT_FORMAT, slotRoom.getStake()));
+        totalStakeTextView.setText(String.format(Constants.TOTAL_STKE_TEXT_FORMAT, Convert.fromWei(slotRoom.getBankerBalance(), Convert.Unit.ETHER)));
         maxPrizeTextView.setText(String.format(Constants.MAX_PRIZE_TEXT_FORMAT, slotRoom.getMaxWinPrize()));
     }
 }

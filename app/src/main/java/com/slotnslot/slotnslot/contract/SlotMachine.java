@@ -64,7 +64,7 @@ public final class SlotMachine extends Contract {
                     },
                     new TypeReference<Uint256>() {
                     },
-                    new TypeReference<Uint256>() {
+                    new TypeReference<Uint8>() {
                     },
                     new TypeReference<Uint8>() {
                     }
@@ -366,7 +366,7 @@ public final class SlotMachine extends Contract {
         return executeTransaction(function);
     }
 
-    public Observable<Receipt> initGameForPlayer(Uint256 _bet, Uint256 _lines, Uint8 _idx) {
+    public Observable<Receipt> initGameForPlayer(Uint256 _bet, Uint8 _lines, Uint8 _idx) {
         Function function = new Function("initGameForPlayer", Arrays.asList(_bet, _lines, _idx), Collections.emptyList());
         return executeTransaction(function);
     }
@@ -480,7 +480,7 @@ public final class SlotMachine extends Contract {
             GameInitializedEventResponse typedResponse = new GameInitializedEventResponse();
             typedResponse.player = (Address) eventValues.getNonIndexedValues().get(0);
             typedResponse.bet = (Uint256) eventValues.getNonIndexedValues().get(1);
-            typedResponse.lines = (Uint256) eventValues.getNonIndexedValues().get(2);
+            typedResponse.lines = (Uint8) eventValues.getNonIndexedValues().get(2);
             typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(3);
             responses.add(typedResponse);
         }
@@ -493,7 +493,7 @@ public final class SlotMachine extends Contract {
                     GameInitializedEventResponse typedResponse = new GameInitializedEventResponse();
                     typedResponse.player = (Address) eventValues.getNonIndexedValues().get(0);
                     typedResponse.bet = (Uint256) eventValues.getNonIndexedValues().get(1);
-                    typedResponse.lines = (Uint256) eventValues.getNonIndexedValues().get(2);
+                    typedResponse.lines = (Uint8) eventValues.getNonIndexedValues().get(2);
                     typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(3);
                     return typedResponse;
                 });
@@ -586,7 +586,7 @@ public final class SlotMachine extends Contract {
     public static class GameInitializedEventResponse {
         public Address player;
         public Uint256 bet;
-        public Uint256 lines;
+        public Uint8 lines;
         public Uint8 idx;
     }
 

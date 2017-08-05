@@ -6,19 +6,20 @@ import com.slotnslot.slotnslot.contract.SlotMachine;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRoom;
-import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 
-import org.web3j.abi.datatypes.Bool;
+import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.abi.datatypes.generated.Uint8;
 
 import java.math.BigInteger;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.BehaviorSubject;
 import io.reactivex.subjects.PublishSubject;
 import lombok.Getter;
@@ -38,9 +39,9 @@ public class PlaySlotViewModel {
     public BehaviorSubject<Double> lastWinSubject = BehaviorSubject.createDefault(0.0);
 
     public PublishSubject<Integer> drawResultSubject = PublishSubject.create();
-    public PublishSubject<String> toastSubject = PublishSubject.create();
     public PublishSubject<Boolean> startSpin = PublishSubject.create();
     public PublishSubject<String> invalidSeedFound = PublishSubject.create();
+    public PublishSubject<Boolean> clearSpin = PublishSubject.create();
 
     public Observable<BigInteger> playerBalanceObservable;
     public Observable<BigInteger> bankerBalanceObservable;
@@ -61,8 +62,8 @@ public class PlaySlotViewModel {
 
     private PlayerSeed playerSeed = new PlayerSeed();
 
-    public PlaySlotViewModel(String slotAddress) {
-        this.rxSlotRoom = RxSlotRooms.getSlotRoom(slotAddress);
+    public PlaySlotViewModel(RxSlotRoom rxSlotRoom) {
+        this.rxSlotRoom = rxSlotRoom;
 
         // init bet line, eth
         betLineSubject.onNext(Constants.BET_MIN_LINE);
@@ -143,21 +144,14 @@ public class PlaySlotViewModel {
     }
 
     private void setSeedReadyEvent() {
-        Observable<Bool> playerSeedReadyObservable = machine.initialPlayerSeedReady();
-        Observable<Bool> bankerSeedReadyObservable = machine.initialBankerSeedReady();
-        Disposable disposable = Observable
-                .zip(playerSeedReadyObservable, bankerSeedReadyObservable, (playerSeedReady, bankerSeedReady) -> {
-                    Log.i(TAG, "player seed ready : " + playerSeedReady.getValue());
-                    Log.i(TAG, "banker seed ready : " + bankerSeedReady.getValue());
-
-                    if (playerSeedReady.getValue() && bankerSeedReady.getValue()) {
+        Disposable disposable = machine
+                .initialBankerSeedReady()
+                .subscribe(ready -> {
+                    Log.i(TAG, "banker seed ready : " + ready.getValue());
+                    if (ready.getValue()) {
                         seedReadySubject.onNext(true);
                     }
-
-                    return true;
-                })
-                .subscribe(o -> {
-                }, Throwable::printStackTrace);
+                });
         compositeDisposable.add(disposable);
     }
 
@@ -170,7 +164,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "player seed2 : " + Utils.byteToHex(response.playerSeed.getValue().get(1).getValue()));
                     Log.i(TAG, "player seed3 : " + Utils.byteToHex(response.playerSeed.getValue().get(2).getValue()));
 
-                    toastSubject.onNext("slot occupied by : " + response.player.toString());
+                    Utils.showToast("slot occupied by : " + response.player.toString());
                     rxSlotRoom.updateBalance();
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
@@ -180,11 +174,17 @@ public class PlaySlotViewModel {
         Disposable disposable = machine
                 .bankerSeedInitializedEventObservable()
                 .subscribe(response -> {
-                    Log.i(TAG, "banker initial seed1 : " + Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue()));
-                    Log.i(TAG, "banker initial seed2 : " + Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue()));
-                    Log.i(TAG, "banker initial seed3 : " + Utils.byteToHex(response._bankerSeed.getValue().get(2).getValue()));
+                    String seed0 = Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue());
+                    String seed1 = Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue());
+                    String seed3 = Utils.byteToHex(response._bankerSeed.getValue().get(2).getValue());
 
-                    toastSubject.onNext("banker seed initialized.");
+                    Log.i(TAG, "banker initial seed1 : " + seed0);
+                    Log.i(TAG, "banker initial seed2 : " + seed1);
+                    Log.i(TAG, "banker initial seed3 : " + seed3);
+
+                    playerSeed.setBankerSeeds(seed0, seed1, seed3);
+
+                    Utils.showToast("banker seed initialized.");
                     seedReadySubject.onNext(true);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
@@ -196,7 +196,6 @@ public class PlaySlotViewModel {
                 .subscribe(bool -> {
                     if (!bool.getValue()) {
                         Log.e(TAG, "banker seed is not initialized yet");
-//                            spinButton.setEnabled(true);
                         return;
                     }
 
@@ -204,7 +203,7 @@ public class PlaySlotViewModel {
                     machine
                             .initGameForPlayer(
                                     new Uint256(Convert.toWei(getCurrentBetEth(), Convert.Unit.ETHER)),
-                                    new Uint256(currentLine),
+                                    new Uint8(currentLine),
                                     new Uint8(playerSeed.getIndex()))
                             .subscribe(o -> {
                             }, Throwable::printStackTrace);
@@ -220,7 +219,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "lines : " + response.lines.getValue());
                     Log.i(TAG, "idx : " + response.idx.getValue());
 
-                    toastSubject.onNext("game initialized.");
+                    Utils.showToast("game initialized.");
 
                     betEthSubject.onNext(Convert.fromWei(response.bet.getValue(), Convert.Unit.ETHER).doubleValue());
                     currentLine = response.lines.getValue().intValue();
@@ -243,7 +242,11 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "banker seed : " + bankerSeed);
                     Log.i(TAG, "idx : " + response.idx.getValue());
 
-                    toastSubject.onNext("banker seed set.");
+                    Utils.showToast("banker seed set.");
+
+                    if (isBanker()) {
+                        return;
+                    }
 
                     if (!playerSeed.isValidSeed(bankerSeed)) {
                         Log.e(TAG, "banker seed is invalid : " + bankerSeed);
@@ -254,12 +257,13 @@ public class PlaySlotViewModel {
                     }
                     playerSeed.setNextBankerSeed(bankerSeed);
 
-                    if (!isBanker()) {
-                        machine
-                                .setPlayerSeed(playerSeed.getSeed(), new Uint8(playerSeed.getIndex()))
-                                .subscribe(o -> {
-                                }, Throwable::printStackTrace);
-                    }
+                    Single
+                            .<Bytes32>create(e -> e.onSuccess(playerSeed.getSeed()))
+                            .toObservable()
+                            .flatMap(playerSeed -> machine.setPlayerSeed(playerSeed, new Uint8(this.playerSeed.getIndex())))
+                            .subscribeOn(Schedulers.computation())
+                            .subscribe(o -> {
+                            }, Throwable::printStackTrace);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
@@ -267,6 +271,7 @@ public class PlaySlotViewModel {
     private void setGameConfirmedEvent() {
         Disposable disposable = machine
                 .gameConfirmedEventObservable()
+                .distinctUntilChanged(response -> response.idx)
                 .subscribe(response -> {
                     BigInteger reward = response.reward.getValue();
                     BigInteger winRate = reward.divide(Convert.toWei(previousBetEth, Convert.Unit.ETHER));
@@ -275,13 +280,15 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "bet : " + previousBetEth);
                     Log.i(TAG, "idx : " + response.idx.getValue());
 
-                    toastSubject.onNext("game confirmed. reward : " + Convert.fromWei(reward, Convert.Unit.ETHER));
+                    Utils.showToast("game confirmed. reward : " + Convert.fromWei(reward, Convert.Unit.ETHER));
 
                     lastWinSubject.onNext(Convert.fromWei(reward, Convert.Unit.ETHER).doubleValue());
                     drawResultSubject.onNext(winRate.intValue());
 
                     rxSlotRoom.updateBalance();
-                    playerSeed.confirm(response.idx.getValue().intValue());
+                    if (!isBanker()) {
+                        playerSeed.confirm(response.idx.getValue().intValue());
+                    }
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
@@ -293,10 +300,11 @@ public class PlaySlotViewModel {
                     if (isBanker()) {
                         Log.i(TAG, "player : " + response.player.toString() + " has left");
 
-                        toastSubject.onNext("player : " + response.player.toString() + " has left");
+                        Utils.showToast("player : " + response.player.toString() + " has left");
 
                         rxSlotRoom.updateBalance();
                         seedReadySubject.onNext(false);
+                        clearSpin.onNext(true);
                         return;
                     }
 
@@ -305,12 +313,27 @@ public class PlaySlotViewModel {
         compositeDisposable.add(disposable);
     }
 
+    public void gameOccupy(Double deposit) {
+        if (deposit == null || isBanker()) {
+            return;
+        }
+        machine
+                .initialPlayerSeedReady()
+                .filter(ready -> !ready.getValue())
+                .observeOn(Schedulers.computation())
+                .map(ready -> playerSeed.getInitialSeed())
+                .flatMap(initialSeeds -> machine.occupy(initialSeeds, Convert.toWei(deposit, Convert.Unit.ETHER)))
+                .subscribe(o -> {
+                }, Throwable::printStackTrace);
+    }
+
     public void onCreate() {
         machine = SlotMachine.load(rxSlotRoom.getSlotAddress());
         setGameEvents();
     }
 
     public void onDestroy() {
+        Log.i(TAG, "destroy... clear all events...");
         compositeDisposable.clear();
 
         if ("test".equals(rxSlotRoom.getSlotAddress())) {

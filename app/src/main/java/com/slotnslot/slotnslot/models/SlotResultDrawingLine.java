@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class SlotResultDrawingLine {
     public enum Drawable {
-        DRAWABLE, BIGWIN, LOOSE
+        DRAWABLE, BIGWIN, DEFEAT
     }
     public final Drawable drawable;
     public final Integer[][] slotLines;

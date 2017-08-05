@@ -92,6 +92,10 @@ public class FilterManager {
                             dispose();
                             return;
                         }
+                        System.out.println("address : " + log.getAddress().getHex()
+                                + ", tx : " + log.getTxHash().getHex()
+                                + ", filter : " + filter.getInt64()
+                                + ", data : " + Utils.byteToHex(log.getData()));
                         emitter.onNext(log);
                     });
         }

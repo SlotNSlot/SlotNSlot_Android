@@ -22,6 +22,8 @@ public class SlotBankerFragment extends AbsSlotFragment {
         betLineTextView = view.findViewById(R.id.slot_banker_bet_line_textview);
         totalBetTextView = view.findViewById(R.id.slot_banker_total_bet_textview);
         betETHTextView = view.findViewById(R.id.slot_banker_bet_eth_textview);
+
+        viewModel.drawResultSubject.subscribe(this::drawResult);
         return view;
     }
 

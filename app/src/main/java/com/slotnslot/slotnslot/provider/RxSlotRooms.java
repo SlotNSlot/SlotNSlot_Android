@@ -30,6 +30,9 @@ public class RxSlotRooms {
     public static Map<String, RxSlotRoom> rxSlotRoomMap = new HashMap<>();
     public static BehaviorSubject<Map<String, RxSlotRoom>> rxSlotRoomMapSubject = BehaviorSubject.create();
 
+    public static Map<String, RxSlotRoom> rxMakeSlotRoomMap = new HashMap<>();
+    public static BehaviorSubject<Map<String, RxSlotRoom>> rxMakeSlotRoomMapSubject = BehaviorSubject.create();
+
     public static SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
     public static SlotMachineStorage slotMachineStorage;
     public static CompletableSubject slotMachineStorageLoaded = CompletableSubject.create();
@@ -44,6 +47,10 @@ public class RxSlotRooms {
         return rxSlotRoomMap.get(slotAddress);
     }
 
+    public static RxSlotRoom getMakeSlotRoom(String slotAddress) {
+        return rxMakeSlotRoomMap.get(slotAddress);
+    }
+
     public static void init() {
         slotMachineManager.getStorageAddr()
                 .subscribe(address -> {
@@ -54,15 +61,19 @@ public class RxSlotRooms {
     }
 
     public static void destroy() {
-        for (RxSlotRoom rxSlotRoom : rxSlotRoomMap.values()) {
+        for (RxSlotRoom rxSlotRoom : rxMakeSlotRoomMap.values()) {
             rxSlotRoom.removeBankerEvent();
         }
+
         rxSlotRoomMap.clear();
         notifyChange();
+
+        rxMakeSlotRoomMap.clear();
+        notifyMakeSlotChange();
     }
 
     public static void updateSlotMachines() {
-        SlotRoom test = new SlotRoom("test", "test", 1.0, 0.15, 1000, 0.001, 0.1);
+        SlotRoom test = new SlotRoom("test", "test", 0.15, 1000, 0.001, 0.1, "test", Convert.toWei(1, Convert.Unit.ETHER));
         addSlot(test);
 
         slotMachineStorageLoaded.subscribe(() -> {
@@ -80,41 +91,45 @@ public class RxSlotRooms {
                         Log.i(TAG, "length of slot machine array : " + slotLength);
                         return slotMachineStorage.getSlotMachinesArray(new Uint256(0), new Uint256(slotLength - 1));
                     })
-                    .mergeWith(slotMachineStorage.getSlotMachines(new Address(AccountProvider.getAccount().getAddressHex())))
                     .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
-                    .subscribe(address -> {
-                        String slotAddress = address.toString();
-                        SlotMachine machine = SlotMachine.load(slotAddress);
+                    .filter(address -> Utils.isValidAddress(address.toString()))
+                    .flatMap(RxSlotRooms::createSlotRoom)
+                    .filter(slotRoom -> !AccountProvider.identical(slotRoom.getBankerAddress()))
+                    .subscribe(RxSlotRooms::addSlot, Throwable::printStackTrace);
 
-                        Observable<SlotMachine.GetInfoResponse> infoOb = machine.getInfo();
-                        Observable<Address> bankerAddressOb = machine.owner();
-                        Observable<Bytes16> nameOb = machine.mName();
-                        Observable
-                                .zip(infoOb, bankerAddressOb, nameOb, (info, bankerAddress, name) -> {
-                                    SlotRoom slotRoom = new SlotRoom(
-                                            slotAddress,
-                                            Utils.byteToString(name.getValue()),
-                                            Convert.fromWei(info.bankerBalance.getValue(), Convert.Unit.ETHER).doubleValue(),
-                                            info.mDecider.getValue().intValue() / 1000.0,
-                                            info.mMaxPrize.getValue().intValue(),
-                                            Convert.fromWei(info.mMinBet.getValue(), Convert.Unit.ETHER).doubleValue(),
-                                            Convert.fromWei(info.mMaxBet.getValue(), Convert.Unit.ETHER).doubleValue()
-                                    );
-                                    slotRoom.setBankerAddress(bankerAddress.toString());
-                                    slotRoom.setBankerBalance(info.bankerBalance.getValue());
-                                    return slotRoom;
-                                })
-                                .subscribe(RxSlotRooms::addSlot, Throwable::printStackTrace);
-                    }, Throwable::printStackTrace);
+            slotMachineStorage
+                    .getSlotMachines(new Address(AccountProvider.getAccount().getAddressHex()))
+                    .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
+                    .filter(address -> Utils.isValidAddress(address.toString()))
+                    .flatMap(RxSlotRooms::createSlotRoom)
+                    .subscribe(RxSlotRooms::addMakeSlot, Throwable::printStackTrace);
         });
     }
 
-    public static void removeSlot(String address) {
-        rxSlotRoomMap.remove(address);
-        rxSlotRoomMapSubject.onNext(rxSlotRoomMap);
+    private static Observable<SlotRoom> createSlotRoom(Address address) {
+        String slotAddress = address.toString();
+        SlotMachine machine = SlotMachine.load(slotAddress);
+
+        Observable<SlotMachine.GetInfoResponse> infoOb = machine.getInfo();
+        Observable<Address> bankerAddressOb = machine.owner();
+        Observable<Bytes16> nameOb = machine.mName();
+        return Observable
+                .zip(infoOb, bankerAddressOb, nameOb, (info, bankerAddress, name) -> new SlotRoom(
+                        slotAddress,
+                        Utils.byteToString(name.getValue()),
+                        info.mDecider.getValue().intValue() / 1000.0,
+                        info.mMaxPrize.getValue().intValue(),
+                        Convert.fromWei(info.mMinBet.getValue(), Convert.Unit.ETHER).doubleValue(),
+                        Convert.fromWei(info.mMaxBet.getValue(), Convert.Unit.ETHER).doubleValue(),
+                        bankerAddress.toString(),
+                        info.bankerBalance.getValue()
+                ));
     }
 
     public static void addSlot(SlotRoom slotRoom) {
+        if (rxSlotRoomMap.containsKey(slotRoom.getAddress())) {
+            return;
+        }
         RxSlotRoom rxSlotRoom = new RxSlotRoom(slotRoom);
         rxSlotRoomMap.put(slotRoom.getAddress(), rxSlotRoom);
         notifyChange();
@@ -122,6 +137,9 @@ public class RxSlotRooms {
 
     public static void addSlots(List<SlotRoom> slotRoomList) {
         for (SlotRoom slotRoom : slotRoomList) {
+            if (rxSlotRoomMap.containsKey(slotRoom.getAddress())) {
+                continue;
+            }
             RxSlotRoom rxSlotRoom = new RxSlotRoom(slotRoom);
             rxSlotRoomMap.put(slotRoom.getAddress(), rxSlotRoom);
         }
@@ -130,5 +148,36 @@ public class RxSlotRooms {
 
     private static void notifyChange() {
         rxSlotRoomMapSubject.onNext(rxSlotRoomMap);
+    }
+
+    public static void addMakeSlot(SlotRoom slotRoom) {
+        if (rxMakeSlotRoomMap.containsKey(slotRoom.getAddress())) {
+            return;
+        }
+        RxSlotRoom rxSlotRoom = new RxSlotRoom(slotRoom);
+        rxMakeSlotRoomMap.put(slotRoom.getAddress(), rxSlotRoom);
+        notifyMakeSlotChange();
+    }
+
+    public static void addMakeSlots(List<SlotRoom> slotRoomList) {
+        for (SlotRoom slotRoom : slotRoomList) {
+            if (rxMakeSlotRoomMap.containsKey(slotRoom.getAddress())) {
+                continue;
+            }
+            RxSlotRoom rxSlotRoom = new RxSlotRoom(slotRoom);
+            rxMakeSlotRoomMap.put(slotRoom.getAddress(), rxSlotRoom);
+        }
+        notifyMakeSlotChange();
+    }
+
+    public static void removeMakeSlot(String address) {
+        RxSlotRoom makeSlot = rxMakeSlotRoomMap.get(address);
+        makeSlot.removeBankerEvent();
+        rxMakeSlotRoomMap.remove(address);
+        notifyMakeSlotChange();
+    }
+
+    private static void notifyMakeSlotChange() {
+        rxMakeSlotRoomMapSubject.onNext(rxMakeSlotRoomMap);
     }
 }

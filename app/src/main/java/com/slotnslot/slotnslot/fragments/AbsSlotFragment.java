@@ -22,6 +22,8 @@ import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.DrawingLine;
 import com.slotnslot.slotnslot.models.PlaySlotViewModel;
 import com.slotnslot.slotnslot.models.SlotResultDrawingLine;
+import com.slotnslot.slotnslot.provider.RxSlotRoom;
+import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 import com.slotnslot.slotnslot.utils.DrawView;
@@ -85,7 +87,11 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
                 new float[]{0, 1}, Shader.TileMode.CLAMP);
         bigWinTextView.getPaint().setShader(textShader);
 
-        viewModel = new PlaySlotViewModel(slotRoomAddress);
+        RxSlotRoom rxSlotRoom = SlotType.BANKER.equals(type)
+                ? RxSlotRooms.getMakeSlotRoom(slotRoomAddress)
+                : RxSlotRooms.getSlotRoom(slotRoomAddress);
+        viewModel = new PlaySlotViewModel(rxSlotRoom);
+
         addSlot(0, false);
         addSlot(1, false);
         addSlot(2, false);
@@ -98,14 +104,19 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         if ("test".equals(viewModel.getRxSlotRoom().getSlotAddress())) { // if test
             return view;
         }
-
         // below do not need for test
         viewModel.onCreate();
+
+        Double deposit = (Double) getArguments().getSerializable(Constants.BUNDLE_KEY_SLOT_ROOM_DEPOSIT);
+        viewModel.gameOccupy(deposit);
+
         viewModel.getRxSlotRoom().updateBalance();
         viewModel.seedReadySubject.subscribe(ready -> loadingViewSetVisible(!ready));
-        viewModel.drawResultSubject.subscribe(this::drawResult);
-        viewModel.toastSubject.subscribe(msg -> Utils.showToast(msg));
         viewModel.startSpin.subscribe(bool -> tapSpin());
+        viewModel.clearSpin.subscribe(bool -> {
+            removePayLines();
+            tapStop(false);
+        });
 
         return view;
     }
@@ -151,6 +162,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
 
     public void tapSpin() {
         Completable complete = Completable.complete();
+        complete.delay(0, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> removePayLines());
         complete.delay(0, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(0));
         complete.delay(200, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(1));
         complete.delay(400, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(2));
@@ -192,14 +204,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
 
     public void drawResult(int slotResult) {
         if (slotResult == 0) {
-            Integer[][] slotLines = new Integer[5][3];
-            for (int i = 0; i < slotLines.length; i++) {
-                for (int j = 0; j < slotLines[i].length; j++) {
-                    slotLines[i][j] = Constants.UNDEFINE;
-                }
-            }
-            drawSlot(new SlotResultDrawingLine(SlotResultDrawingLine.Drawable.LOOSE, slotLines, null));
-            tapStop(false);
+            drawDefeatLine(false);
             return;
         }
         SlotResultDrawingLine slotResultDrawline = Utils.getDrawLine(viewModel.getCurrentLine(), slotResult);
@@ -210,10 +215,21 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         }
     }
 
+    private void drawDefeatLine(boolean isBigwin) {
+        Integer[][] slotLines = new Integer[5][3];
+        for (int i = 0; i < slotLines.length; i++) {
+            for (int j = 0; j < slotLines[i].length; j++) {
+                slotLines[i][j] = Constants.UNDEFINE;
+            }
+        }
+        drawSlot(new SlotResultDrawingLine(SlotResultDrawingLine.Drawable.DEFEAT, slotLines, null));
+        tapStop(isBigwin);
+    }
+
     private void drawBigWin(int slotResult) {
+        drawDefeatLine(true);
         bigWinContainer.setVisibility(View.VISIBLE);
         bigWinTextView.setText("+" + slotResult);
-        tapStop(true);
     }
 
     private void drawSlot(SlotResultDrawingLine slotResultDrawingLine) {
@@ -268,6 +284,13 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
             slotContainer.addView(payLine, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, slotContainer.getMeasuredHeight()));
         }
         slotLayout.bringToFront();
+    }
+
+    private void removePayLines() {
+        for (DrawView view : payLineView) {
+            slotContainer.removeView(view);
+        }
+        slotContainer.invalidate();
     }
 
     @Override
