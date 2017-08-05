@@ -21,14 +21,17 @@ import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.activities.SignInUpActivity;
 import com.slotnslot.slotnslot.geth.Credential;
 import com.slotnslot.slotnslot.geth.CredentialManager;
+import com.slotnslot.slotnslot.provider.AccountProvider;
 
 import org.ethereum.geth.Account;
 import org.ethereum.geth.KeyStore;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.Completable;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class SignUpFragment extends SlotRootFragment {
@@ -113,30 +116,37 @@ public class SignUpFragment extends SlotRootFragment {
             return;
         }
 
-        Completable
-                .create(e -> {
+        loadingViewSetVisible(true);
+        Observable
+                .just(true)
+                .flatMap(b -> {
                     KeyStore keyStore = CredentialManager.getKeyStore();
 
                     String passphrase = passwordInputEditText.getText().toString();
                     Account account = keyStore.newAccount(passphrase);
 
                     CredentialManager.setDefault(Credential.create(account, passphrase));
+                    AccountProvider.setAccount(new com.slotnslot.slotnslot.models.Account(account));
 
-                    e.onComplete();
+                    return Observable.timer(2, TimeUnit.SECONDS);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        () -> {
+                        t -> {
                             Fragment frag = new SignUpPhraseFragment();
                             FragmentManager fmanager = getActivity().getSupportFragmentManager();
                             FragmentTransaction ftrans = fmanager.beginTransaction();
                             ftrans.replace(R.id.fragment_framelayout, frag);
                             ftrans.addToBackStack(null);
                             ftrans.commit();
+
+                            loadingViewSetVisible(false);
                         },
                         e -> {
                             e.printStackTrace();
                             Log.i(TAG, "fail to create account : " + e.getMessage());
+
+                            loadingViewSetVisible(false);
                         });
     }
 
