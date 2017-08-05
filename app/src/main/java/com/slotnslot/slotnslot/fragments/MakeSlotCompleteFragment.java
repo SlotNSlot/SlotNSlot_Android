@@ -94,7 +94,6 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                 new Uint16(slotRoom.getMaxWinPrize()),
                 Utils.stringToBytes16(roomNameEditText.getText().toString()))
                 .map(slotMachineManager::getSlotMachineCreatedEvents)
-                .compose(bindToLifecycle())
                 .flatMap(responses -> {
                     if (responses.isEmpty()) {
                         Log.e(TAG, "event is empty.");
@@ -114,7 +113,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
 
                     SlotRoom slotRoom = new SlotRoom(
                             slotAddress,
-                            slotAddress,
+                            this.slotRoom.getTitle(),
                             responses.get(0)._decider.getValue().intValue() / 1000.0,
                             responses.get(0)._maxPrize.getValue().intValue(),
                             Convert.fromWei(responses.get(0)._minBet.getValue(), Convert.Unit.ETHER).doubleValue(),
@@ -122,7 +121,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                             AccountProvider.getAccount().getAddressHex(),
                             this.slotRoom.getBankerBalance()
                     );
-                    RxSlotRooms.addSlot(slotRoom);
+                    RxSlotRooms.addMakeSlot(slotRoom);
 
                     return TransactionManager.sendFunds(slotAddress, this.slotRoom.getBankerBalance());
                 })
