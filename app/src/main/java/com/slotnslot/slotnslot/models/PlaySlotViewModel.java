@@ -120,8 +120,10 @@ public class PlaySlotViewModel {
     }
 
     public void maxBet() {
-        betLineSubject.onNext(Constants.BET_MAX_LINE);
-        betEthSubject.onNext(rxSlotRoom.getSlotRoom().getMaxBet());
+        currentLine = Constants.BET_MAX_LINE;
+        betLineSubject.onNext(currentLine);
+        currentBetEth = rxSlotRoom.getSlotRoom().getMaxBet();
+        betEthSubject.onNext(currentBetEth);
     }
 
     public boolean isBanker() {
