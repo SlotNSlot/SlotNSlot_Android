@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.slotnslot.slotnslot.R;
+import com.slotnslot.slotnslot.utils.Convert;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
@@ -23,7 +24,7 @@ public class MakeSlotStepTwoFragment extends MakeSlotStepFragment {
         observable.filter(cs -> isStringDouble(cs.toString()))
                 .map(cs -> Double.parseDouble(cs.toString()))
                 .filter(stake -> stake != null)
-                .subscribe(stake -> this.slotRoom.setStake(stake));
+                .subscribe(stake -> this.slotRoom.setBankerBalance(Convert.toWei(stake, Convert.Unit.ETHER)));
     }
 
     @Override

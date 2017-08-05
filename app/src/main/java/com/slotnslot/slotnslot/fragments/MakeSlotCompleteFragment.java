@@ -73,7 +73,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
 
         hitRatioTextView.setText(String.format(HIT_RATIO, slotRoom.getHitRatio()));
         betRangeTextView.setText(String.format(BET_RANGE, slotRoom.getMinBet(), slotRoom.getMaxBet()));
-        stakeTextView.setText(String.format(TOTAL_STKE, slotRoom.getStake()));
+        stakeTextView.setText(String.format(TOTAL_STKE, Convert.fromWei(slotRoom.getBankerBalance(), Convert.Unit.ETHER)));
         maxPrizeTextView.setText(String.format(MAX_PRIZE, slotRoom.getMaxWinPrize()));
 
         nextButton.setText("CONFIRM");
@@ -115,17 +115,16 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                     SlotRoom slotRoom = new SlotRoom(
                             slotAddress,
                             slotAddress,
-                            this.slotRoom.getStake(),
                             responses.get(0)._decider.getValue().intValue() / 1000.0,
                             responses.get(0)._maxPrize.getValue().intValue(),
                             Convert.fromWei(responses.get(0)._minBet.getValue(), Convert.Unit.ETHER).doubleValue(),
-                            Convert.fromWei(responses.get(0)._maxBet.getValue(), Convert.Unit.ETHER).doubleValue()
+                            Convert.fromWei(responses.get(0)._maxBet.getValue(), Convert.Unit.ETHER).doubleValue(),
+                            AccountProvider.getAccount().getAddressHex(),
+                            this.slotRoom.getBankerBalance()
                     );
-                    slotRoom.setBankerAddress(AccountProvider.getAccount().getAddressHex());
-
                     RxSlotRooms.addSlot(slotRoom);
 
-                    return TransactionManager.sendFunds(slotAddress, Convert.toWei(this.slotRoom.getStake(), Convert.Unit.ETHER));
+                    return TransactionManager.sendFunds(slotAddress, this.slotRoom.getBankerBalance());
                 })
                 .subscribe(
                         hash -> Log.i(TAG, "fund sent. hash : " + hash.getHex()),

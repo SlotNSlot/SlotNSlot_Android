@@ -123,6 +123,7 @@ public class RxSlotRoom {
                     Log.i(TAG, "idx : " + index);
 
                     bankerSeed.confirm(index);
+                    updateBalance();
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }

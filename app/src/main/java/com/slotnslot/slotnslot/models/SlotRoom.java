@@ -21,22 +21,21 @@ public class SlotRoom implements Serializable {
 
     private int playTime;
 
-    private double stake;
-
     private String playerAddress;
     private String bankerAddress;
 
     private BigInteger playerBalance = BigInteger.ZERO;
     private BigInteger bankerBalance = BigInteger.ZERO;
 
-    public SlotRoom(String address, String title, double stake, double hitRatio, int maxWinPrize, double minBet, double maxBet) {
+    public SlotRoom(String address, String title, double hitRatio, int maxWinPrize, double minBet, double maxBet, String bankerAddress, BigInteger bankerBalance) {
         this.address = address;
         this.title = title;
-        this.stake = stake;
         this.hitRatio = hitRatio;
         this.maxWinPrize = maxWinPrize;
         this.minBet = minBet;
         this.maxBet = maxBet;
+        this.bankerAddress = bankerAddress;
+        this.bankerBalance = bankerBalance;
     }
 
     public int getHitRatio() {

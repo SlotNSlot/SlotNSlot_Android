@@ -73,7 +73,7 @@ public class RxSlotRooms {
     }
 
     public static void updateSlotMachines() {
-        SlotRoom test = new SlotRoom("test", "test", 1.0, 0.15, 1000, 0.001, 0.1);
+        SlotRoom test = new SlotRoom("test", "test", 0.15, 1000, 0.001, 0.1, "test", Convert.toWei(1, Convert.Unit.ETHER));
         addSlot(test);
 
         slotMachineStorageLoaded.subscribe(() -> {
@@ -114,20 +114,16 @@ public class RxSlotRooms {
         Observable<Address> bankerAddressOb = machine.owner();
         Observable<Bytes16> nameOb = machine.mName();
         return Observable
-                .zip(infoOb, bankerAddressOb, nameOb, (info, bankerAddress, name) -> {
-                    SlotRoom slotRoom = new SlotRoom(
-                            slotAddress,
-                            Utils.byteToString(name.getValue()),
-                            Convert.fromWei(info.bankerBalance.getValue(), Convert.Unit.ETHER).doubleValue(),
-                            info.mDecider.getValue().intValue() / 1000.0,
-                            info.mMaxPrize.getValue().intValue(),
-                            Convert.fromWei(info.mMinBet.getValue(), Convert.Unit.ETHER).doubleValue(),
-                            Convert.fromWei(info.mMaxBet.getValue(), Convert.Unit.ETHER).doubleValue()
-                    );
-                    slotRoom.setBankerAddress(bankerAddress.toString());
-                    slotRoom.setBankerBalance(info.bankerBalance.getValue());
-                    return slotRoom;
-                });
+                .zip(infoOb, bankerAddressOb, nameOb, (info, bankerAddress, name) -> new SlotRoom(
+                        slotAddress,
+                        Utils.byteToString(name.getValue()),
+                        info.mDecider.getValue().intValue() / 1000.0,
+                        info.mMaxPrize.getValue().intValue(),
+                        Convert.fromWei(info.mMinBet.getValue(), Convert.Unit.ETHER).doubleValue(),
+                        Convert.fromWei(info.mMaxBet.getValue(), Convert.Unit.ETHER).doubleValue(),
+                        bankerAddress.toString(),
+                        info.bankerBalance.getValue()
+                ));
     }
 
     public static void addSlot(SlotRoom slotRoom) {
