@@ -45,9 +45,10 @@ public class Constants {
     public static final String PLAY_BET_TOTAL_BET_FORMAT = "%.3f ETH";
     public static final String PLAY_PLAYERS_BALANCE_TEXT_FORMAT = "%.4f ETH";
     public static final String PLAY_LAST_WIN_TEXT_FFORMAT = "+ %.3f ETH";
-    public static final String HIT_RATIO_TEXT_FORMAT = "%d%%";
+    public static final String HIT_RATIO_TEXT_FORMAT = "%.1f" +
+            " %%";
     public static final String BET_RANGE_TEXT_FORMAT = "%.3f - %.3f ETH";
-    public static final String TOTAL_STKE_TEXT_FORMAT = "%.3f ETH";
+    public static final String TOTAL_STAKE_TEXT_FORMAT = "%.3f ETH";
     public static final String MAX_PRIZE_TEXT_FORMAT = "x%d ";
 
     public static final String BUNDLE_KEY_LIST_TYPE = "LIST_TYPE";

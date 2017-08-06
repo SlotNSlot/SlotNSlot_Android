@@ -15,9 +15,9 @@ import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
 
 public class SlotViewHolder extends RecyclerView.ViewHolder {
-    private static final String HIT_RATIO = "%d %%";
+    private static final String HIT_RATIO = "%.1f %%";
     private static final String BET_RANGE = "BET Range : %.3f-%.3f ETH";
-    private static final String TOTAL_STKE = "%.3f ETH";
+    private static final String TOTAL_STAKE = "%.3f ETH";
     private static final String MAX_PRIZE = "x %d ";
     private static final String PLAY_TIME = "Played %d times";
 
@@ -51,7 +51,7 @@ public class SlotViewHolder extends RecyclerView.ViewHolder {
             disposable.dispose();
         }
         disposables.clear();
-        disposables.add(viewModel.stake.subscribe(stake -> stackTextView.setText(String.format(TOTAL_STKE, stake))));
+        disposables.add(viewModel.stake.subscribe(stake -> stackTextView.setText(String.format(TOTAL_STAKE, stake))));
         disposables.add(viewModel.playTime.subscribe(playTime -> playTimeTextView.setText(String.format(PLAY_TIME, playTime))));
 
         titleTextView.setText(viewModel.getRxSlotRoom().getSlotRoom().getTitle());

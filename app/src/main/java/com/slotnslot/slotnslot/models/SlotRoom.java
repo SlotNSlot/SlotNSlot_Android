@@ -38,7 +38,7 @@ public class SlotRoom implements Serializable {
         this.bankerBalance = bankerBalance;
     }
 
-    public int getHitRatio() {
-        return (int) (hitRatio * 100);
+    public double getHitRatio() {
+        return hitRatio * 100;
     }
 }

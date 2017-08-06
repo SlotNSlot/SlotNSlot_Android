@@ -35,7 +35,7 @@ import io.reactivex.Observable;
 public class MakeSlotCompleteFragment extends SlotRootFragment {
     private static final String TAG = MakeSlotCompleteFragment.class.getSimpleName();
 
-    private static final String HIT_RATIO = "HIT RATIO : %d%%";
+    private static final String HIT_RATIO = "HIT RATIO : %.1f %%";
     private static final String BET_RANGE = "BET RANGE : %.3f-%.3f ETH";
     private static final String TOTAL_STKE = "TOTAL STAKE : %.3f ETH";
     private static final String MAX_PRIZE = "MAX PRIZE : x %d ";
@@ -88,7 +88,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
         SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
 
         slotMachineManager.createSlotMachine(
-                new Uint16(slotRoom.getHitRatio() * 10),
+                new Uint16((int) slotRoom.getHitRatio() * 10),
                 new Uint256(Convert.toWei(slotRoom.getMinBet(), Convert.Unit.ETHER)),
                 new Uint256(Convert.toWei(slotRoom.getMaxBet(), Convert.Unit.ETHER)),
                 new Uint16(slotRoom.getMaxWinPrize()),
