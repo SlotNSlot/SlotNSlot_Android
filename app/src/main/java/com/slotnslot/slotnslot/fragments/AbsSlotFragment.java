@@ -114,6 +114,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         viewModel.seedReadySubject.subscribe(ready -> loadingViewSetVisible(!ready));
         viewModel.startSpin.subscribe(bool -> tapSpin());
         viewModel.clearSpin.subscribe(bool -> {
+            bigWinContainer.setVisibility(View.INVISIBLE);
             removePayLines();
             tapStop(false);
         });
@@ -161,7 +162,10 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
 
     public void tapSpin() {
         Completable complete = Completable.complete();
-        complete.delay(0, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> removePayLines());
+        complete.delay(0, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> {
+            removePayLines();
+            bigWinContainer.setVisibility(View.INVISIBLE);
+        });
         complete.delay(0, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(0));
         complete.delay(200, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(1));
         complete.delay(400, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(2));
@@ -188,7 +192,6 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
     }
 
     private void stop(int index) {
-        bigWinContainer.setVisibility(View.INVISIBLE);
         WheelView view = (WheelView) slotLayout.getChildAt(index);
         view.stopScrolling();
     }
