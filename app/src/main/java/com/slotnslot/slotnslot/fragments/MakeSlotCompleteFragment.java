@@ -88,7 +88,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
         SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
 
         slotMachineManager.createSlotMachine(
-                new Uint16((int) slotRoom.getHitRatio() * 10),
+                new Uint16((int) (slotRoom.getHitRatio() * 10)),
                 new Uint256(Convert.toWei(slotRoom.getMinBet(), Convert.Unit.ETHER)),
                 new Uint256(Convert.toWei(slotRoom.getMaxBet(), Convert.Unit.ETHER)),
                 new Uint16(slotRoom.getMaxWinPrize()),

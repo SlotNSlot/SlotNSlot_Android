@@ -12,6 +12,7 @@ import org.web3j.abi.datatypes.Address;
 import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.abi.datatypes.generated.Uint8;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
@@ -31,7 +32,7 @@ public class RxSlotRoom {
     private SlotMachine machine;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private boolean bankerEventInitialized = false;
-    private Seed bankerSeed = new Seed();
+    private Seed bankerSeed;
 
     public RxSlotRoom(SlotRoom slotRoom) {
         this.slotAddress = slotRoom.getAddress();
@@ -66,16 +67,21 @@ public class RxSlotRoom {
             return;
         }
 
-        SlotMachine machine = SlotMachine.load(slotAddress);
-        machine.playerBalance()
-                .subscribe(playerBalance -> {
-                    slotRoom.setPlayerBalance(playerBalance.getValue());
-                    notifyChange();
-                });
-        machine.bankerBalance()
-                .subscribe(bankerBalance -> {
-                    slotRoom.setBankerBalance(bankerBalance.getValue());
-                    notifyChange();
+        Completable
+                .complete()
+                .observeOn(Schedulers.io())
+                .subscribe(() -> {
+                    SlotMachine machine = SlotMachine.load(slotAddress);
+                    machine.playerBalance()
+                            .subscribe(playerBalance -> {
+                                slotRoom.setPlayerBalance(playerBalance.getValue());
+                                notifyChange();
+                            });
+                    machine.bankerBalance()
+                            .subscribe(bankerBalance -> {
+                                slotRoom.setBankerBalance(bankerBalance.getValue());
+                                notifyChange();
+                            });
                 });
     }
 
@@ -85,7 +91,7 @@ public class RxSlotRoom {
         }
         bankerEventInitialized = true;
         machine = SlotMachine.load(slotAddress);
-
+        Seed.load(slotAddress).subscribe(seed -> bankerSeed = seed);
         setOccupiedEvent();
         setBankerSeedInitializedEvent();
         setGameInitializedEvent();
@@ -108,6 +114,7 @@ public class RxSlotRoom {
                 .subscribe(response -> {
                     Log.i(TAG, "player left : " + response.player.toString());
                     Log.i(TAG, "player's initial balance: " + response.playerBalance.getValue());
+                    AccountProvider.updateBalance();
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
@@ -123,6 +130,8 @@ public class RxSlotRoom {
                     Log.i(TAG, "idx : " + index);
 
                     bankerSeed.confirm(index);
+                    bankerSeed.save(machine.getContractAddress());
+
                     updateBalance();
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);

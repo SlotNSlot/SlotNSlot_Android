@@ -27,7 +27,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FilterManager {
 
-    private static final int POLLING_PERIOD = 1000;
+    private static final int POLLING_PERIOD = 500;
     private static final int DEFAULT_BUFFER_SIZE = 16;
 
     private FilterManager() {

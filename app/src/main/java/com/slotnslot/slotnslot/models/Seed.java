@@ -1,9 +1,15 @@
 package com.slotnslot.slotnslot.models;
 
 import com.slotnslot.slotnslot.geth.Utils;
+import com.slotnslot.slotnslot.utils.Constants;
+import com.slotnslot.slotnslot.utils.StorageUtil;
 
 import org.web3j.abi.datatypes.StaticArray;
 import org.web3j.abi.datatypes.generated.Bytes32;
+
+import io.reactivex.Completable;
+import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 
 public class Seed {
     String[] seeds = new String[3];
@@ -43,5 +49,25 @@ public class Seed {
 
     public void confirm(int idx) {
         repeats[idx]--;
+    }
+
+    public void save(String slotAddress) {
+        Completable
+                .complete()
+                .observeOn(Schedulers.io())
+                .subscribe(() -> StorageUtil.save(Constants.BANKER_SEED_KEY, slotAddress, this));
+    }
+
+    public static Single<Seed> load(String slotAddress) {
+        return Single
+                .<Seed>create(e -> {
+                    Seed load = StorageUtil.load(Constants.BANKER_SEED_KEY, slotAddress, Seed.class);
+                    if (load == null) {
+                        e.onSuccess(new Seed());
+                    } else {
+                        e.onSuccess(load);
+                    }
+                })
+                .subscribeOn(Schedulers.io());
     }
 }
