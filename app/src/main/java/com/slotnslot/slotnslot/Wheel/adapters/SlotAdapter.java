@@ -71,7 +71,7 @@ public class SlotAdapter extends AbstractWheelAdapter {
         return img;
     }
 
-    public ArrayList<Integer> setItemIndexs(Integer[] itemIndexs, ArrayList<Integer> notWindDrawSymBol) {
+    public synchronized ArrayList<Integer> setItemIndexs(Integer[] itemIndexs, ArrayList<Integer> notWindDrawSymBol) {
         this.itemIndexs = itemIndexs;
         Random random = new Random();
         for (int i = 0; i < 3; i++) {
@@ -113,12 +113,11 @@ public class SlotAdapter extends AbstractWheelAdapter {
         }
     }
 
-    private int getImageIndex(int index) {
-        int randomIndex = new Random().nextInt(Constants.items.length);
+    private synchronized int getImageIndex(int index) {
         if (this.itemIndexs.length > index) {
-            return this.itemIndexs[index] == -1 ? randomIndex : this.itemIndexs[index];
+            return this.itemIndexs[index];
         }
-        return randomIndex;
+        return index;
     }
 
     public static int calculateInSampleSize(
