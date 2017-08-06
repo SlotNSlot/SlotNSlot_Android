@@ -146,7 +146,6 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
 
         WheelView wheel = /* getWheel(id); */addWheel(id);
         wheel.setViewAdapter(slotAdapter);
-        wheel.setCurrentItem((int) (Math.random() * 10));
         wheel.setCyclic(true);
         wheel.setEnabled(false);
         slotLayout.addView(wheel, new TableLayout.LayoutParams(
