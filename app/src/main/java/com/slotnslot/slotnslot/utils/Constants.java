@@ -63,4 +63,7 @@ public class Constants {
     public static final String ACTIVITY_EXTRA_KEY_SLOT_TYPE = "SLOT_TYPE";
     public static final String SLOT_PLAYER_TITLE = "Play";
     public static final String SLOT_BANKER_TITLE = "Watch Game";
+
+    public static final String BANKER_SEED_KEY = "banker_seed";
+    public static final String PLAYER_SEED_KEY = "player_seed";
 }

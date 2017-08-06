@@ -9,14 +9,13 @@ import com.slotnslot.slotnslot.provider.RxSlotRoom;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 
-import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.abi.datatypes.generated.Uint8;
 
 import java.math.BigInteger;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -60,7 +59,7 @@ public class PlaySlotViewModel {
 
     private boolean seedReady = false;
 
-    private PlayerSeed playerSeed = new PlayerSeed();
+    private PlayerSeed playerSeed;
 
     public PlaySlotViewModel(RxSlotRoom rxSlotRoom) {
         this.rxSlotRoom = rxSlotRoom;
@@ -259,9 +258,9 @@ public class PlaySlotViewModel {
                     }
                     playerSeed.setNextBankerSeed(bankerSeed);
 
-                    Single
-                            .<Bytes32>create(e -> e.onSuccess(playerSeed.getSeed()))
-                            .toObservable()
+                    Observable
+                            .timer(2, TimeUnit.SECONDS)
+                            .map(e -> playerSeed.getSeed())
                             .flatMap(playerSeed -> machine.setPlayerSeed(playerSeed, new Uint8(this.playerSeed.getIndex())))
                             .subscribeOn(Schedulers.computation())
                             .subscribe(o -> {
@@ -276,20 +275,22 @@ public class PlaySlotViewModel {
                 .distinctUntilChanged(response -> response.idx)
                 .subscribe(response -> {
                     BigInteger reward = response.reward.getValue();
-                    BigInteger winRate = reward.divide(Convert.toWei(previousBetEth, Convert.Unit.ETHER));
+                    int winRate = reward.divide(Convert.toWei(previousBetEth, Convert.Unit.ETHER)).intValue();
 
                     Log.i(TAG, "reward : " + reward);
                     Log.i(TAG, "bet : " + previousBetEth);
                     Log.i(TAG, "idx : " + response.idx.getValue());
+                    Log.i(TAG, "win rate : " + winRate);
 
                     Utils.showToast("game confirmed. reward : " + Convert.fromWei(reward, Convert.Unit.ETHER));
 
                     lastWinSubject.onNext(Convert.fromWei(reward, Convert.Unit.ETHER).doubleValue());
-                    drawResultSubject.onNext(winRate.intValue());
+                    drawResultSubject.onNext(winRate);
 
                     rxSlotRoom.updateBalance();
                     if (!isBanker()) {
                         playerSeed.confirm(response.idx.getValue().intValue());
+                        playerSeed.save(machine.getContractAddress());
                     }
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
@@ -329,8 +330,13 @@ public class PlaySlotViewModel {
                 }, Throwable::printStackTrace);
     }
 
-    public void onCreate() {
+    public void onCreate(Double deposit) {
         machine = SlotMachine.load(rxSlotRoom.getSlotAddress());
+        PlayerSeed.load(rxSlotRoom.getSlotAddress())
+                .subscribe(seed -> {
+                    playerSeed = (PlayerSeed) seed;
+                    gameOccupy(deposit);
+                }, Throwable::printStackTrace);
         setGameEvents();
     }
 

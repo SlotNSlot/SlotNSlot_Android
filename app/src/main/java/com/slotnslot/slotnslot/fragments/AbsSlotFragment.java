@@ -105,10 +105,8 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
             return view;
         }
         // below do not need for test
-        viewModel.onCreate();
-
         Double deposit = (Double) getArguments().getSerializable(Constants.BUNDLE_KEY_SLOT_ROOM_DEPOSIT);
-        viewModel.gameOccupy(deposit);
+        viewModel.onCreate(deposit);
 
         viewModel.getRxSlotRoom().updateBalance();
         viewModel.seedReadySubject.subscribe(ready -> loadingViewSetVisible(!ready));
