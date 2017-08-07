@@ -16,6 +16,7 @@ import com.slotnslot.slotnslot.utils.SlotUtil;
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SlotAdapter extends AbstractWheelAdapter {
     private ArrayList<SoftReference<Bitmap>> mImages;
@@ -50,7 +51,7 @@ public class SlotAdapter extends AbstractWheelAdapter {
     }
 
     @Override
-    public View getItem(int index, View convertView, ViewGroup parent) {
+    public synchronized View getItem(int index, View convertView, ViewGroup parent) {
         ImageView img;
         if (convertView != null) {
             img = (ImageView) convertView;
@@ -64,8 +65,8 @@ public class SlotAdapter extends AbstractWheelAdapter {
         SoftReference<Bitmap> bitmapRef = mImages.get(getImageIndex(index));
         Bitmap bitmap = bitmapRef.get();
         if (bitmap == null) {
-            bitmap = loadImage(Constants.items[index]);
-            mImages.set(index, new SoftReference<Bitmap>(bitmap));
+            bitmap = loadImage(Constants.items[getImageIndex(index)]);
+            mImages.set(getImageIndex(index), new SoftReference<Bitmap>(bitmap));
         }
         img.setImageBitmap(bitmap);
         return img;

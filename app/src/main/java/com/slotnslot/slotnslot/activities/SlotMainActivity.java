@@ -2,6 +2,7 @@ package com.slotnslot.slotnslot.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -20,8 +21,8 @@ import android.widget.TextView;
 import com.slotnslot.slotnslot.MyPageType;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.adapters.TabPagerAdapter;
+import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.AccountViewModel;
-import com.slotnslot.slotnslot.models.SlotRoomMapViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Convert;
@@ -46,6 +47,7 @@ public class SlotMainActivity extends SlotRootActivity {
     RelativeLayout loadingView;
 
     private AccountViewModel accountViewModel;
+    private boolean doubleBackToExitPressedOnce;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +126,13 @@ public class SlotMainActivity extends SlotRootActivity {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (doubleBackToExitPressedOnce) {
+                super.onBackPressed();
+                return;
+            }
+            this.doubleBackToExitPressedOnce = true;
+            Utils.showToast("Please click BACK again to exit");
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce=false, 2000);
         }
     }
 
