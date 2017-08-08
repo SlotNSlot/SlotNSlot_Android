@@ -195,8 +195,7 @@ public class RxSlotRoom {
                             .toObservable()
                             .flatMap(initialSeeds -> machine.initBankerSeed(bankerSeed.getInitialSeed()))
                             .subscribeOn(Schedulers.computation())
-                            .subscribe(o -> {
-                            }, Throwable::printStackTrace);
+                            .subscribe(o -> bankerSeed.save(machine.getContractAddress()), Throwable::printStackTrace);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }

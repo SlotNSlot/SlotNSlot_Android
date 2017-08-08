@@ -9,7 +9,10 @@ import android.widget.Button;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class SlotBankerFragment extends AbsSlotFragment {
 
@@ -23,7 +26,7 @@ public class SlotBankerFragment extends AbsSlotFragment {
         totalBetTextView = view.findViewById(R.id.slot_banker_total_bet_textview);
         betETHTextView = view.findViewById(R.id.slot_banker_bet_eth_textview);
 
-        viewModel.drawResultSubject.subscribe(this::drawResult);
+        viewModel.drawResultSubject.delay(3, TimeUnit.SECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(this::drawResult);
         return view;
     }
 
