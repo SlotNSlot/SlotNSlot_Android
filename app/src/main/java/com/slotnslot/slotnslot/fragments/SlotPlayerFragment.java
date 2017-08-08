@@ -12,7 +12,10 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.geth.Utils;
 
+import java.util.concurrent.TimeUnit;
+
 import butterknife.BindView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class SlotPlayerFragment extends AbsSlotFragment {
 
@@ -39,7 +42,10 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         betETHTextView = view.findViewById(R.id.play_bet_eth_textview);
 
         invalidSeedEvent();
-        viewModel.drawResultSubject.subscribe(result -> {
+        viewModel.drawResultSubject
+                .delay(8, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
             drawResult(result);
             spinButton.setEnabled(true);
         });

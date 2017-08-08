@@ -326,8 +326,7 @@ public class PlaySlotViewModel {
                 .observeOn(Schedulers.computation())
                 .map(ready -> playerSeed.getInitialSeed())
                 .flatMap(initialSeeds -> machine.occupy(initialSeeds, Convert.toWei(deposit, Convert.Unit.ETHER)))
-                .subscribe(o -> {
-                }, Throwable::printStackTrace);
+                .subscribe(o -> playerSeed.save(machine.getContractAddress()), Throwable::printStackTrace);
     }
 
     public void onCreate(Double deposit) {
