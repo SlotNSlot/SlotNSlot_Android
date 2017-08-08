@@ -15,6 +15,7 @@ import com.slotnslot.slotnslot.geth.Utils;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class SlotPlayerFragment extends AbsSlotFragment {
@@ -42,13 +43,23 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         betETHTextView = view.findViewById(R.id.play_bet_eth_textview);
 
         invalidSeedEvent();
-        viewModel.drawResultSubject
+        Observable
+                .combineLatest(
+                        viewModel.drawResultSubject,
+                        viewModel.txConfirmationSubject,
+                        (option, confirm) -> {
+                            System.out.println("winRate : " + option.winRate + ", next idx : " + option.nextIdx + ", next confirm: " + confirm[option.nextIdx]);
+                            option.nextTxConfirmation = confirm[option.nextIdx];
+                            return option;
+                        })
+                .filter(option -> option.nextTxConfirmation)
+                .distinctUntilChanged(option -> option.nextIdx)
                 .delay(8, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
-            drawResult(result);
-            spinButton.setEnabled(true);
-        });
+                    drawResult(result.winRate);
+                    spinButton.setEnabled(true);
+                });
         return view;
     }
 
