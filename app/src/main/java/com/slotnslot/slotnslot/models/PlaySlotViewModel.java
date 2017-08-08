@@ -221,8 +221,6 @@ public class PlaySlotViewModel {
                     double bet = Convert.fromWei(response.bet.getValue(), Convert.Unit.ETHER).doubleValue();
                     Log.i(TAG, "bet : " + bet);
 
-                    Utils.showToast("game initialized.");
-
                     previousBetEth = bet;
                     rxSlotRoom.updateBalance();
 
@@ -242,8 +240,6 @@ public class PlaySlotViewModel {
                     String bankerSeed = Utils.byteToHex(response.bankerSeed.getValue());
                     Log.i(TAG, "banker seed : " + bankerSeed);
                     Log.i(TAG, "idx : " + response.idx.getValue());
-
-                    Utils.showToast("banker seed set.");
 
                     if (isBanker()) {
                         return;
@@ -281,8 +277,6 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "bet : " + previousBetEth);
                     Log.i(TAG, "idx : " + response.idx.getValue());
                     Log.i(TAG, "win rate : " + winRate);
-
-                    Utils.showToast("game confirmed. reward : " + Convert.fromWei(reward, Convert.Unit.ETHER));
 
                     lastWinSubject.onNext(Convert.fromWei(reward, Convert.Unit.ETHER).doubleValue());
                     drawResultSubject.onNext(winRate);

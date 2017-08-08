@@ -20,13 +20,18 @@ import android.widget.TextView;
 
 import com.slotnslot.slotnslot.MyPageType;
 import com.slotnslot.slotnslot.R;
+import com.slotnslot.slotnslot.SlotType;
 import com.slotnslot.slotnslot.adapters.TabPagerAdapter;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.AccountViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
+import com.slotnslot.slotnslot.provider.RxSlotRoom;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
+import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 import com.slotnslot.slotnslot.utils.SlotUtil;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -107,6 +112,27 @@ public class SlotMainActivity extends SlotRootActivity {
 
         setAccountModel();
         RxSlotRooms.init();
+        continuePlaying();
+    }
+
+    private void continuePlaying() {
+        RxSlotRooms
+                .rxSlotRoomMapSubject
+                .debounce(2, TimeUnit.SECONDS)
+                .take(1)
+                .subscribe(slotMap -> {
+                    for (RxSlotRoom rxSlotRoom : slotMap.values()) {
+                        if (AccountProvider.identical(rxSlotRoom.getSlotRoom().getPlayerAddress())) {
+                            Intent intent = new Intent(getApplicationContext(), SlotGameActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(Constants.ACTIVITY_EXTRA_KEY_SLOT_TYPE, SlotType.PLAYER);
+                            bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, rxSlotRoom.getSlotAddress());
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                            break;
+                        }
+                    }
+                }, Throwable::printStackTrace);
     }
 
     private void setAccountModel() {
