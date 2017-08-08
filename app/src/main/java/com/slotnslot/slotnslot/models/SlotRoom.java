@@ -1,5 +1,7 @@
 package com.slotnslot.slotnslot.models;
 
+import com.slotnslot.slotnslot.geth.Utils;
+
 import java.io.Serializable;
 import java.math.BigInteger;
 
@@ -21,9 +23,6 @@ public class SlotRoom implements Serializable {
 
     private int playTime;
 
-    private boolean available = true;
-    private boolean bankrupt = false;
-
     private String playerAddress;
     private String bankerAddress;
 
@@ -39,6 +38,14 @@ public class SlotRoom implements Serializable {
         this.maxBet = maxBet;
         this.bankerAddress = bankerAddress;
         this.bankerBalance = bankerBalance;
+    }
+
+    public boolean isBankrupt() {
+        return bankerBalance.compareTo(BigInteger.ZERO) <= 0;
+    }
+
+    public boolean isOccupied() {
+        return Utils.isValidAddress(playerAddress);
     }
 
     public double getHitRatio() {

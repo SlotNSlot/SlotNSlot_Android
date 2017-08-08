@@ -22,11 +22,10 @@ public class PlayListFragment extends SlotRoomListFragment {
                     getItems().clear();
                     List<SlotRoomViewModel> makeList = new ArrayList<>();
                     for (RxSlotRoom slotRoom : rxSlotRoomMap.values()) {
-                        if (slotRoom.getSlotRoom().isBankrupt()
-                                || slotRoom.getSlotRoom().getBankerBalance().compareTo(BigInteger.ZERO) <= 0) {
+                        if (slotRoom.getSlotRoom().isBankrupt()) {
                             continue; // do not list bankrupt slot room
                         }
-                        if (!slotRoom.getSlotRoom().isAvailable()) {
+                        if (!slotRoom.getSlotRoom().isOccupied()) {
                             continue; // slot room is already occupied by someone
                         }
                         SlotRoomViewModel model = new SlotRoomViewModel(slotRoom);
