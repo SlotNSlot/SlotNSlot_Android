@@ -116,8 +116,9 @@ public class RxSlotRooms {
         Observable<Bytes16> nameOb = machine.mName();
         Observable<Bool> availableOb = machine.mAvailable();
         Observable<Bool> bankruptOb = machine.mBankrupt();
+        Observable<Address> playerOb = machine.mPlayer();
         return Observable
-                .zip(infoOb, bankerAddressOb, nameOb, availableOb, bankruptOb, (info, bankerAddress, name, available, bankrupt) -> {
+                .zip(infoOb, bankerAddressOb, nameOb, availableOb, bankruptOb, playerOb, (info, bankerAddress, name, available, bankrupt, player) -> {
                     SlotRoom slotRoom = new SlotRoom(
                             slotAddress,
                             Utils.byteToString(name.getValue()),
@@ -130,6 +131,7 @@ public class RxSlotRooms {
                     );
                     slotRoom.setAvailable(available.getValue());
                     slotRoom.setBankrupt(bankrupt.getValue());
+                    slotRoom.setPlayerAddress(player.toString());
                     return slotRoom;
                 });
     }

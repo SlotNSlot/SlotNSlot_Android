@@ -26,6 +26,9 @@ public class PlayListFragment extends SlotRoomListFragment {
                                 || slotRoom.getSlotRoom().getBankerBalance().compareTo(BigInteger.ZERO) <= 0) {
                             continue; // do not list bankrupt slot room
                         }
+                        if (!slotRoom.getSlotRoom().isAvailable()) {
+                            continue; // slot room is already occupied by someone
+                        }
                         SlotRoomViewModel model = new SlotRoomViewModel(slotRoom);
                         makeList.add(model);
                     }
