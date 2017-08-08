@@ -27,7 +27,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FilterManager {
 
-    private static final int POLLING_PERIOD = 500;
+    private static final int POLLING_PERIOD = 1000;
     private static final int DEFAULT_BUFFER_SIZE = 16;
 
     private FilterManager() {
@@ -35,7 +35,7 @@ public class FilterManager {
 
     public static Observable<Log> pendingFilterLogs(Filter filter) {
         // pending block setup
-        filter.setFromBlock(GethConstants.PENDING_BLOCK);
+        filter.setFromBlock(GethConstants.LATEST_BLOCK);
         filter.setToBlock(GethConstants.PENDING_BLOCK);
 //        filter.setFromBlock(GethConstants.LATEST_BLOCK);
 //        filter.setToBlock(GethConstants.LATEST_BLOCK);
