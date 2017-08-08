@@ -200,7 +200,6 @@ public class PlaySlotViewModel {
                         return;
                     }
 
-                    previousBetEth = currentBetEth;
                     machine
                             .initGameForPlayer(
                                     new Uint256(Convert.toWei(getCurrentBetEth(), Convert.Unit.ETHER)),
@@ -216,19 +215,20 @@ public class PlaySlotViewModel {
                 .gameInitializedEventObservable()
                 .subscribe(response -> {
                     Log.i(TAG, "player address : " + response.player.toString());
-                    Log.i(TAG, "bet : " + response.bet.getValue());
                     Log.i(TAG, "lines : " + response.lines.getValue());
                     Log.i(TAG, "idx : " + response.idx.getValue());
 
+                    double bet = Convert.fromWei(response.bet.getValue(), Convert.Unit.ETHER).doubleValue();
+                    Log.i(TAG, "bet : " + bet);
+
                     Utils.showToast("game initialized.");
 
-                    betEthSubject.onNext(Convert.fromWei(response.bet.getValue(), Convert.Unit.ETHER).doubleValue());
-                    currentLine = response.lines.getValue().intValue();
-                    betLineSubject.onNext(response.lines.getValue().intValue());
-
+                    previousBetEth = bet;
                     rxSlotRoom.updateBalance();
 
                     if (isBanker()) {
+                        betEthSubject.onNext(bet);
+                        betLineSubject.onNext(response.lines.getValue().intValue());
                         startSpin.onNext(true);
                     }
                 }, Throwable::printStackTrace);
