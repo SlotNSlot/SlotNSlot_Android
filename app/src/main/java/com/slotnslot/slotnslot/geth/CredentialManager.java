@@ -86,4 +86,16 @@ public class CredentialManager {
     public static String getDefaultAccountHex() {
         return defaultCredential.getAccount().getAddress().getHex();
     }
+
+    public static long getDefaultNonce() {
+        return defaultCredential.getNonce();
+    }
+
+    public static void syncDefaultNonce() {
+        defaultCredential.syncNonce();
+    }
+
+    public static void updateDefaultNonce() {
+        defaultCredential.updateNonce();
+    }
 }

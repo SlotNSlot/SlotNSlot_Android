@@ -50,8 +50,6 @@ public class MainActivity extends RxAppCompatActivity {
                             .penaltyLog()
                             .build());
         }
-
-        CredentialManager.setDefault(0, "asdf");
         subscribeHead();
     }
 

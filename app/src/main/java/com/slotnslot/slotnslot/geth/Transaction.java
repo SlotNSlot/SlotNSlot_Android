@@ -106,7 +106,8 @@ public class Transaction {
     private org.ethereum.geth.Transaction getRawTransaction() throws Exception {
         if (to == null) throw new GethException();
         if (nonce == 0 && from != null) {
-            nonce = GethManager.getClient().getPendingNonceAt(txContext, from.getAddress());
+//            nonce = GethManager.getClient().getPendingNonceAt(txContext, from.getAddress());
+            nonce = CredentialManager.getDefaultNonce();
         }
         if (gas == null) {
             gas = GethConstants.DEFAULT_GAS_LIMIT;
@@ -163,7 +164,9 @@ public class Transaction {
         // transaction.getSigHash().getHex() == signed.getSigHash().getHex()
         // signed.getHash().getHex() -> fullhash
 
+        Log.i(TAG, "======= SENDING TX : nonce - " + signed.getNonce() + ", data - " + Utils.byteToHex(signed.getData()));
         GethManager.getClient().sendTransaction(GethManager.getMainContext(), signed);
+        CredentialManager.updateDefaultNonce();
         return signed.getHash();
     }
 }
