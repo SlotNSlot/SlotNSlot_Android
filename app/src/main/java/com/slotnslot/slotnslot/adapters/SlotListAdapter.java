@@ -141,6 +141,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
         editText.setTextColor(ContextCompat.getColor(context, R.color.pink1));
         editText.getBackground().setColorFilter(context.getResources().getColor(R.color.pink1), PorterDuff.Mode.SRC_ATOP);
         editText.setRawInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        editText.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.leftMargin = context.getResources().getDimensionPixelSize(R.dimen.input_deposite_margin);

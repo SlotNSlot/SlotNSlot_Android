@@ -4,7 +4,6 @@ import com.slotnslot.slotnslot.models.SlotRoomViewModel;
 import com.slotnslot.slotnslot.provider.RxSlotRoom;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +24,7 @@ public class PlayListFragment extends SlotRoomListFragment {
                         if (slotRoom.getSlotRoom().isBankrupt()) {
                             continue; // do not list bankrupt slot room
                         }
-                        if (!slotRoom.getSlotRoom().isOccupied()) {
+                        if (slotRoom.getSlotRoom().isOccupied()) {
                             continue; // slot room is already occupied by someone
                         }
                         SlotRoomViewModel model = new SlotRoomViewModel(slotRoom);

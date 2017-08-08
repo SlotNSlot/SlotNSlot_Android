@@ -37,7 +37,7 @@ public class PlaySlotViewModel {
     public BehaviorSubject<Double> totalBetSubject = BehaviorSubject.create();
     public BehaviorSubject<Double> lastWinSubject = BehaviorSubject.createDefault(0.0);
 
-    public PublishSubject<Integer> drawResultSubject = PublishSubject.create();
+    public PublishSubject<DrawOption> drawResultSubject = PublishSubject.create();
     public PublishSubject<Boolean> startSpin = PublishSubject.create();
     public PublishSubject<String> invalidSeedFound = PublishSubject.create();
     public PublishSubject<Boolean> clearSpin = PublishSubject.create();
@@ -46,6 +46,7 @@ public class PlaySlotViewModel {
     public Observable<BigInteger> bankerBalanceObservable;
 
     public BehaviorSubject<Boolean> seedReadySubject = BehaviorSubject.createDefault(false);
+    public BehaviorSubject<Boolean[]> txConfirmationSubject = BehaviorSubject.createDefault(new Boolean[]{true, true, true});
 
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
@@ -58,6 +59,7 @@ public class PlaySlotViewModel {
     private double currentTotalBet = currentLine * currentBetEth;
 
     private boolean seedReady = false;
+    private Boolean[] txConfirmation = {true, true, true};
 
     private PlayerSeed playerSeed;
 
@@ -200,13 +202,14 @@ public class PlaySlotViewModel {
                         return;
                     }
 
+                    int index = playerSeed.getIndex();
                     machine
                             .initGameForPlayer(
                                     new Uint256(Convert.toWei(getCurrentBetEth(), Convert.Unit.ETHER)),
                                     new Uint8(currentLine),
-                                    new Uint8(playerSeed.getIndex()))
-                            .subscribe(o -> {
-                            }, Throwable::printStackTrace);
+                                    new Uint8(index))
+                            .subscribe(o -> updateTxConfirmation(true, index), Throwable::printStackTrace);
+                    updateTxConfirmation(false, index);
                 }, Throwable::printStackTrace);
     }
 
@@ -272,18 +275,19 @@ public class PlaySlotViewModel {
                 .subscribe(response -> {
                     BigInteger reward = response.reward.getValue();
                     int winRate = reward.divide(Convert.toWei(previousBetEth, Convert.Unit.ETHER)).intValue();
+                    int index = response.idx.getValue().intValue();
 
                     Log.i(TAG, "reward : " + reward);
                     Log.i(TAG, "bet : " + previousBetEth);
-                    Log.i(TAG, "idx : " + response.idx.getValue());
                     Log.i(TAG, "win rate : " + winRate);
+                    Log.i(TAG, "idx : " + index);
 
                     lastWinSubject.onNext(Convert.fromWei(reward, Convert.Unit.ETHER).doubleValue());
-                    drawResultSubject.onNext(winRate);
+                    drawResultSubject.onNext(new DrawOption(winRate, (index + 1) % 3));
 
                     rxSlotRoom.updateBalance();
                     if (!isBanker()) {
-                        playerSeed.confirm(response.idx.getValue().intValue());
+                        playerSeed.confirm(index);
                         playerSeed.save(machine.getContractAddress());
                     }
                 }, Throwable::printStackTrace);
@@ -323,6 +327,11 @@ public class PlaySlotViewModel {
                 .subscribe(o -> playerSeed.save(machine.getContractAddress()), Throwable::printStackTrace);
     }
 
+    public void updateTxConfirmation(boolean confirm, int index) {
+        txConfirmation[index] = confirm;
+        txConfirmationSubject.onNext(txConfirmation);
+    }
+
     public void onCreate(Double deposit) {
         machine = SlotMachine.load(rxSlotRoom.getSlotAddress());
         PlayerSeed.load(rxSlotRoom.getSlotAddress())
@@ -352,5 +361,16 @@ public class PlaySlotViewModel {
                         address -> Log.i(TAG, "leave... now occupied by : " + address.toString()),
                         Throwable::printStackTrace
                 );
+    }
+
+    public static class DrawOption {
+        public int winRate;
+        public int nextIdx;
+        public boolean nextTxConfirmation;
+
+        public DrawOption(int winRate, int nextIdx) {
+            this.winRate = winRate;
+            this.nextIdx = nextIdx;
+        }
     }
 }
