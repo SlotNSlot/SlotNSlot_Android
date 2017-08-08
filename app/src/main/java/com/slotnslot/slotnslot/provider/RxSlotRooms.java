@@ -11,6 +11,7 @@ import com.slotnslot.slotnslot.models.SlotRoom;
 import com.slotnslot.slotnslot.utils.Convert;
 
 import org.web3j.abi.datatypes.Address;
+import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.abi.datatypes.generated.Uint256;
 
@@ -113,17 +114,24 @@ public class RxSlotRooms {
         Observable<SlotMachine.GetInfoResponse> infoOb = machine.getInfo();
         Observable<Address> bankerAddressOb = machine.owner();
         Observable<Bytes16> nameOb = machine.mName();
+        Observable<Bool> availableOb = machine.mAvailable();
+        Observable<Bool> bankruptOb = machine.mBankrupt();
         return Observable
-                .zip(infoOb, bankerAddressOb, nameOb, (info, bankerAddress, name) -> new SlotRoom(
-                        slotAddress,
-                        Utils.byteToString(name.getValue()),
-                        info.mDecider.getValue().intValue() / 1000.0,
-                        info.mMaxPrize.getValue().intValue(),
-                        Convert.fromWei(info.mMinBet.getValue(), Convert.Unit.ETHER).doubleValue(),
-                        Convert.fromWei(info.mMaxBet.getValue(), Convert.Unit.ETHER).doubleValue(),
-                        bankerAddress.toString(),
-                        info.bankerBalance.getValue()
-                ));
+                .zip(infoOb, bankerAddressOb, nameOb, availableOb, bankruptOb, (info, bankerAddress, name, available, bankrupt) -> {
+                    SlotRoom slotRoom = new SlotRoom(
+                            slotAddress,
+                            Utils.byteToString(name.getValue()),
+                            info.mDecider.getValue().intValue() / 1000.0,
+                            info.mMaxPrize.getValue().intValue(),
+                            Convert.fromWei(info.mMinBet.getValue(), Convert.Unit.ETHER).doubleValue(),
+                            Convert.fromWei(info.mMaxBet.getValue(), Convert.Unit.ETHER).doubleValue(),
+                            bankerAddress.toString(),
+                            info.bankerBalance.getValue()
+                    );
+                    slotRoom.setAvailable(available.getValue());
+                    slotRoom.setBankrupt(bankrupt.getValue());
+                    return slotRoom;
+                });
     }
 
     public static void addSlot(SlotRoom slotRoom) {

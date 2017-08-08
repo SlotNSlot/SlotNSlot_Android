@@ -21,6 +21,9 @@ public class SlotRoom implements Serializable {
 
     private int playTime;
 
+    private boolean available = true;
+    private boolean bankrupt = false;
+
     private String playerAddress;
     private String bankerAddress;
 
