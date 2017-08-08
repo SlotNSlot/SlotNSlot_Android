@@ -323,6 +323,12 @@ public final class SlotMachine extends Contract {
                 "getInfo",
                 Collections.emptyList(),
                 Arrays.asList(
+                        new TypeReference<Address>() {
+                        },
+                        new TypeReference<Address>() {
+                        },
+                        new TypeReference<Bytes16>() {
+                        },
                         new TypeReference<Uint16>() {
                         },
                         new TypeReference<Uint256>() {
@@ -336,16 +342,22 @@ public final class SlotMachine extends Contract {
         return executeCallMultipleValueReturnObservable(function)
                 .map(response -> {
                     GetInfoResponse getInfo = new GetInfoResponse();
-                    getInfo.mDecider = (Uint16) response.get(0);
-                    getInfo.mMinBet = (Uint256) response.get(1);
-                    getInfo.mMaxBet = (Uint256) response.get(2);
-                    getInfo.mMaxPrize = (Uint16) response.get(3);
-                    getInfo.bankerBalance = (Uint256) response.get(4);
+                    getInfo.mPlayer = (Address) response.get(0);
+                    getInfo.owner = (Address) response.get(1);
+                    getInfo.mName = (Bytes16) response.get(2);
+                    getInfo.mDecider = (Uint16) response.get(3);
+                    getInfo.mMinBet = (Uint256) response.get(4);
+                    getInfo.mMaxBet = (Uint256) response.get(5);
+                    getInfo.mMaxPrize = (Uint16) response.get(6);
+                    getInfo.bankerBalance = (Uint256) response.get(7);
                     return getInfo;
                 });
     }
 
     public static class GetInfoResponse {
+        public Address mPlayer;
+        public Address owner;
+        public Bytes16 mName;
         public Uint16 mDecider;
         public Uint256 mMinBet;
         public Uint256 mMaxBet;

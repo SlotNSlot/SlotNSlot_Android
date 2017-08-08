@@ -11,8 +11,6 @@ import com.slotnslot.slotnslot.models.SlotRoom;
 import com.slotnslot.slotnslot.utils.Convert;
 
 import org.web3j.abi.datatypes.Address;
-import org.web3j.abi.datatypes.Bool;
-import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.abi.datatypes.generated.Uint256;
 
 import java.util.HashMap;
@@ -111,27 +109,20 @@ public class RxSlotRooms {
         String slotAddress = address.toString();
         SlotMachine machine = SlotMachine.load(slotAddress);
 
-        Observable<SlotMachine.GetInfoResponse> infoOb = machine.getInfo();
-        Observable<Address> bankerAddressOb = machine.owner();
-        Observable<Bytes16> nameOb = machine.mName();
-        Observable<Bool> availableOb = machine.mAvailable();
-        Observable<Bool> bankruptOb = machine.mBankrupt();
-        Observable<Address> playerOb = machine.mPlayer();
-        return Observable
-                .zip(infoOb, bankerAddressOb, nameOb, availableOb, bankruptOb, playerOb, (info, bankerAddress, name, available, bankrupt, player) -> {
+        return machine
+                .getInfo()
+                .map(response -> {
                     SlotRoom slotRoom = new SlotRoom(
                             slotAddress,
-                            Utils.byteToString(name.getValue()),
-                            info.mDecider.getValue().intValue() / 1000.0,
-                            info.mMaxPrize.getValue().intValue(),
-                            Convert.fromWei(info.mMinBet.getValue(), Convert.Unit.ETHER).doubleValue(),
-                            Convert.fromWei(info.mMaxBet.getValue(), Convert.Unit.ETHER).doubleValue(),
-                            bankerAddress.toString(),
-                            info.bankerBalance.getValue()
+                            Utils.byteToString(response.mName.getValue()),
+                            response.mDecider.getValue().intValue() / 1000.0,
+                            response.mMaxPrize.getValue().intValue(),
+                            Convert.fromWei(response.mMinBet.getValue(), Convert.Unit.ETHER).doubleValue(),
+                            Convert.fromWei(response.mMaxBet.getValue(), Convert.Unit.ETHER).doubleValue(),
+                            response.owner.toString(),
+                            response.bankerBalance.getValue()
                     );
-                    slotRoom.setAvailable(available.getValue());
-                    slotRoom.setBankrupt(bankrupt.getValue());
-                    slotRoom.setPlayerAddress(player.toString());
+                    slotRoom.setPlayerAddress(response.mPlayer.toString());
                     return slotRoom;
                 });
     }

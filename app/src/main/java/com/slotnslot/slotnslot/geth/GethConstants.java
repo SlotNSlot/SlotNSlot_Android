@@ -3,7 +3,7 @@ package com.slotnslot.slotnslot.geth;
 import java.math.BigInteger;
 
 public class GethConstants {
-    public static final String SLOT_MANAGER_CONTRACT_ADDRESS = "0x9cb0765d9305b93088c0acc1558395203f535737";
+    public static final String SLOT_MANAGER_CONTRACT_ADDRESS = "0x579be642b67af4998afcdae4c6f1fe4444b713e9";
     public static final int LATEST_BLOCK = -1;
     public static final int PENDING_BLOCK = -2;
 

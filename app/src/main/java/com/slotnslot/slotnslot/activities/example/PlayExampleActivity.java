@@ -359,6 +359,9 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                     machine
                             .getInfo()
                             .subscribe(response -> {
+                                Log.i(TAG, "mPlayer : " + response.mPlayer.toString());
+                                Log.i(TAG, "owner : " + response.owner.toString());
+                                Log.i(TAG, "mName : " + Utils.byteToString(response.mName.getValue()));
                                 Log.i(TAG, "mDecider : " + response.mDecider.getValue());
                                 Log.i(TAG, "mMinBet : " + response.mMinBet.getValue());
                                 Log.i(TAG, "mMaxBet : " + response.mMaxBet.getValue());
