@@ -26,6 +26,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class FilterManager {
+    private static final String TAG = FilterManager.class.getSimpleName();
 
     private static final int POLLING_PERIOD = 1000;
     private static final int DEFAULT_BUFFER_SIZE = 16;
@@ -92,7 +93,7 @@ public class FilterManager {
                             dispose();
                             return;
                         }
-                        System.out.println("address : " + log.getAddress().getHex()
+                        android.util.Log.i(TAG, "address : " + log.getAddress().getHex()
                                 + ", tx : " + log.getTxHash().getHex()
                                 + ", filter : " + filter.getInt64()
                                 + ", data : " + Utils.byteToHex(log.getData()));
@@ -175,7 +176,7 @@ public class FilterManager {
         }
 
         public Filter addTopic(String topic) {
-            System.out.println("event topic hash : " + topic);
+            android.util.Log.i(TAG, "event topic hash : " + topic);
             return addTopics(Collections.singletonList(topic));
         }
 

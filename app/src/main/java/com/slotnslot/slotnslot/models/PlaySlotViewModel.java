@@ -13,8 +13,8 @@ import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.abi.datatypes.generated.Uint8;
 
 import java.math.BigInteger;
-import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -258,13 +258,13 @@ public class PlaySlotViewModel {
                     }
                     playerSeed.setNextBankerSeed(bankerSeed);
 
-                    Observable
-                            .timer(2, TimeUnit.SECONDS)
-                            .map(e -> playerSeed.getSeed())
-                            .flatMap(playerSeed -> machine.setPlayerSeed(playerSeed, new Uint8(this.playerSeed.getIndex())))
-                            .subscribeOn(Schedulers.computation())
-                            .subscribe(o -> {
-                            }, Throwable::printStackTrace);
+                    Completable
+                            .complete()
+                            .observeOn(Schedulers.computation())
+                            .subscribe(() -> machine
+                                    .setPlayerSeed(playerSeed.getSeed(), new Uint8(this.playerSeed.getIndex()))
+                                    .subscribe(o -> {
+                                    }, Throwable::printStackTrace), Throwable::printStackTrace);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
