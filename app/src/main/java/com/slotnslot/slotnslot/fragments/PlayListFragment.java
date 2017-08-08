@@ -4,6 +4,7 @@ import com.slotnslot.slotnslot.models.SlotRoomViewModel;
 import com.slotnslot.slotnslot.provider.RxSlotRoom;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +22,10 @@ public class PlayListFragment extends SlotRoomListFragment {
                     getItems().clear();
                     List<SlotRoomViewModel> makeList = new ArrayList<>();
                     for (RxSlotRoom slotRoom : rxSlotRoomMap.values()) {
+                        if (slotRoom.getSlotRoom().isBankrupt()
+                                || slotRoom.getSlotRoom().getBankerBalance().compareTo(BigInteger.ZERO) <= 0) {
+                            continue; // do not list bankrupt slot room
+                        }
                         SlotRoomViewModel model = new SlotRoomViewModel(slotRoom);
                         makeList.add(model);
                     }
