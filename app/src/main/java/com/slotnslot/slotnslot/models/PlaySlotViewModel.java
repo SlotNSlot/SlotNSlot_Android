@@ -282,8 +282,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "win rate : " + winRate);
                     Log.i(TAG, "idx : " + index);
 
-                    lastWinSubject.onNext(Convert.fromWei(reward, Convert.Unit.ETHER).doubleValue());
-                    drawResultSubject.onNext(new DrawOption(winRate, (index + 1) % 3));
+                    drawResultSubject.onNext(new DrawOption(winRate, previousBetEth, (index + 1) % 3));
 
                     rxSlotRoom.updateBalance();
                     if (!isBanker()) {
@@ -365,11 +364,13 @@ public class PlaySlotViewModel {
 
     public static class DrawOption {
         public int winRate;
+        public double bet;
         public int nextIdx;
         public boolean nextTxConfirmation;
 
-        public DrawOption(int winRate, int nextIdx) {
+        public DrawOption(int winRate, double bet, int nextIdx) {
             this.winRate = winRate;
+            this.bet = bet;
             this.nextIdx = nextIdx;
         }
     }
