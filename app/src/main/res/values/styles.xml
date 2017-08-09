@@ -9,6 +9,7 @@
         <item name="windowNoTitle">true</item>
         <item name="android:windowAnimationStyle">@null</item>
         <item name="actionSheetStyle">@style/ActionSheetStyleiOS7</item>
+        <item name="android:alertDialogTheme">@style/AlertDialogStyle</item>
     </style>
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -25,5 +26,8 @@
         <item name="otherButtonSpacing">0dp</item>
         <item name="cancelButtonMarginTop">10dp</item>
         <item name="actionSheetTextSize">12sp</item>
+    </style>
+    <style name="AlertDialogStyle" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">#ff1c71</item>
     </style>
 </resources>
