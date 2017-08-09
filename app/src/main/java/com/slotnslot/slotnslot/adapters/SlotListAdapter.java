@@ -30,7 +30,7 @@ import com.slotnslot.slotnslot.models.SlotRoomViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
-import com.slotnslot.slotnslot.views.SlotImageViewHolder;
+import com.slotnslot.slotnslot.views.SlotDescriptionViewHolder;
 import com.slotnslot.slotnslot.views.SlotMakeViewHolder;
 import com.slotnslot.slotnslot.views.SlotViewHolder;
 import com.trello.rxlifecycle2.components.support.RxFragment;
@@ -45,6 +45,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
     static final int SLOT_ITEM_VIEWTYPE_ROOM = 0;
     static final int SLOT_ITEM_VIEWTYPE_ROOM_MAKE = 1;
     static final int SLOT_ITEM_VIEWTYPE_IMGAE = 2;
+    static final int SLOT_ITEM_VIEWTYPE_BETA_DESCRIPTION = 3;
 
     private ArrayList<SlotRoomViewModel> items = new ArrayList<>();
     private ListType type;
@@ -79,7 +80,12 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                 itemView = LayoutInflater.
                         from(parent.getContext()).
                         inflate(R.layout.slot_recycler_image, parent, false);
-                return new SlotImageViewHolder(itemView);
+                return new SlotDescriptionViewHolder(itemView);
+            case SLOT_ITEM_VIEWTYPE_BETA_DESCRIPTION:
+                itemView = LayoutInflater.
+                        from(parent.getContext()).
+                        inflate(R.layout.slot_recycler_beta_description, parent, false);
+                return new SlotDescriptionViewHolder(itemView);
         }
         return null;
     }
@@ -212,7 +218,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return items.size() + 1;
+        return items.size() + 1 + (type == ListType.MAKE ? 1 : 0);
     }
 
     @Override
@@ -221,10 +227,19 @@ public class SlotListAdapter extends RecyclerView.Adapter {
             case PLAY:
                 return position == 0 ? SLOT_ITEM_VIEWTYPE_IMGAE : SLOT_ITEM_VIEWTYPE_ROOM;
             case MAKE:
-                return items.size() > 0 ?
-                        (position == items.size() ?
-                                SLOT_ITEM_VIEWTYPE_ROOM_MAKE : SLOT_ITEM_VIEWTYPE_ROOM)
-                        : SLOT_ITEM_VIEWTYPE_ROOM_MAKE;
+                if (items.size() > 0) {
+                    if (position == 0 )
+                        return SLOT_ITEM_VIEWTYPE_BETA_DESCRIPTION;
+                    else if (position <= items.size())
+                        return SLOT_ITEM_VIEWTYPE_ROOM;
+                    else
+                        return SLOT_ITEM_VIEWTYPE_ROOM_MAKE;
+                } else {
+                    if (position == 0)
+                        return SLOT_ITEM_VIEWTYPE_BETA_DESCRIPTION;
+                    else
+                        return SLOT_ITEM_VIEWTYPE_ROOM_MAKE;
+                }
         }
         return super.getItemViewType(position);
     }

@@ -1,8 +1,10 @@
 package com.slotnslot.slotnslot.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.slotnslot.slotnslot.MainApplication;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.contract.SlotMachineManager;
 import com.slotnslot.slotnslot.geth.GethConstants;
@@ -85,6 +88,20 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
     }
 
     private void next() {
+
+        /*
+         * BETA VERSION
+         * */
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("The ‘Make’ function is not available in beta.");
+        builder.setMessage("The SlotNSlot team is working hard to stabilize the service. Try out the features in upcoming apps.");
+        builder.setPositiveButton("I got it", (dialog, which) -> {
+            dialog.dismiss();
+            getActivity().finish();
+        });
+        builder.show();
+
+        /*
         SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
 
         slotMachineManager.createSlotMachine(
@@ -129,8 +146,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                         hash -> Log.i(TAG, "fund sent. hash : " + hash.getHex()),
                         Throwable::printStackTrace
                 );
-
-        getActivity().finish();
+                */
     }
 
     private void back() {
