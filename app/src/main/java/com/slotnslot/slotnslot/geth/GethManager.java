@@ -119,8 +119,11 @@ public class GethManager {
         }
 
         public GethManager build() {
+            String dataDir = getDataDir(this.manager.networkConfig.getNetwork());
+            CredentialManager.setKeyStore(this.fileDirPath, dataDir);
+
             this.manager.node = new Node(
-                    this.fileDirPath + getDataDir(this.manager.networkConfig.getNetwork()),
+                    this.fileDirPath + dataDir,
                     this.manager.networkConfig.getNodeConfig());
             return manager;
         }
