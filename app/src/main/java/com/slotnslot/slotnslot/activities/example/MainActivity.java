@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.slotnslot.slotnslot.BuildConfig;
 import com.slotnslot.slotnslot.R;
-import com.slotnslot.slotnslot.geth.CredentialManager;
 import com.slotnslot.slotnslot.geth.GethManager;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
@@ -117,10 +116,9 @@ public class MainActivity extends RxAppCompatActivity {
         Observable
                 .create(subscriber -> {
                     try {
-                        GethManager manager = GethManager.getInstance();
-                        EthereumClient ethereumClient = manager.getClient();
+                        EthereumClient ethereumClient = GethManager.getClient();
 
-                        SyncProgress syncProgress = ethereumClient.syncProgress(manager.getMainContext());
+                        SyncProgress syncProgress = ethereumClient.syncProgress(GethManager.getMainContext());
 
                         if (syncProgress != null) {
                             long highestBlock = syncProgress.getHighestBlock();

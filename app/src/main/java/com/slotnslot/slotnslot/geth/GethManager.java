@@ -31,7 +31,9 @@ public class GethManager {
 
     public static GethManager getInstance() {
         if (instance == null) {
-            instance = new GethManager.Builder(MainApplication.getContext().getFilesDir().getPath()).build();
+            instance = new GethManager.Builder(MainApplication.getContext().getFilesDir().getPath())
+                    .setNetworkConfig(NetworkConfig.getTestnetConfig())
+                    .build();
         }
         return instance;
     }
@@ -55,7 +57,7 @@ public class GethManager {
             this.nodeStarted = false;
             nodeStartedObservable.onNext(false);
             Log.e(TAG, e.getLocalizedMessage());
-            emitter.onError(new Throwable());
+//            emitter.onError(new Throwable());
         }
     }
 
