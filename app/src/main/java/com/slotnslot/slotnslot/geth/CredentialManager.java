@@ -61,8 +61,8 @@ public class CredentialManager {
         return keyStore;
     }
 
-    public static void setKeyStore(String fileDirPath) {
-        keyStore = new KeyStore(fileDirPath + defaultKeyStoreDir, Geth.LightScryptN, Geth.LightScryptP);
+    public static void setKeyStore(String fileDirPath, String dataDir) {
+        keyStore = new KeyStore(fileDirPath + dataDir + defaultKeyStoreDir, Geth.LightScryptN, Geth.LightScryptP);
     }
 
     public static List<Account> getAccounts() {
