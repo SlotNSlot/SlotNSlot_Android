@@ -96,6 +96,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
             case SLOT_ITEM_VIEWTYPE_ROOM:
                 SlotRoomViewModel viewModel = items.get(position - (type == ListType.PLAY ? 1 : 0));
                 ((SlotViewHolder) holder).onBindView(viewModel);
+                ((SlotViewHolder) holder).getMoreButton().setVisibility(type == ListType.PLAY ? View.GONE : View.VISIBLE);
                 ((SlotViewHolder) holder).getMoreButton().setOnClickListener(v -> {
                     ActionSheet.createBuilder(fragment.getContext(), fragment.getFragmentManager())
                             .setCancelButtonTitle("Cancel")

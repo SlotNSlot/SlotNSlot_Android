@@ -146,6 +146,7 @@
         android:layout_below="@id/slot_border_view"
         android:layout_marginTop="6dp"
         android:layout_marginLeft="15.5dp"
+        android:visibility="gone"
         />
 
     <TextView
