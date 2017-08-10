@@ -54,9 +54,10 @@ public class SlotPlayerFragment extends AbsSlotFragment {
                         })
                 .filter(option -> option.nextTxConfirmation)
                 .distinctUntilChanged(option -> option.nextIdx)
-                .delay(8, TimeUnit.SECONDS)
+                .delay(5, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(option -> {
+                    viewModel.updateBalance();
                     drawResult(option.winRate);
                     viewModel.lastWinSubject.onNext(option.winRate * option.bet);
                     spinButton.setEnabled(true);
@@ -81,7 +82,7 @@ public class SlotPlayerFragment extends AbsSlotFragment {
             }
             viewModel.initGame();
         });
-        RxView.clicks(autoButton).subscribe(o -> tapStop(false));
+//        RxView.clicks(autoButton).subscribe(o -> tapStop(false));
         RxView.clicks(linePlusButton).subscribe(o -> viewModel.linePlus());
         RxView.clicks(lineMinusButton).subscribe(o -> viewModel.lineMinus());
         RxView.clicks(ethPlusButton).subscribe(o -> viewModel.betPlus());

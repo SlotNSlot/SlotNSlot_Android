@@ -12,6 +12,7 @@ import com.slotnslot.slotnslot.ListType;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.adapters.SlotListAdapter;
 import com.slotnslot.slotnslot.models.SlotRoomViewModel;
+import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.SlotUtil;
 
@@ -43,9 +44,7 @@ public abstract class SlotRoomListFragment extends SlotRootFragment {
         recyclerView.addItemDecoration(new SpacesItemDecoration(SlotUtil.convertDpToPixel(7f, getContext())));
         recyclerView.setAdapter(adapter);
 
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            refreshItems();
-        });
+        swipeRefreshLayout.setOnRefreshListener(this::refreshItems);
         swipeRefreshLayout.setColorSchemeResources(R.color.pink1);
 
         setItemList();
@@ -53,22 +52,13 @@ public abstract class SlotRoomListFragment extends SlotRootFragment {
     }
 
     void refreshItems() {
-        // Load items
-        // ...
-
-        // Load complete
+        RxSlotRooms.updatePlaySlotMachines();
         Observable.timer(2, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe((interval) -> {
-                    onItemsLoadComplete();
-                });
+                .subscribe((i) -> onItemsLoadComplete());
     }
 
     void onItemsLoadComplete() {
-        // Update the adapter and notify data set changed
-        // ...
-
-        // Stop refresh animation
         swipeRefreshLayout.setRefreshing(false);
     }
 
