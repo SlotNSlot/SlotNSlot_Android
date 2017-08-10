@@ -9,7 +9,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.activities.SignInUpActivity;
 import com.slotnslot.slotnslot.geth.Credential;
 import com.slotnslot.slotnslot.geth.CredentialManager;
+import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 
 import org.ethereum.geth.Account;
@@ -108,11 +108,11 @@ public class SignUpFragment extends SlotRootFragment {
     @OnClick(R.id.signup_button)
     public void onClickSignUpButton() {
         if (TextUtils.isEmpty(passwordInputEditText.getText().toString())) {
-            Log.i(TAG, "please enter passphrase.");
+            Utils.showToast("please enter passphrase.");
             return;
         }
         if (!passwordInputEditText.getText().toString().equals(passwordConfirmInputEditText.getText().toString())) {
-            Log.i(TAG, "please enter same passphrase.");
+            Utils.showToast("please enter same passphrase.");
             return;
         }
 
@@ -144,7 +144,7 @@ public class SignUpFragment extends SlotRootFragment {
                         },
                         e -> {
                             e.printStackTrace();
-                            Log.i(TAG, "fail to create account : " + e.getMessage());
+                            Utils.showToast("fail to create account : " + e.getMessage());
 
                             loadingViewSetVisible(false);
                         });

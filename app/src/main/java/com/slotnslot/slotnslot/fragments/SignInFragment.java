@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +17,7 @@ import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.activities.SignInUpActivity;
 import com.slotnslot.slotnslot.activities.SlotMainActivity;
 import com.slotnslot.slotnslot.geth.CredentialManager;
+import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.Account;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 
@@ -63,13 +63,13 @@ public class SignInFragment extends SlotRootFragment {
 
         String passphrase = passwordInputEditText.getText().toString();
         if (TextUtils.isEmpty(passphrase)) {
-            Log.e(TAG, "passphrase is empty.");
+            Utils.showToast("passphrase is empty.");
             return;
         }
 
         boolean success = CredentialManager.setDefault(account.getAccount(), passphrase);
         if (!success) {
-            Log.e(TAG, "enter correct passphrase.");
+            Utils.showToast("enter correct passphrase.");
             return;
         }
         AccountProvider.setAccount(account);
