@@ -57,7 +57,6 @@ public class Constants {
     public static final String BUNDLE_KEY_STEP_INDEX = "STEP_INDEX";
 
     public static final String MAKE_SLOT_STEP_TITLE_SUMMARY = "Summary";
-    public static final String ACTIVITY_EXTRA_KEY_MY_PAGE_TYPE = "MYPAGETYPE";
     public static final String MY_PAGE_TITLE_WALLET = "Wallet";
     public static final String MY_PAGE_TITLE_WITHDRAW_ETH = "Withdraw ETH";
     public static final String ACTIVITY_EXTRA_KEY_SLOT_TYPE = "SLOT_TYPE";
