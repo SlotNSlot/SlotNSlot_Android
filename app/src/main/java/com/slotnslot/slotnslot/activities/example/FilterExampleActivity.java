@@ -105,7 +105,7 @@ public class FilterExampleActivity extends RxAppCompatActivity {
     void gameEventSet() {
         CredentialManager.setDefault(0, "asdf");
         SlotMachineManager
-                .load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS)
+                .load(GethConstants.getManagerAddress())
                 .getStorageAddr()
                 .flatMap(address -> {
                     Log.i(TAG, "slot storage address : " + address.toString());

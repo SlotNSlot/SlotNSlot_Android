@@ -32,7 +32,7 @@ public class GethManager {
     public static GethManager getInstance() {
         if (instance == null) {
             instance = new GethManager.Builder(MainApplication.getContext().getFilesDir().getPath())
-                    .setNetworkConfig(NetworkConfig.getTestnetConfig())
+//                    .setNetworkConfig(NetworkConfig.getTestnetConfig())
                     .build();
         }
         return instance;

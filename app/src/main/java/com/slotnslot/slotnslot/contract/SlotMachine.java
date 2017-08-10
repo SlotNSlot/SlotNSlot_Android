@@ -117,15 +117,6 @@ public final class SlotMachine extends Contract {
         return executeCallSingleValueReturnObservable(function);
     }
 
-    public Observable<Bool> mBankrupt() {
-        Function function = new Function(
-                "mBankrupt",
-                Collections.emptyList(),
-                Collections.singletonList(new TypeReference<Bool>() {
-                }));
-        return executeCallSingleValueReturnObservable(function);
-    }
-
     public Observable<Address> owner() {
         Function function = new Function(
                 "owner",
@@ -184,15 +175,6 @@ public final class SlotMachine extends Contract {
                 "mMaxPrize",
                 Collections.emptyList(),
                 Collections.singletonList(new TypeReference<Uint16>() {
-                }));
-        return executeCallSingleValueReturnObservable(function);
-    }
-
-    public Observable<Bool> mIsGamePlaying() {
-        Function function = new Function(
-                "mIsGamePlaying",
-                Collections.emptyList(),
-                Collections.singletonList(new TypeReference<Bool>() {
                 }));
         return executeCallSingleValueReturnObservable(function);
     }

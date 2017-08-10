@@ -49,12 +49,9 @@ public class LandingPageActivity extends SlotRootActivity {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(n -> {
                     Header header = GethManager.getClient().getHeaderByNumber(GethManager.getMainContext(), -1);
-                    Log.i(TAG, "time : " + header.getTime());
-
                     long currentTime = System.currentTimeMillis() / 1000;
                     long t = currentTime - header.getTime();
                     long size = GethManager.getNode().getPeersInfo().size();
-                    Log.i(TAG, "time : " + t + ", size : " + size);
                     if (size > 0 && t < 300) {
                         synced.onComplete();
                     }
