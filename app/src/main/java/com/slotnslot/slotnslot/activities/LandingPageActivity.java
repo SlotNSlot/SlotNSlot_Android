@@ -2,10 +2,11 @@ package com.slotnslot.slotnslot.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.geth.GethManager;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -28,6 +30,8 @@ public class LandingPageActivity extends SlotRootActivity {
     ProgressBar progressBar;
     @BindView(R.id.loading_text)
     TextView loadingText;
+    @BindView(R.id.sync_btn)
+    Button syncButton;
 
     private CompletableSubject synced = CompletableSubject.create();
 
@@ -38,6 +42,7 @@ public class LandingPageActivity extends SlotRootActivity {
         ButterKnife.bind(this);
 
         syncProgress();
+        setSyncButtonEvent();
     }
 
     private void syncProgress() {
@@ -77,5 +82,15 @@ public class LandingPageActivity extends SlotRootActivity {
                     startActivity(intent);
                     finish();
                 }, Throwable::printStackTrace);
+    }
+
+    private void setSyncButtonEvent() {
+        GethManager
+                .getNodeStartedSubject()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(started -> syncButton.setText(started ? "sync stop" : "sync start"), Throwable::printStackTrace);
+        RxView
+                .clicks(syncButton)
+                .subscribe(o -> GethManager.getInstance().toggleNode(), Throwable::printStackTrace);
     }
 }

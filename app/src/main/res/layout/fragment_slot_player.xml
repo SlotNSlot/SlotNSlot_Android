@@ -194,14 +194,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
-        <Button
-            android:id="@+id/play_auto_button"
-            android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:text="AUTO"
-            android:background="@color/pink2"
-            android:textColor="@color/white"
-            android:layout_weight="2"/>
+        <!--<Button-->
+            <!--android:id="@+id/play_auto_button"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="61dp"-->
+            <!--android:text="AUTO"-->
+            <!--android:background="@color/pink2"-->
+            <!--android:textColor="@color/white"-->
+            <!--android:layout_weight="2"/>-->
 
         <Button
             android:id="@+id/play_spin_button"

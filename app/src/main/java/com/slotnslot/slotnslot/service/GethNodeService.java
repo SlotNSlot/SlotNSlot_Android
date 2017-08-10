@@ -28,7 +28,7 @@ public class GethNodeService extends Service {
         Completable
                 .create(e -> {
                     this.gethManager = GethManager.getInstance();
-                    this.gethManager.startNode(e);
+                    this.gethManager.startNode();
                 })
                 .retry(5)
                 .subscribeOn(Schedulers.computation())
