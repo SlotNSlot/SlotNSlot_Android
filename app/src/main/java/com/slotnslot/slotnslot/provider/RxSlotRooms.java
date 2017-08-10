@@ -60,49 +60,57 @@ public class RxSlotRooms {
     }
 
     public static void destroy() {
+        clearPlaySlot();
+        clearMakeSlot();
+    }
+
+    public static void clearPlaySlot() {
+        rxSlotRoomMap.clear();
+        notifyChange();
+    }
+
+    public static void clearMakeSlot() {
         for (RxSlotRoom rxSlotRoom : rxMakeSlotRoomMap.values()) {
             rxSlotRoom.removeBankerEvent();
         }
-
-        rxSlotRoomMap.clear();
-        notifyChange();
-
         rxMakeSlotRoomMap.clear();
         notifyMakeSlotChange();
     }
 
     public static void updateSlotMachines() {
+        updatePlaySlotMachines();
+        updateMakeSlotMachines();
+    }
+
+    public static void updatePlaySlotMachines() {
+        clearPlaySlot();
+
         SlotRoom test = new SlotRoom("test", "test", 0.15, 1000, 0.001, 0.1, "test", Convert.toWei(1, Convert.Unit.ETHER));
+        test.setPlayerBalance(Convert.toWei(0.15, Convert.Unit.ETHER));
         addSlot(test);
 
-        slotMachineStorageLoaded.subscribe(() -> {
-            slotMachineStorage
-                    .totalNumOfSlotMachine()
-                    .subscribe(result -> {
-                        numberOfSlotMachine = result.getValue().intValue();
-                        Log.i(TAG, "total number of slot machines : " + result.getValue());
-                    }, Throwable::printStackTrace);
+        slotMachineStorageLoaded.subscribe(() -> slotMachineStorage
+                .getLengthOfSlotMachinesArray()
+                .flatMap(length -> {
+                    int slotLength = length.getValue().intValue();
+                    Log.i(TAG, "length of slot machine array : " + slotLength);
+                    return slotMachineStorage.getSlotMachinesArray(new Uint256(0), new Uint256(slotLength - 1));
+                })
+                .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
+                .filter(address -> Utils.isValidAddress(address.toString()))
+                .flatMap(RxSlotRooms::createSlotRoom)
+                .filter(slotRoom -> !AccountProvider.identical(slotRoom.getBankerAddress()))
+                .subscribe(RxSlotRooms::addSlot, Throwable::printStackTrace));
+    }
 
-            slotMachineStorage
-                    .getLengthOfSlotMachinesArray()
-                    .flatMap(length -> {
-                        int slotLength = length.getValue().intValue();
-                        Log.i(TAG, "length of slot machine array : " + slotLength);
-                        return slotMachineStorage.getSlotMachinesArray(new Uint256(0), new Uint256(slotLength - 1));
-                    })
-                    .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
-                    .filter(address -> Utils.isValidAddress(address.toString()))
-                    .flatMap(RxSlotRooms::createSlotRoom)
-                    .filter(slotRoom -> !AccountProvider.identical(slotRoom.getBankerAddress()))
-                    .subscribe(RxSlotRooms::addSlot, Throwable::printStackTrace);
-
-            slotMachineStorage
-                    .getSlotMachines(new Address(AccountProvider.getAccount().getAddressHex()))
-                    .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
-                    .filter(address -> Utils.isValidAddress(address.toString()))
-                    .flatMap(RxSlotRooms::createSlotRoom)
-                    .subscribe(RxSlotRooms::addMakeSlot, Throwable::printStackTrace);
-        });
+    public static void updateMakeSlotMachines() {
+        clearMakeSlot();
+        slotMachineStorageLoaded.subscribe(() -> slotMachineStorage
+                .getSlotMachines(new Address(AccountProvider.getAccount().getAddressHex()))
+                .flatMap(dynamicArray -> Observable.fromIterable(dynamicArray.getValue()))
+                .filter(address -> Utils.isValidAddress(address.toString()))
+                .flatMap(RxSlotRooms::createSlotRoom)
+                .subscribe(RxSlotRooms::addMakeSlot, Throwable::printStackTrace));
     }
 
     private static Observable<SlotRoom> createSlotRoom(Address address) {
