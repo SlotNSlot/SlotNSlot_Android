@@ -57,7 +57,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
     void load() {
         CredentialManager.setDefault(0, "asdf");
         SlotMachineManager
-                .load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS)
+                .load(GethConstants.getManagerAddress())
                 .getStorageAddr()
                 .flatMap(address -> {
                     Log.i(TAG, "slot storage address : " + address.toString());
@@ -100,7 +100,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
     void create() {
         CredentialManager.setDefault(0, "asdf");
 
-        SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
+        SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.getManagerAddress());
         slotMachineManager
                 .createSlotMachine(
                         new Uint16(150),
@@ -330,7 +330,7 @@ public class PlayExampleActivity extends RxAppCompatActivity {
     void remove() {
         CredentialManager.setDefault(0, "asdf");
 
-        SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
+        SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.getManagerAddress());
         slotMachineManager.removeSlotMachine(new Address(machine.getContractAddress()))
                 .map(slotMachineManager::getSlotMachineRemovedEvents)
                 .subscribe(slotMachineRemovedEventResponses -> {
@@ -354,7 +354,6 @@ public class PlayExampleActivity extends RxAppCompatActivity {
 
         Completable
                 .create(e -> {
-                    machine.mPlayer().subscribe(address -> Log.i(TAG, "player address : " + address.toString()));
                     machine.playerBalance().subscribe(playerBalance -> Log.i(TAG, "player balance : " + playerBalance.getValue()));
                     machine
                             .getInfo()

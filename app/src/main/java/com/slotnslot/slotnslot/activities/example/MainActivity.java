@@ -53,7 +53,7 @@ public class MainActivity extends RxAppCompatActivity {
     }
 
     private void subscribeHead() {
-        GethManager.getNodeStartedObservable()
+        GethManager.getNodeStartedSubject()
                 .filter(aBoolean -> aBoolean)
                 .take(1)
                 .map(e -> {

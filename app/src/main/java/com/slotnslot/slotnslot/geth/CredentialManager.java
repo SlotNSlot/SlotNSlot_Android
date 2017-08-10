@@ -1,7 +1,5 @@
 package com.slotnslot.slotnslot.geth;
 
-import android.util.Log;
-
 import org.ethereum.geth.Account;
 import org.ethereum.geth.Accounts;
 import org.ethereum.geth.Geth;
@@ -26,7 +24,7 @@ public class CredentialManager {
             keyStore.lock(account.getAddress());
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e(TAG, "passphrase is incorrect.");
+            Utils.showToast("passphrase is incorrect.");
             return false;
         }
 
@@ -40,7 +38,7 @@ public class CredentialManager {
             account = keyStore.getAccounts().get(index);
         } catch (Exception e) {
             e.printStackTrace();
-            Log.e(TAG, "cannot get account : " + e.getMessage());
+            Utils.showToast("cannot get account : " + e.getMessage());
             return false;
         }
         return setDefault(account, passphrase);
@@ -89,10 +87,6 @@ public class CredentialManager {
 
     public static long getDefaultNonce() {
         return defaultCredential.getNonce();
-    }
-
-    public static void syncDefaultNonce() {
-        defaultCredential.syncNonce();
     }
 
     public static void updateDefaultNonce() {

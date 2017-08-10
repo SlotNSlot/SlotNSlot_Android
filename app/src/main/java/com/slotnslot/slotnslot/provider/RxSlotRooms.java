@@ -32,7 +32,7 @@ public class RxSlotRooms {
     public static Map<String, RxSlotRoom> rxMakeSlotRoomMap = new HashMap<>();
     public static BehaviorSubject<Map<String, RxSlotRoom>> rxMakeSlotRoomMapSubject = BehaviorSubject.create();
 
-    public static SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
+    public static SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.getManagerAddress());
     public static SlotMachineStorage slotMachineStorage;
     public static CompletableSubject slotMachineStorageLoaded = CompletableSubject.create();
 

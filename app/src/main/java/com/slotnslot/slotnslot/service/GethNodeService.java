@@ -32,7 +32,7 @@ public class GethNodeService extends Service {
                 })
                 .retry(5)
                 .subscribeOn(Schedulers.computation())
-                .subscribe();
+                .subscribe(() -> {}, Throwable::printStackTrace);
 
         return super.onStartCommand(intent, Service.START_FLAG_REDELIVERY, startId);
     }

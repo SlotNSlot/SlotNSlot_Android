@@ -109,7 +109,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
 
                                 @Override
                                 public void onOtherButtonClick(ActionSheet actionSheet, int index) {
-                                    SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
+                                    SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.getManagerAddress());
                                     Address address = new Address(items.get(position - (type == ListType.PLAY ? 1 : 0)).getSlotAddress());
                                     slotMachineManager.removeSlotMachine(address)
                                             .compose(fragment.bindToLifecycle())
