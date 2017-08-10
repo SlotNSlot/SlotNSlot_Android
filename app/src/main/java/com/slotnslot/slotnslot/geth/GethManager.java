@@ -15,7 +15,7 @@ public class GethManager {
     private static final String TAG = GethManager.class.getSimpleName();
     private static GethManager instance = null;
 
-    private static BehaviorSubject<Boolean> nodeStartedObservable = BehaviorSubject.create();
+    private static BehaviorSubject<Boolean> nodeStartedSubject = BehaviorSubject.create();
 
     private GethManager() {
     }
@@ -38,8 +38,8 @@ public class GethManager {
         return instance;
     }
 
-    public static BehaviorSubject<Boolean> getNodeStartedObservable() {
-        return nodeStartedObservable;
+    public static BehaviorSubject<Boolean> getNodeStartedSubject() {
+        return nodeStartedSubject;
     }
 
     public void startNode(CompletableEmitter emitter) {
@@ -51,13 +51,12 @@ public class GethManager {
             this.node.start();
             this.nodeStarted = true;
             this.client = this.node.getEthereumClient();
-            nodeStartedObservable.onNext(true);
+            nodeStartedSubject.onNext(true);
             emitter.onComplete();
         } catch (Exception e) {
             this.nodeStarted = false;
-            nodeStartedObservable.onNext(false);
-            Log.e(TAG, e.getLocalizedMessage());
-//            emitter.onError(new Throwable());
+            nodeStartedSubject.onNext(false);
+            emitter.onError(e);
         }
     }
 
@@ -69,10 +68,10 @@ public class GethManager {
         try {
             this.node.stop();
             this.nodeStarted = false;
-            nodeStartedObservable.onNext(false);
+            nodeStartedSubject.onNext(false);
         } catch (Exception e) {
             this.nodeStarted = false;
-            nodeStartedObservable.onNext(false);
+            nodeStartedSubject.onNext(false);
             Log.e(TAG, e.getLocalizedMessage());
         }
     }

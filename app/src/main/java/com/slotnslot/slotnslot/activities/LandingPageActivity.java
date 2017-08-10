@@ -41,7 +41,8 @@ public class LandingPageActivity extends SlotRootActivity {
     }
 
     private void syncProgress() {
-        Disposable sync = GethManager.getNodeStartedObservable()
+        Disposable sync = GethManager.getNodeStartedSubject()
+                .compose(bindToLifecycle())
                 .filter(b -> b)
                 .take(1)
                 .flatMap(b -> Observable.interval(1000, TimeUnit.MILLISECONDS))
@@ -71,11 +72,13 @@ public class LandingPageActivity extends SlotRootActivity {
                     loadingText.setText("Loading... " + currentBlock);
                 }, Throwable::printStackTrace);
 
-        synced.subscribe(() -> {
-            sync.dispose();
-            Intent intent = new Intent(getApplicationContext(), SignInUpActivity.class);
-            startActivity(intent);
-            finish();
-        }, Throwable::printStackTrace);
+        synced
+                .compose(bindToLifecycle())
+                .subscribe(() -> {
+                    sync.dispose();
+                    Intent intent = new Intent(getApplicationContext(), SignInUpActivity.class);
+                    startActivity(intent);
+                    finish();
+                }, Throwable::printStackTrace);
     }
 }
