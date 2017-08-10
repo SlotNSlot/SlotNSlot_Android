@@ -94,6 +94,9 @@ public class PlaySlotViewModel {
         if (currentLine >= Constants.BET_MAX_LINE) {
             return;
         }
+        if ((currentLine + 1) * currentBetEth > Convert.fromWei(rxSlotRoom.getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER).doubleValue()) {
+            return;
+        }
         betLineSubject.onNext(++currentLine);
     }
 
@@ -108,12 +111,15 @@ public class PlaySlotViewModel {
         if (currentBetEth >= rxSlotRoom.getSlotRoom().getMaxBet()) {
             return;
         }
+        if (currentLine * (currentBetEth + 0.001) > Convert.fromWei(rxSlotRoom.getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER).doubleValue()) {
+            return;
+        }
         currentBetEth += 0.001;
         betEthSubject.onNext(currentBetEth);
     }
 
     public void betMinus() {
-        if (currentBetEth <= Constants.BET_MIN_ETH) {
+        if (currentBetEth <= rxSlotRoom.getSlotRoom().getMinBet()) {
             return;
         }
         currentBetEth -= 0.001;
@@ -121,9 +127,27 @@ public class PlaySlotViewModel {
     }
 
     public void maxBet() {
-        currentLine = Constants.BET_MAX_LINE;
+        double playerBal = Convert.fromWei(rxSlotRoom.getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER).doubleValue();
+        double slotMaxBet = rxSlotRoom.getSlotRoom().getMaxBet();
+        double slotMinBet = rxSlotRoom.getSlotRoom().getMinBet();
+
+        int line;
+        double bet;
+        if (playerBal <= Constants.BET_MAX_LINE * slotMinBet) {
+            int maxLine = (int) (playerBal / slotMinBet);
+            line = maxLine == 0 ? 1 : maxLine;
+            bet = slotMinBet;
+        } else if (playerBal <= Constants.BET_MAX_LINE * slotMaxBet) {
+            line = Constants.BET_MAX_LINE;
+            int betCount = (int) (playerBal / line / slotMinBet);
+            bet = (betCount == 0 ? 1 : betCount) * slotMinBet;
+        } else {
+            line = Constants.BET_MAX_LINE;
+            bet = slotMaxBet;
+        }
+        currentLine = line;
+        currentBetEth = bet;
         betLineSubject.onNext(currentLine);
-        currentBetEth = rxSlotRoom.getSlotRoom().getMaxBet();
         betEthSubject.onNext(currentBetEth);
     }
 
@@ -302,7 +326,6 @@ public class PlaySlotViewModel {
 
                         Utils.showToast("player : " + response.player.toString() + " has left");
 
-                        rxSlotRoom.updateBalance();
                         seedReadySubject.onNext(false);
                         clearSpin.onNext(true);
                         return;
@@ -329,6 +352,10 @@ public class PlaySlotViewModel {
     public void updateTxConfirmation(boolean confirm, int index) {
         txConfirmation[index] = confirm;
         txConfirmationSubject.onNext(txConfirmation);
+    }
+
+    public void updateBalance() {
+        rxSlotRoom.updateBalance();
     }
 
     public void onCreate(Double deposit) {
