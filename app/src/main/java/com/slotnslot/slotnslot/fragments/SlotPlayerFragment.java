@@ -30,8 +30,8 @@ public class SlotPlayerFragment extends AbsSlotFragment {
     ImageButton ethMinusButton;
     @BindView(R.id.play_max_bet_button)
     RelativeLayout maxBetButton;
-    @BindView(R.id.play_auto_button)
-    Button autoButton;
+//    @BindView(R.id.play_auto_button)
+//    Button autoButton;
     @BindView(R.id.play_spin_button)
     Button spinButton;
 
