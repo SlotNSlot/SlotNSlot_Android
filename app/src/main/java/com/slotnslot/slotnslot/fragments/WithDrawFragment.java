@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.slotnslot.slotnslot.R;
+import com.slotnslot.slotnslot.activities.MyPageActivity;
 import com.slotnslot.slotnslot.geth.CredentialManager;
 import com.slotnslot.slotnslot.geth.TransactionManager;
 import com.slotnslot.slotnslot.models.AccountViewModel;
@@ -53,6 +54,12 @@ public class WithDrawFragment extends SlotRootFragment {
 
         updateBalance();
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MyPageActivity)getActivity()).setTitle("Withdraw ETH");
     }
 
     private void updateBalance() {

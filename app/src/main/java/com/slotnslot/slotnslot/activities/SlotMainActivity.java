@@ -1,5 +1,8 @@
 package com.slotnslot.slotnslot.activities;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,10 +18,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.slotnslot.slotnslot.MyPageType;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.SlotType;
 import com.slotnslot.slotnslot.adapters.TabPagerAdapter;
@@ -46,6 +50,8 @@ public class SlotMainActivity extends SlotRootActivity {
     ViewPager viewPager;
     @BindView(R.id.nav_address_textview)
     TextView addressTextView;
+    @BindView(R.id.nav_address_more_button)
+    ImageButton moreButton;
     @BindView(R.id.nav_amount_textview)
     TextView amountTextView;
     @BindView(R.id.global_loading_container)
@@ -98,6 +104,14 @@ public class SlotMainActivity extends SlotRootActivity {
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
+        });
+
+        RxView.clicks(moreButton).subscribe(v -> {
+            ClipboardManager clipboard = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("text", addressTextView.getText());
+            clipboard.setPrimaryClip(clip);
+
+            Utils.showToast("Copy Address");
         });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -167,16 +181,6 @@ public class SlotMainActivity extends SlotRootActivity {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         Intent intent = new Intent(getApplicationContext(), MyPageActivity.class);
-        intent.putExtra(com.slotnslot.slotnslot.utils.Constants.ACTIVITY_EXTRA_KEY_MY_PAGE_TYPE, MyPageType.WALLET);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.nav_address_layout)
-    public void showAddess() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        Intent intent = new Intent(getApplicationContext(), MyPageActivity.class);
-        intent.putExtra(com.slotnslot.slotnslot.utils.Constants.ACTIVITY_EXTRA_KEY_MY_PAGE_TYPE, MyPageType.WITHDRAW);
         startActivity(intent);
     }
 
