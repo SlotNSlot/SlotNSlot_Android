@@ -8,7 +8,6 @@ import org.ethereum.geth.Context;
 import org.ethereum.geth.EthereumClient;
 import org.ethereum.geth.Node;
 
-import io.reactivex.CompletableEmitter;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class GethManager {
@@ -42,7 +41,15 @@ public class GethManager {
         return nodeStartedSubject;
     }
 
-    public void startNode(CompletableEmitter emitter) {
+    public void toggleNode() {
+        if (nodeStarted) {
+            stopNode();
+        } else {
+            startNode();
+        }
+    }
+
+    public void startNode() {
         if (this.nodeStarted) {
             return;
         }
@@ -52,11 +59,10 @@ public class GethManager {
             this.nodeStarted = true;
             this.client = this.node.getEthereumClient();
             nodeStartedSubject.onNext(true);
-            emitter.onComplete();
         } catch (Exception e) {
             this.nodeStarted = false;
             nodeStartedSubject.onNext(false);
-            emitter.onError(e);
+            Log.e(TAG, e.getMessage());
         }
     }
 
