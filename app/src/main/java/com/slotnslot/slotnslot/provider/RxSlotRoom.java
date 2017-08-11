@@ -101,7 +101,6 @@ public class RxSlotRoom {
                 .subscribe(response -> {
                     Log.i(TAG, "player left : " + response.player.toString());
                     Log.i(TAG, "player's initial balance: " + response.playerBalance.getValue());
-                    AccountProvider.updateBalance();
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }

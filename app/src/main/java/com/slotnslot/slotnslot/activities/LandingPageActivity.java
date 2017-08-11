@@ -17,7 +17,6 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -88,7 +87,7 @@ public class LandingPageActivity extends SlotRootActivity {
         GethManager
                 .getNodeStartedSubject()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(started -> syncButton.setText(started ? "sync stop" : "sync start"), Throwable::printStackTrace);
+                .subscribe(started -> syncButton.setText(started ? "stop syncing" : "start syncing"), Throwable::printStackTrace);
         RxView
                 .clicks(syncButton)
                 .subscribe(o -> GethManager.getInstance().toggleNode(), Throwable::printStackTrace);

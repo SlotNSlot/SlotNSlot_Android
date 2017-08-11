@@ -330,8 +330,6 @@ public class PlaySlotViewModel {
                         clearSpin.onNext(true);
                         return;
                     }
-
-                    AccountProvider.updateBalance(); // for player only
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
