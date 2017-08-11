@@ -308,7 +308,6 @@ public class PlaySlotViewModel {
 
                     drawResultSubject.onNext(new DrawOption(winRate, previousBetEth, (index + 1) % 3));
 
-                    rxSlotRoom.updateBalance();
                     if (!isBanker()) {
                         playerSeed.confirm(index);
                         playerSeed.save(machine.getContractAddress());
