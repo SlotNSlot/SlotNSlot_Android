@@ -26,6 +26,7 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.SlotType;
 import com.slotnslot.slotnslot.adapters.TabPagerAdapter;
+import com.slotnslot.slotnslot.geth.GethManager;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.AccountViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
@@ -209,5 +210,6 @@ public class SlotMainActivity extends SlotRootActivity {
     protected void onDestroy() {
         super.onDestroy();
         RxSlotRooms.destroy();
+        GethManager.getInstance().stopNode();
     }
 }

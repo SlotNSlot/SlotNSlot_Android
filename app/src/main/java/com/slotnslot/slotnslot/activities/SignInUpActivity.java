@@ -4,12 +4,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.fragments.SignInListFragment;
 import com.slotnslot.slotnslot.fragments.SignUpFragment;
+import com.slotnslot.slotnslot.geth.GethManager;
 import com.slotnslot.slotnslot.geth.Utils;
 
 public class SignInUpActivity extends SlotFragmentActivity {
@@ -40,6 +39,7 @@ public class SignInUpActivity extends SlotFragmentActivity {
         }
         if (doubleBackToExitPressedOnce) {
             finish();
+            GethManager.getInstance().stopNode();
             return;
         }
         this.doubleBackToExitPressedOnce = true;

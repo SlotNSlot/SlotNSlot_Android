@@ -144,5 +144,6 @@ public class MainActivity extends RxAppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        GethManager.getInstance().stopNode();
     }
 }
