@@ -6,6 +6,7 @@ import android.widget.EditText;
 
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.slotnslot.slotnslot.R;
+import com.slotnslot.slotnslot.geth.Utils;
 
 import butterknife.BindView;
 import io.reactivex.Observable;
@@ -21,15 +22,31 @@ public class MakeSlotStepFourFragment extends MakeSlotStepFragment {
         Observable<CharSequence> minRangeObservable = RxTextView.textChanges(minRangeEditText);
         Observable<CharSequence> maxRangeObservable = RxTextView.textChanges(maxRangeEditText);
         minRangeObservable
-                .filter(cs -> isStringDouble(cs.toString()))
+                .filter(cs -> !Utils.isEmpty(cs))
                 .map(cs -> Double.parseDouble(cs.toString()))
-                .filter(bet -> bet != null)
                 .subscribe(bet -> this.slotRoom.setMinBet(bet) );
         maxRangeObservable
-                .filter(cs -> isStringDouble(cs.toString()))
+                .filter(cs -> !Utils.isEmpty(cs))
                 .map(cs -> Double.parseDouble(cs.toString()))
-                .filter(bet -> bet != null)
                 .subscribe(bet -> this.slotRoom.setMaxBet(bet) );
+    }
+
+    @Override
+    boolean verify() {
+        if (Utils.isEmpty(minRangeEditText.getText().toString())
+            || Utils.isEmpty(maxRangeEditText.getText().toString())) {
+            Utils.showDialog(getActivity(), null, "Please enter min/max range.", "ok");
+            return false;
+        }
+        if (Double.parseDouble(minRangeEditText.getText().toString()) <= 0) {
+            Utils.showDialog(getActivity(), null, "Min range MUST be higher than 0 ETH.", "ok");
+            return false;
+        }
+        if (Double.parseDouble(minRangeEditText.getText().toString()) > Double.parseDouble(maxRangeEditText.getText().toString())) {
+            Utils.showDialog(getActivity(), null, "Max range MUST be higher than Min range.", "ok");
+            return false;
+        }
+        return true;
     }
 
     @Override

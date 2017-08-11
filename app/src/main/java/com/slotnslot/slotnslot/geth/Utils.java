@@ -1,5 +1,7 @@
 package com.slotnslot.slotnslot.geth;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -42,6 +44,14 @@ public class Utils {
 
     public static void showToast(String msg) {
         Toast.makeText(MainApplication.getContext(), msg, Toast.LENGTH_LONG).show();
+    }
+
+    public static void showDialog(Activity activity, String title, String message, String okMessage) {
+        new AlertDialog.Builder(activity)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(okMessage, (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     public static byte[] hexToByte(String hex) {

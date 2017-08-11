@@ -59,7 +59,12 @@ public abstract class MakeSlotStepFragment extends SlotRootFragment {
         return view;
     }
 
+    abstract boolean verify();
+
     private void next() {
+        if (!verify()) {
+            return;
+        }
         Fragment frag = getStepFragment();
         Bundle bundle = new Bundle();
         bundle.putInt(Constants.BUNDLE_KEY_STEP_INDEX, this.stepIndex + 1);
@@ -142,24 +147,6 @@ public abstract class MakeSlotStepFragment extends SlotRootFragment {
                 return getString(R.string.step4_description);
             default:
                 return Constants.EMPTY_STRING;
-        }
-    }
-
-    public boolean isStringFloat(String s) {
-        try {
-            Float.parseFloat(s);
-            return true;
-        } catch (NumberFormatException ex) {
-            return false;
-        }
-    }
-
-    public boolean isStringDouble(String s) {
-        try {
-            Double.parseDouble(s);
-            return true;
-        } catch (NumberFormatException ex) {
-            return false;
         }
     }
 

@@ -95,13 +95,13 @@ public class SlotListAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case SLOT_ITEM_VIEWTYPE_ROOM:
-                SlotRoomViewModel viewModel = items.get(position - (type == ListType.PLAY ? 1 : 0));
+                SlotRoomViewModel viewModel = items.get(position - 1);
                 ((SlotViewHolder) holder).onBindView(viewModel);
                 ((SlotViewHolder) holder).getMoreButton().setVisibility(type == ListType.PLAY ? View.GONE : View.VISIBLE);
                 ((SlotViewHolder) holder).getMoreButton().setOnClickListener(v -> {
                     ActionSheet.createBuilder(fragment.getContext(), fragment.getFragmentManager())
-                            .setCancelButtonTitle("Cancel")
-                            .setOtherButtonTitles("Remove (Cash out)")
+                            .setCancelButtonTitle("cancel")
+                            .setOtherButtonTitles("remove (cash out)")
                             .setCancelableOnTouchOutside(true)
                             .setListener(new ActionSheet.ActionSheetListener() {
                                 @Override
@@ -132,7 +132,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                             }).show();
                 });
                 holder.itemView.setOnClickListener(view -> {
-                    SlotRoomViewModel slotRoomViewModel = items.get(position - (type == ListType.PLAY ? 1 : 0));
+                    SlotRoomViewModel slotRoomViewModel = items.get(position - 1);
                     if (type == ListType.PLAY) {
                         setDeposit(slotRoomViewModel);
                     } else {
