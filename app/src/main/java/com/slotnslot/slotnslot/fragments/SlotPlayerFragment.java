@@ -1,6 +1,8 @@
 package com.slotnslot.slotnslot.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +32,7 @@ public class SlotPlayerFragment extends AbsSlotFragment {
     ImageButton ethMinusButton;
     @BindView(R.id.play_max_bet_button)
     RelativeLayout maxBetButton;
-//    @BindView(R.id.play_auto_button)
+    //    @BindView(R.id.play_auto_button)
 //    Button autoButton;
     @BindView(R.id.play_spin_button)
     Button spinButton;
@@ -62,7 +64,24 @@ public class SlotPlayerFragment extends AbsSlotFragment {
                     viewModel.lastWinSubject.onNext(option.winRate * option.bet);
                     spinButton.setEnabled(true);
                 });
+
+        onBackPressed(view);
         return view;
+    }
+
+    private void onBackPressed(View view) {
+        view.setFocusableInTouchMode(true);
+        view.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("Do you really want to leave this slot? When you leave, your balance in the current slot is automatically cashed out to your wallet.")
+                        .setPositiveButton("Yes", (dialog, id) -> getActivity().finish())
+                        .setNegativeButton("No", null)
+                        .show();
+                return true;
+            }
+            return false;
+        });
     }
 
     private void invalidSeedEvent() {

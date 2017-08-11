@@ -111,11 +111,12 @@ public class SlotListAdapter extends RecyclerView.Adapter {
 
                                 @Override
                                 public void onOtherButtonClick(ActionSheet actionSheet, int index) {
-                                    SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.getManagerAddress());
-                                    Address address = new Address(items.get(position - (type == ListType.PLAY ? 1 : 0)).getSlotAddress());
-                                    slotMachineManager.removeSlotMachine(address)
+                                    SlotRoomViewModel viewModel = items.get(position - 1);
+                                    Utils.showToast("Your balance [" + Convert.fromWei(viewModel.getRxSlotRoom().getSlotRoom().getBankerBalance(), Convert.Unit.ETHER) + "] ETH in the slot has been withdrawn and put into your wallet.");
+
+                                    RxSlotRooms.slotMachineManager.removeSlotMachine(new Address(viewModel.getSlotAddress()))
                                             .compose(fragment.bindToLifecycle())
-                                            .map(slotMachineManager::getSlotMachineRemovedEvents)
+                                            .map(RxSlotRooms.slotMachineManager::getSlotMachineRemovedEvents)
                                             .subscribe(responses -> {
                                                 if (responses.isEmpty()) {
                                                     Log.e(TAG, "event is empty.");

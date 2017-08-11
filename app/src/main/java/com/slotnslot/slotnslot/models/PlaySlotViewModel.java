@@ -389,6 +389,7 @@ public class PlaySlotViewModel {
                         address -> Log.i(TAG, "leave... now occupied by : " + address.toString()),
                         Throwable::printStackTrace
                 );
+        Utils.showToast("Your balance [" + Convert.fromWei(rxSlotRoom.getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER) + "] ETH in the slot has been withdrawn and put into your wallet.");
     }
 
     public static class DrawOption {
