@@ -1,7 +1,6 @@
 package com.slotnslot.slotnslot.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -14,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.slotnslot.slotnslot.MainApplication;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.contract.SlotMachineManager;
 import com.slotnslot.slotnslot.geth.GethConstants;
@@ -27,7 +25,6 @@ import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 
-import org.web3j.abi.datatypes.generated.Bytes16;
 import org.web3j.abi.datatypes.generated.Uint16;
 import org.web3j.abi.datatypes.generated.Uint256;
 
@@ -81,7 +78,13 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
 
         nextButton.setText("CONFIRM");
         nextButton.setBackgroundResource(R.color.complete_confirm);
-        nextButton.setOnClickListener(view1 -> this.next());
+        nextButton.setOnClickListener(view1 -> {
+            if (roomNameEditText.getText().toString().getBytes().length > 16) {
+                Utils.showDialog(getActivity(), "Slot Title is too long", "Please enter 16 characters or less", "ok");
+                return;
+            }
+            this.next();
+        });
         backButton.setBackgroundResource(R.color.complete_cancel);
         backButton.setOnClickListener(view1 -> this.back());
         return view;
@@ -92,18 +95,16 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
         /*
          * BETA VERSION
          * */
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("The ‘Make’ function is not available in beta.");
-        builder.setMessage("The SlotNSlot team is working hard to stabilize the service. Try out the features in upcoming apps.");
-        builder.setPositiveButton("I got it", (dialog, which) -> {
-            dialog.dismiss();
-            getActivity().finish();
-        });
-        builder.show();
+//        new AlertDialog.Builder(getActivity())
+//                .setTitle("The ‘Make’ function is not available in beta.")
+//                .setMessage("The SlotNSlot team is working hard to stabilize the service. Try out the features in upcoming apps.")
+//                .setPositiveButton("I got it", (dialog, which) -> {
+//                    dialog.dismiss();
+//                    getActivity().finish();
+//                })
+//                .show();
 
-        /*
-        SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.SLOT_MANAGER_CONTRACT_ADDRESS);
-
+        SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.getManagerAddress());
         slotMachineManager.createSlotMachine(
                 new Uint16((int) (slotRoom.getHitRatio() * 10)),
                 new Uint256(Convert.toWei(slotRoom.getMinBet(), Convert.Unit.ETHER)),
@@ -146,7 +147,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                         hash -> Log.i(TAG, "fund sent. hash : " + hash.getHex()),
                         Throwable::printStackTrace
                 );
-                */
+        getActivity().finish();
     }
 
     private void back() {

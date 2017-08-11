@@ -19,6 +19,11 @@ public class MakeSlotSummaryFragment extends MakeSlotStepFragment {
     @BindView(R.id.make_slot_summary_total_stake_textview)
     TextView totalStakeTextView;
 
+    @Override
+    boolean verify() {
+        return true;
+    }
+
     public void initView() {
         hitRatioTextView.setText(String.format(Constants.HIT_RATIO_TEXT_FORMAT, slotRoom.getHitRatio()));
         betRangeTextView.setText(String.format(Constants.BET_RANGE_TEXT_FORMAT, slotRoom.getMinBet(), slotRoom.getMaxBet()));

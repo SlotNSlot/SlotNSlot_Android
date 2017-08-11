@@ -1,6 +1,8 @@
 package com.slotnslot.slotnslot.fragments;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,8 +10,6 @@ import android.widget.Button;
 
 import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
-
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -34,7 +34,24 @@ public class SlotBankerFragment extends AbsSlotFragment {
                     this.drawResult(option.winRate);
                     viewModel.lastWinSubject.onNext(option.winRate * option.bet);
                 });
+
+        onBackPressed(view);
         return view;
+    }
+
+    private void onBackPressed(View view) {
+        view.setFocusableInTouchMode(true);
+        view.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                new AlertDialog.Builder(getActivity())
+                        .setMessage("Exit the watch screen?")
+                        .setPositiveButton("Yes", (dialog, id) -> getActivity().finish())
+                        .setNegativeButton("No", null)
+                        .show();
+                return true;
+            }
+            return false;
+        });
     }
 
     @Override

@@ -95,13 +95,13 @@ public class SlotListAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (getItemViewType(position)) {
             case SLOT_ITEM_VIEWTYPE_ROOM:
-                SlotRoomViewModel viewModel = items.get(position - (type == ListType.PLAY ? 1 : 0));
+                SlotRoomViewModel viewModel = items.get(position - 1);
                 ((SlotViewHolder) holder).onBindView(viewModel);
                 ((SlotViewHolder) holder).getMoreButton().setVisibility(type == ListType.PLAY ? View.GONE : View.VISIBLE);
                 ((SlotViewHolder) holder).getMoreButton().setOnClickListener(v -> {
                     ActionSheet.createBuilder(fragment.getContext(), fragment.getFragmentManager())
-                            .setCancelButtonTitle("Cancel")
-                            .setOtherButtonTitles("Remove (Cash out)")
+                            .setCancelButtonTitle("cancel")
+                            .setOtherButtonTitles("remove (cash out)")
                             .setCancelableOnTouchOutside(true)
                             .setListener(new ActionSheet.ActionSheetListener() {
                                 @Override
@@ -111,11 +111,12 @@ public class SlotListAdapter extends RecyclerView.Adapter {
 
                                 @Override
                                 public void onOtherButtonClick(ActionSheet actionSheet, int index) {
-                                    SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.getManagerAddress());
-                                    Address address = new Address(items.get(position - (type == ListType.PLAY ? 1 : 0)).getSlotAddress());
-                                    slotMachineManager.removeSlotMachine(address)
+                                    SlotRoomViewModel viewModel = items.get(position - 1);
+                                    Utils.showToast("Your balance [" + Convert.fromWei(viewModel.getRxSlotRoom().getSlotRoom().getBankerBalance(), Convert.Unit.ETHER) + "] ETH in the slot has been withdrawn and put into your wallet.");
+
+                                    RxSlotRooms.slotMachineManager.removeSlotMachine(new Address(viewModel.getSlotAddress()))
                                             .compose(fragment.bindToLifecycle())
-                                            .map(slotMachineManager::getSlotMachineRemovedEvents)
+                                            .map(RxSlotRooms.slotMachineManager::getSlotMachineRemovedEvents)
                                             .subscribe(responses -> {
                                                 if (responses.isEmpty()) {
                                                     Log.e(TAG, "event is empty.");
@@ -132,7 +133,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                             }).show();
                 });
                 holder.itemView.setOnClickListener(view -> {
-                    SlotRoomViewModel slotRoomViewModel = items.get(position - (type == ListType.PLAY ? 1 : 0));
+                    SlotRoomViewModel slotRoomViewModel = items.get(position - 1);
                     if (type == ListType.PLAY) {
                         setDeposit(slotRoomViewModel);
                     } else {

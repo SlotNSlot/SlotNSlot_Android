@@ -49,13 +49,4 @@ public class SlotGameActivity extends SlotFragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setMessage("Are you sure you want to exit game?")
-                .setPositiveButton("Yes", (dialog, id) -> finish())
-                .setNegativeButton("No", null)
-                .show();
-    }
 }

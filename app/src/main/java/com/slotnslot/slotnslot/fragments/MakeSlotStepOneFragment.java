@@ -22,6 +22,11 @@ public class MakeSlotStepOneFragment extends MakeSlotStepFragment {
     static final private String BUTTON2_TEXT = "12.5%";
     static final private String BUTTON3_TEXT = "15%";
 
+    @Override
+    boolean verify() {
+        return true;
+    }
+
     public void initView() {
         slotRoom = new SlotRoom();
         backButton.setVisibility(View.GONE);

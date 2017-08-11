@@ -21,6 +21,11 @@ public class MakeSlotStepThreeFragment extends MakeSlotStepFragment {
     static final private String BUTTON2_TEXT = "1500";
     static final private String BUTTON3_TEXT = "2000";
 
+    @Override
+    boolean verify() {
+        return true;
+    }
+
     public void initView() {
         selectButton1.setText(BUTTON1_TEXT);
         selectButton2.setText(BUTTON2_TEXT);
