@@ -6,6 +6,7 @@ import com.slotnslot.slotnslot.models.Account;
 
 import java.math.BigInteger;
 
+import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
 public class AccountProvider {
@@ -33,13 +34,9 @@ public class AccountProvider {
         TransactionManager.getBalanceAt().subscribe(AccountProvider::updateBalance);
     }
 
-    public static void getBalance() {
-        TransactionManager
-                .getBalanceAt()
-                .subscribe(
-                        AccountProvider::updateBalance,
-                        Throwable::printStackTrace
-                );
+    public static Observable<BigInteger> getBalance() {
+        return TransactionManager
+                .getBalanceAt();
     }
 
     public static boolean identical(String address) {

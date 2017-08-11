@@ -92,9 +92,9 @@ public class WithDrawFragment extends SlotRootFragment {
                             hash -> {
                                 Log.i(TAG, "ether sent, hash : " + hash.getHex());
                                 withdrawAmount.setText("");
-                                AccountProvider.getBalance();
+                                AccountProvider.updateBalance();
                                 TransactionManager.processResponse(hash)
-                                        .subscribe(receipt -> AccountProvider.getBalance());
+                                        .subscribe(receipt -> AccountProvider.updateBalance());
                             },
                             Throwable::printStackTrace);
             return;
@@ -105,9 +105,9 @@ public class WithDrawFragment extends SlotRootFragment {
                         hash -> {
                             Log.i(TAG, "ether sent, hash : " + hash.getHex());
                             withdrawAmount.setText("");
-                            AccountProvider.getBalance();
+                            AccountProvider.updateBalance();
                             TransactionManager.processResponse(hash)
-                                    .subscribe(receipt -> AccountProvider.getBalance());
+                                    .subscribe(receipt -> AccountProvider.updateBalance());
                         },
                         Throwable::printStackTrace);
     }

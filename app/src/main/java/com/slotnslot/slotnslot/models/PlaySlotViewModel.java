@@ -12,6 +12,7 @@ import com.slotnslot.slotnslot.utils.Convert;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.abi.datatypes.generated.Uint8;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import io.reactivex.Completable;
@@ -114,7 +115,7 @@ public class PlaySlotViewModel {
         if (currentLine * (currentBetEth + 0.001) > Convert.fromWei(rxSlotRoom.getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER).doubleValue()) {
             return;
         }
-        currentBetEth += 0.001;
+        currentBetEth = BigDecimal.valueOf(currentBetEth).add(BigDecimal.valueOf(0.001)).doubleValue();
         betEthSubject.onNext(currentBetEth);
     }
 
@@ -122,7 +123,8 @@ public class PlaySlotViewModel {
         if (currentBetEth <= rxSlotRoom.getSlotRoom().getMinBet()) {
             return;
         }
-        currentBetEth -= 0.001;
+        currentBetEth = BigDecimal.valueOf(currentBetEth).subtract(BigDecimal.valueOf(0.001)).doubleValue();
+        Log.i(TAG, "current bet : " + currentBetEth);
         betEthSubject.onNext(currentBetEth);
     }
 
@@ -130,6 +132,8 @@ public class PlaySlotViewModel {
         double playerBal = Convert.fromWei(rxSlotRoom.getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER).doubleValue();
         double slotMaxBet = rxSlotRoom.getSlotRoom().getMaxBet();
         double slotMinBet = rxSlotRoom.getSlotRoom().getMinBet();
+        Log.i(TAG, "max bet : " + slotMaxBet);
+        Log.i(TAG, "min bet : " + slotMinBet);
 
         int line;
         double bet;
@@ -147,6 +151,8 @@ public class PlaySlotViewModel {
         }
         currentLine = line;
         currentBetEth = bet;
+        Log.i(TAG, "current line : " + currentLine);
+        Log.i(TAG, "current bet : " + currentBetEth);
         betLineSubject.onNext(currentLine);
         betEthSubject.onNext(currentBetEth);
     }
@@ -225,11 +231,10 @@ public class PlaySlotViewModel {
                         Log.e(TAG, "banker seed is not initialized yet");
                         return;
                     }
-
                     int index = playerSeed.getIndex();
                     machine
                             .initGameForPlayer(
-                                    new Uint256(Convert.toWei(getCurrentBetEth(), Convert.Unit.ETHER)),
+                                    new Uint256(Convert.toWei(currentBetEth, Convert.Unit.ETHER)),
                                     new Uint8(currentLine),
                                     new Uint8(index))
                             .subscribe(o -> updateTxConfirmation(true, index), Throwable::printStackTrace);
@@ -308,7 +313,6 @@ public class PlaySlotViewModel {
 
                     drawResultSubject.onNext(new DrawOption(winRate, previousBetEth, (index + 1) % 3));
 
-                    rxSlotRoom.updateBalance();
                     if (!isBanker()) {
                         playerSeed.confirm(index);
                         playerSeed.save(machine.getContractAddress());
@@ -330,8 +334,6 @@ public class PlaySlotViewModel {
                         clearSpin.onNext(true);
                         return;
                     }
-
-                    AccountProvider.updateBalance(); // for player only
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }

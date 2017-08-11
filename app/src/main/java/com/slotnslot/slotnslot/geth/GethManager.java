@@ -26,7 +26,7 @@ public class GethManager {
     private NetworkConfig networkConfig;
     private Node node;
 
-    private boolean nodeStarted = false;
+    public static boolean nodeStarted = false;
 
     public static GethManager getInstance() {
         if (instance == null) {
@@ -41,42 +41,34 @@ public class GethManager {
         return nodeStartedSubject;
     }
 
-    public void toggleNode() {
-        if (nodeStarted) {
-            stopNode();
-        } else {
-            startNode();
-        }
-    }
-
     public void startNode() {
-        if (this.nodeStarted) {
+        if (nodeStarted) {
             return;
         }
 
         try {
             this.node.start();
-            this.nodeStarted = true;
             this.client = this.node.getEthereumClient();
+            nodeStarted = true;
             nodeStartedSubject.onNext(true);
         } catch (Exception e) {
-            this.nodeStarted = false;
+            nodeStarted = false;
             nodeStartedSubject.onNext(false);
             Log.e(TAG, e.getMessage());
         }
     }
 
     public void stopNode() {
-        if (!this.nodeStarted) {
+        if (!nodeStarted) {
             return;
         }
 
         try {
             this.node.stop();
-            this.nodeStarted = false;
+            nodeStarted = false;
             nodeStartedSubject.onNext(false);
         } catch (Exception e) {
-            this.nodeStarted = false;
+            nodeStarted = false;
             nodeStartedSubject.onNext(false);
             Log.e(TAG, e.getLocalizedMessage());
         }

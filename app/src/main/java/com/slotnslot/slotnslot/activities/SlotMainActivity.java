@@ -26,6 +26,7 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.SlotType;
 import com.slotnslot.slotnslot.adapters.TabPagerAdapter;
+import com.slotnslot.slotnslot.geth.GethManager;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.AccountViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
@@ -107,7 +108,7 @@ public class SlotMainActivity extends SlotRootActivity {
         });
 
         RxView.clicks(moreButton).subscribe(v -> {
-            ClipboardManager clipboard = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("text", addressTextView.getText());
             clipboard.setPrimaryClip(clip);
 
@@ -120,7 +121,13 @@ public class SlotMainActivity extends SlotRootActivity {
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                AccountProvider.updateBalance();
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -137,12 +144,16 @@ public class SlotMainActivity extends SlotRootActivity {
                 .subscribe(slotMap -> {
                     for (RxSlotRoom rxSlotRoom : slotMap.values()) {
                         if (AccountProvider.identical(rxSlotRoom.getSlotRoom().getPlayerAddress())) {
-                            Intent intent = new Intent(getApplicationContext(), SlotGameActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable(Constants.ACTIVITY_EXTRA_KEY_SLOT_TYPE, SlotType.PLAYER);
-                            bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, rxSlotRoom.getSlotAddress());
-                            intent.putExtras(bundle);
-                            startActivity(intent);
+                            rxSlotRoom.getMachine().mPlayer().subscribe(address -> {
+                                if (AccountProvider.identical(address.toString())) {
+                                    Intent intent = new Intent(getApplicationContext(), SlotGameActivity.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable(Constants.ACTIVITY_EXTRA_KEY_SLOT_TYPE, SlotType.PLAYER);
+                                    bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, rxSlotRoom.getSlotAddress());
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
+                                }
+                            }, Throwable::printStackTrace);
                             break;
                         }
                     }
@@ -157,7 +168,7 @@ public class SlotMainActivity extends SlotRootActivity {
         accountViewModel.addressHex
                 .subscribe(hex -> addressTextView.setText(hex));
 
-        AccountProvider.getBalance();
+        AccountProvider.updateBalance();
     }
 
     @Override
@@ -172,7 +183,7 @@ public class SlotMainActivity extends SlotRootActivity {
             }
             this.doubleBackToExitPressedOnce = true;
             Utils.showToast("press back again to exit");
-            new Handler().postDelayed(() -> doubleBackToExitPressedOnce=false, 2000);
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
         }
     }
 
@@ -199,5 +210,6 @@ public class SlotMainActivity extends SlotRootActivity {
     protected void onDestroy() {
         super.onDestroy();
         RxSlotRooms.destroy();
+        GethManager.getInstance().stopNode();
     }
 }

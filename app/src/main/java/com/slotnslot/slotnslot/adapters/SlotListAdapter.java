@@ -30,6 +30,7 @@ import com.slotnslot.slotnslot.models.SlotRoomViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
+import com.slotnslot.slotnslot.utils.Convert;
 import com.slotnslot.slotnslot.views.SlotDescriptionViewHolder;
 import com.slotnslot.slotnslot.views.SlotMakeViewHolder;
 import com.slotnslot.slotnslot.views.SlotViewHolder;
@@ -100,7 +101,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                 ((SlotViewHolder) holder).getMoreButton().setOnClickListener(v -> {
                     ActionSheet.createBuilder(fragment.getContext(), fragment.getFragmentManager())
                             .setCancelButtonTitle("Cancel")
-                            .setOtherButtonTitles("Delete")
+                            .setOtherButtonTitles("Remove (Cash out)")
                             .setCancelableOnTouchOutside(true)
                             .setListener(new ActionSheet.ActionSheetListener() {
                                 @Override
@@ -162,8 +163,16 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                 .setView(container)
                 .setTitle("Please enter your initial deposit. (ether)")
                 .setPositiveButton("OK", (dialogInterface, i) -> {
-                    this.deposit = Double.parseDouble(editText.getText().toString());
-                    enterSlotRoom(viewModel);
+                    deposit = Double.parseDouble(editText.getText().toString());
+
+                    AccountProvider.getBalance()
+                            .subscribe(balance -> {
+                                if (deposit > Convert.fromWei(balance, Convert.Unit.ETHER).doubleValue()) {
+                                    Utils.showToast("deposit amount exceeds balance.");
+                                    return;
+                                }
+                                enterSlotRoom(viewModel);
+                            }, Throwable::printStackTrace);
                 })
                 .setNegativeButton("CANCEL", null)
                 .create();
@@ -188,11 +197,11 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                     if (AccountProvider.identical(viewModel.getBankerAddress())) {
                         return true; // banker can enter the room
                     }
-                    if (!Utils.isValidAddress(player.toString())) {
-                        return true; // if player address not exist, user can enter
-                    }
                     if (AccountProvider.identical(player.toString())) {
                         return true; // if player address equals user address, user can re-enter
+                    }
+                    if (!Utils.isValidAddress(player.toString())) {
+                        return true; // if player address not exist, user can enter
                     }
                     return false;
                 })
