@@ -107,7 +107,7 @@ public class SlotMainActivity extends SlotRootActivity {
         });
 
         RxView.clicks(moreButton).subscribe(v -> {
-            ClipboardManager clipboard = (ClipboardManager)getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData clip = ClipData.newPlainText("text", addressTextView.getText());
             clipboard.setPrimaryClip(clip);
 
@@ -137,12 +137,16 @@ public class SlotMainActivity extends SlotRootActivity {
                 .subscribe(slotMap -> {
                     for (RxSlotRoom rxSlotRoom : slotMap.values()) {
                         if (AccountProvider.identical(rxSlotRoom.getSlotRoom().getPlayerAddress())) {
-                            Intent intent = new Intent(getApplicationContext(), SlotGameActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable(Constants.ACTIVITY_EXTRA_KEY_SLOT_TYPE, SlotType.PLAYER);
-                            bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, rxSlotRoom.getSlotAddress());
-                            intent.putExtras(bundle);
-                            startActivity(intent);
+                            rxSlotRoom.getMachine().mPlayer().subscribe(address -> {
+                                if (AccountProvider.identical(address.toString())) {
+                                    Intent intent = new Intent(getApplicationContext(), SlotGameActivity.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable(Constants.ACTIVITY_EXTRA_KEY_SLOT_TYPE, SlotType.PLAYER);
+                                    bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, rxSlotRoom.getSlotAddress());
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
+                                }
+                            }, Throwable::printStackTrace);
                             break;
                         }
                     }
@@ -172,7 +176,7 @@ public class SlotMainActivity extends SlotRootActivity {
             }
             this.doubleBackToExitPressedOnce = true;
             Utils.showToast("press back again to exit");
-            new Handler().postDelayed(() -> doubleBackToExitPressedOnce=false, 2000);
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
         }
     }
 

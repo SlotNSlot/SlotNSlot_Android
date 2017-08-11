@@ -188,11 +188,11 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                     if (AccountProvider.identical(viewModel.getBankerAddress())) {
                         return true; // banker can enter the room
                     }
-                    if (!Utils.isValidAddress(player.toString())) {
-                        return true; // if player address not exist, user can enter
-                    }
                     if (AccountProvider.identical(player.toString())) {
                         return true; // if player address equals user address, user can re-enter
+                    }
+                    if (!Utils.isValidAddress(player.toString())) {
+                        return true; // if player address not exist, user can enter
                     }
                     return false;
                 })
