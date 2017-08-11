@@ -101,7 +101,7 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                 ((SlotViewHolder) holder).getMoreButton().setOnClickListener(v -> {
                     ActionSheet.createBuilder(fragment.getContext(), fragment.getFragmentManager())
                             .setCancelButtonTitle("Cancel")
-                            .setOtherButtonTitles("Delete")
+                            .setOtherButtonTitles("Remove (Cash out)")
                             .setCancelableOnTouchOutside(true)
                             .setListener(new ActionSheet.ActionSheetListener() {
                                 @Override

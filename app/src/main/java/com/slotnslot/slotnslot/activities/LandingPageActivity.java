@@ -56,7 +56,7 @@ public class LandingPageActivity extends SlotRootActivity {
                     long currentTime = System.currentTimeMillis() / 1000;
                     long t = currentTime - header.getTime();
                     long size = GethManager.getNode().getPeersInfo().size();
-                    if (size > 0 && t < 300) {
+                    if (size > 1 && t < 300) {
                         synced.onComplete();
                     }
 
