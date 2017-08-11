@@ -78,7 +78,8 @@ public class LandingPageActivity extends SlotRootActivity {
                     long currentBlock = syncProgress.getCurrentBlock();
                     long knownStates = syncProgress.getKnownStates();
                     long pulledStates = syncProgress.getPulledStates();
-                    int progress = (int) ((currentBlock + pulledStates) * 100 / (highestBlock + knownStates));
+                    long startingBlock = syncProgress.getStartingBlock();
+                    int progress = (int) ((currentBlock + pulledStates - startingBlock) * 100 / (highestBlock + knownStates - startingBlock));
                     progressBar.setProgress(progress);
                     loadingText.setText("Loading... " + currentBlock);
                 }, Throwable::printStackTrace);
