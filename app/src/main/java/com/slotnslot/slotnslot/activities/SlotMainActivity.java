@@ -161,7 +161,7 @@ public class SlotMainActivity extends SlotRootActivity {
         accountViewModel.addressHex
                 .subscribe(hex -> addressTextView.setText(hex));
 
-        AccountProvider.getBalance();
+        AccountProvider.updateBalance();
     }
 
     @Override

@@ -30,6 +30,7 @@ import com.slotnslot.slotnslot.models.SlotRoomViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRooms;
 import com.slotnslot.slotnslot.utils.Constants;
+import com.slotnslot.slotnslot.utils.Convert;
 import com.slotnslot.slotnslot.views.SlotDescriptionViewHolder;
 import com.slotnslot.slotnslot.views.SlotMakeViewHolder;
 import com.slotnslot.slotnslot.views.SlotViewHolder;
@@ -162,8 +163,16 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                 .setView(container)
                 .setTitle("Please enter your initial deposit. (ether)")
                 .setPositiveButton("OK", (dialogInterface, i) -> {
-                    this.deposit = Double.parseDouble(editText.getText().toString());
-                    enterSlotRoom(viewModel);
+                    deposit = Double.parseDouble(editText.getText().toString());
+
+                    AccountProvider.getBalance()
+                            .subscribe(balance -> {
+                                if (deposit > Convert.fromWei(balance, Convert.Unit.ETHER).doubleValue()) {
+                                    Utils.showToast("deposit amount exceeds balance.");
+                                    return;
+                                }
+                                enterSlotRoom(viewModel);
+                            }, Throwable::printStackTrace);
                 })
                 .setNegativeButton("CANCEL", null)
                 .create();
