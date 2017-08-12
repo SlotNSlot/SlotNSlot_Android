@@ -27,7 +27,8 @@
         android:layout_marginBottom="121.5dp"
         android:layout_marginLeft="48dp"
         android:layout_marginRight="48dp"
-        android:background="@drawable/landing_loading_background" />
+        android:background="@drawable/landing_loading_background"
+        />
 
     <TextView
         android:id="@+id/loading_text"

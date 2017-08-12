@@ -39,6 +39,10 @@ public class Constants {
     public static int BET_MIN_LINE = 1;
     public static double BET_MIN_ETH = 0.001;
 
+    public static final String SAVED_NODE_FOLDER_NAME = "chaindata";
+    public static final int READ_EXTERNAL_PERMISSION_REQUEST_CODE = 0;
+    public static final int WRITE_EXTERNAL_PERMISSION_REQUEST_CODE = 1;
+
     public static final String EMPTY_STRING = "";
     public static final String PLAY_BET_LINES_TEXT_FORMAT = "%d line";
     public static final String PLAY_BET_ETH_TEXT_FORMAT = "%.3f ETH";
