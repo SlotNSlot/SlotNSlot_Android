@@ -260,44 +260,12 @@ public final class SlotMachine extends Contract {
         return executeCallSingleValueReturnObservable(function);
     }
 
-    public Observable<GameResponse> mGames(Bytes32 param0) {
-        Function function = new Function(
-                "mGames",
+    public Observable<Uint256> mGameInfo(Uint256 param0) {
+        Function function = new Function("mGameInfo",
                 Collections.singletonList(param0),
-                Arrays.asList(
-                        new TypeReference<Uint256>() {
-                        },
-                        new TypeReference<Bool>() {
-                        },
-                        new TypeReference<Bool>() {
-                        },
-                        new TypeReference<Bool>() {
-                        },
-                        new TypeReference<Uint256>() {
-                        },
-                        new TypeReference<Uint256>() {
-                        }
-                ));
-        return executeCallMultipleValueReturnObservable(function)
-                .map(response -> {
-                    GameResponse gameResponse = new GameResponse();
-                    gameResponse.bet = (Uint256) response.get(0).getValue();
-                    gameResponse.betReady = (Bool) response.get(1).getValue();
-                    gameResponse.bankerSeedReady = (Bool) response.get(2).getValue();
-                    gameResponse.playerSeedReady = (Bool) response.get(3).getValue();
-                    gameResponse.numOfLines = (Uint256) response.get(4).getValue();
-                    gameResponse.reward = (Uint256) response.get(5).getValue();
-                    return gameResponse;
-                });
-    }
-
-    public static class GameResponse {
-        public Uint256 bet;
-        public Bool betReady;
-        public Bool bankerSeedReady;
-        public Bool playerSeedReady;
-        public Uint256 numOfLines;
-        public Uint256 reward;
+                Collections.singletonList(new TypeReference<Uint256>() {
+                }));
+        return executeCallSingleValueReturnObservable(function);
     }
 
     public Observable<GetInfoResponse> getInfo() {
