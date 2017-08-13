@@ -67,18 +67,24 @@ public class LandingPageActivity extends SlotRootActivity {
         setContentView(R.layout.activity_landing_page);
         ButterKnife.bind(this);
 
-        progressPublisher.observeOn(AndroidSchedulers.mainThread()).compose(bindToLifecycle()).subscribe(progress -> progressBar.setProgress(progress));
-        copyExpansionPublisher.observeOn(Schedulers.io()).compose(bindToLifecycle()).subscribe(isExist -> {
-            if (isExist) {
-                copyExpansionComplete();
-            } else {
-                try {
-                    copyExpansion();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        progressPublisher
+                .compose(bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(progress -> progressBar.setProgress(progress));
+        copyExpansionPublisher
+                .compose(bindToLifecycle())
+                .observeOn(Schedulers.io())
+                .subscribe(isExist -> {
+                    if (isExist) {
+                        copyExpansionComplete();
+                    } else {
+                        try {
+                            copyExpansion();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
 
         checkPermission(Constants.READ_EXTERNAL_PERMISSION_REQUEST_CODE);
     }
@@ -204,9 +210,9 @@ public class LandingPageActivity extends SlotRootActivity {
                     }
                     Header header = GethManager.getClient().getHeaderByNumber(GethManager.getMainContext(), -1);
                     long currentTime = System.currentTimeMillis() / 1000;
-                    long t = currentTime - header.getTime();
+                    long timeDiff = currentTime - header.getTime();
                     long size = GethManager.getNode().getPeersInfo().size();
-                    if (size > 1 && t < 300) {
+                    if (size > 1 && timeDiff < 300) {
                         synced.onComplete();
                     }
 

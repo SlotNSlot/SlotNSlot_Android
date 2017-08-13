@@ -53,6 +53,7 @@ public class RxSlotRooms {
     public static void init() {
         slotMachineManager.getStorageAddr()
                 .subscribe(address -> {
+                    Log.i(TAG, "storage address : " + address.toString());
                     slotMachineStorage = SlotMachineStorage.load(address.toString());
                     slotMachineStorageLoaded.onComplete();
                 }, Throwable::printStackTrace);

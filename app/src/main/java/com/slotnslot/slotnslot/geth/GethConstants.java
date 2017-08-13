@@ -22,7 +22,7 @@ public class GethConstants {
         if (GethManager.getNetworkConfig().getNetwork() == EthereumNetwork.TESTNET) {
             return "0xce10092dbf587a3af476174bf94d79d480d6940b";
         } else {
-            return "0x1c6a994e0ae29af157fdd5bb86b05aff17c9ad02";
+            return "0x04d053f69b504ca6b795c5e4e442222e7f16dcb4";
         }
     }
 }

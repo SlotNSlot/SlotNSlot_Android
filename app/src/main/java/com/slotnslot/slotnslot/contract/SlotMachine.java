@@ -94,6 +94,8 @@ public final class SlotMachine extends Contract {
                     new TypeReference<Uint256>() {
                     },
                     new TypeReference<Uint8>() {
+                    },
+                    new TypeReference<Bytes32>() {
                     }
             ));
 
@@ -512,6 +514,7 @@ public final class SlotMachine extends Contract {
             GameConfirmedEventResponse typedResponse = new GameConfirmedEventResponse();
             typedResponse.reward = (Uint256) eventValues.getNonIndexedValues().get(0);
             typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(1);
+            typedResponse.randomSeed = (Bytes32) eventValues.getNonIndexedValues().get(2);
             responses.add(typedResponse);
         }
         return responses;
@@ -523,6 +526,7 @@ public final class SlotMachine extends Contract {
                     GameConfirmedEventResponse typedResponse = new GameConfirmedEventResponse();
                     typedResponse.reward = (Uint256) eventValues.getNonIndexedValues().get(0);
                     typedResponse.idx = (Uint8) eventValues.getNonIndexedValues().get(1);
+                    typedResponse.randomSeed = (Bytes32) eventValues.getNonIndexedValues().get(2);
                     return typedResponse;
                 });
     }
@@ -565,6 +569,7 @@ public final class SlotMachine extends Contract {
     public static class GameConfirmedEventResponse {
         public Uint256 reward;
         public Uint8 idx;
+        public Bytes32 randomSeed;
     }
 }
 

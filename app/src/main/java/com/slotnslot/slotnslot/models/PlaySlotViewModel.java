@@ -304,7 +304,7 @@ public class PlaySlotViewModel {
     private void setGameConfirmedEvent() {
         Disposable disposable = machine
                 .gameConfirmedEventObservable()
-                .distinctUntilChanged(response -> response.idx)
+                .distinct(response -> response.randomSeed)
                 .subscribe(response -> {
                     BigInteger reward = response.reward.getValue();
                     int winRate = reward.divide(Convert.toWei(previousBetEth, Convert.Unit.ETHER)).intValue();
@@ -314,6 +314,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "bet : " + previousBetEth);
                     Log.i(TAG, "win rate : " + winRate);
                     Log.i(TAG, "idx : " + index);
+                    Log.i(TAG, "random seed : " + Utils.byteToHex(response.randomSeed.getValue()));
 
                     drawResultSubject.onNext(new DrawOption(winRate, previousBetEth, (index + 1) % 3));
 
