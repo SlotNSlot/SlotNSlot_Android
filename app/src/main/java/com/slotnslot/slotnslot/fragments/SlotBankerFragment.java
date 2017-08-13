@@ -44,6 +44,7 @@ public class SlotBankerFragment extends AbsSlotFragment {
         view.setOnKeyListener((v, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                 new AlertDialog.Builder(getActivity())
+                        .setTitle("Leave")
                         .setMessage("Exit the watch screen?")
                         .setPositiveButton("Yes", (dialog, id) -> getActivity().finish())
                         .setNegativeButton("No", null)

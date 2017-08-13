@@ -31,16 +31,23 @@ public class MakeSlotStepTwoFragment extends MakeSlotStepFragment {
     }
 
     @Override
-    boolean verify() {
+    Observable<Boolean> verify() {
         if (Utils.isEmpty(stakeTxt.getText().toString())) {
             Utils.showDialog(getActivity(), null, "Stake MUST be entered.", "ok");
-            return false;
+            return Observable.just(false);
         }
         if (Double.parseDouble(stakeTxt.getText().toString()) <= 0) {
             Utils.showDialog(getActivity(), null, "Stake MUST be higher than 0 ETH.", "ok");
-            return false;
+            return Observable.just(false);
         }
-        return true;
+        return AccountProvider.getBalance()
+                .flatMap(balance -> {
+                    if (Double.parseDouble(stakeTxt.getText().toString()) > Convert.fromWei(balance, Convert.Unit.ETHER).doubleValue() - 0.5) {
+                        Utils.showDialog(getActivity(), null, "Please leave a certain amount of gas fee for the game. (at least 0.5 ETH)", "ok");
+                        return Observable.just(false);
+                    }
+                    return Observable.just(true);
+                });
     }
 
     @Override

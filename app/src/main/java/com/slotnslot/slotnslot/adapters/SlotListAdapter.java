@@ -162,20 +162,21 @@ public class SlotListAdapter extends RecyclerView.Adapter {
 
         AlertDialog dialog = new AlertDialog.Builder(fragment.getActivity())
                 .setView(container)
-                .setTitle("Please enter your initial deposit. (ether)")
-                .setPositiveButton("OK", (dialogInterface, i) -> {
+                .setTitle("DEPOSIT")
+                .setMessage("Please write down the amount of ETH to put in this slot. Leave a certain amount of gas fee for the game. (at least 0.5 ETH)")
+                .setPositiveButton("Confirm", (dialogInterface, i) -> {
                     deposit = Double.parseDouble(editText.getText().toString());
 
                     AccountProvider.getBalance()
                             .subscribe(balance -> {
-                                if (deposit > Convert.fromWei(balance, Convert.Unit.ETHER).doubleValue()) {
-                                    Utils.showToast("deposit amount exceeds balance.");
+                                if (deposit > Convert.fromWei(balance, Convert.Unit.ETHER).doubleValue() - 0.5) {
+                                    Utils.showDialog(fragment.getActivity(), null, "deposit amount exceeds balance + 0.5(ETH) gas fee.", "ok");
                                     return;
                                 }
                                 enterSlotRoom(viewModel);
                             }, Throwable::printStackTrace);
                 })
-                .setNegativeButton("CANCEL", null)
+                .setNegativeButton("Cancel", null)
                 .create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();

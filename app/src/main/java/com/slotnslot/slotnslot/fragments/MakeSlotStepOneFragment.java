@@ -8,6 +8,7 @@ import com.slotnslot.slotnslot.models.SlotRoom;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Observable;
 
 public class MakeSlotStepOneFragment extends MakeSlotStepFragment {
 
@@ -23,8 +24,8 @@ public class MakeSlotStepOneFragment extends MakeSlotStepFragment {
     static final private String BUTTON3_TEXT = "15%";
 
     @Override
-    boolean verify() {
-        return true;
+    Observable<Boolean> verify() {
+        return Observable.just(true);
     }
 
     public void initView() {

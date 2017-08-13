@@ -7,6 +7,7 @@ import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
 
 public class MakeSlotSummaryFragment extends MakeSlotStepFragment {
 
@@ -20,8 +21,8 @@ public class MakeSlotSummaryFragment extends MakeSlotStepFragment {
     TextView totalStakeTextView;
 
     @Override
-    boolean verify() {
-        return true;
+    Observable<Boolean> verify() {
+        return Observable.just(true);
     }
 
     public void initView() {

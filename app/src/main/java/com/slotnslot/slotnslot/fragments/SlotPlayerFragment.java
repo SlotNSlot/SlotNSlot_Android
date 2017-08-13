@@ -74,6 +74,7 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         view.setOnKeyListener((v, keyCode, event) -> {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
                 new AlertDialog.Builder(getActivity())
+                        .setTitle("Leave")
                         .setMessage("Do you really want to leave this slot? When you leave, your balance in the current slot is automatically cashed out to your wallet.")
                         .setPositiveButton("Yes", (dialog, id) -> getActivity().finish())
                         .setNegativeButton("No", null)
