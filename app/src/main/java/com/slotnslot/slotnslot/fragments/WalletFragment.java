@@ -55,7 +55,7 @@ public class WalletFragment extends SlotRootFragment {
             ClipData clip = ClipData.newPlainText("text", addressTextView.getText());
             clipboard.setPrimaryClip(clip);
 
-            Utils.showToast("Copy Address");
+            Utils.showToast("Wallet address copied.");
         });
 
         setAccountModel();

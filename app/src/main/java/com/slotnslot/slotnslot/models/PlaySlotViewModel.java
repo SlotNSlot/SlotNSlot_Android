@@ -14,6 +14,7 @@ import org.web3j.abi.datatypes.generated.Uint8;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -206,6 +207,7 @@ public class PlaySlotViewModel {
     private void setBankerSeedInitializedEvent() {
         Disposable disposable = machine
                 .bankerSeedInitializedEventObservable()
+                .delay(10, TimeUnit.SECONDS)
                 .subscribe(response -> {
                     String seed0 = Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue());
                     String seed1 = Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue());

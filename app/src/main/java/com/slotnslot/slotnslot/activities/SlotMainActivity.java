@@ -112,7 +112,7 @@ public class SlotMainActivity extends SlotRootActivity {
             ClipData clip = ClipData.newPlainText("text", addressTextView.getText());
             clipboard.setPrimaryClip(clip);
 
-            Utils.showToast("Copy Address");
+            Utils.showToast("Wallet address copied.");
         });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
