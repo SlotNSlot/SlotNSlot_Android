@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -208,6 +209,7 @@ public class PlaySlotViewModel {
         Disposable disposable = machine
                 .bankerSeedInitializedEventObservable()
                 .delay(10, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
                     String seed0 = Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue());
                     String seed1 = Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue());
