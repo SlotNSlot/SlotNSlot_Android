@@ -2,8 +2,6 @@ package com.slotnslot.slotnslot.geth;
 
 import android.util.Log;
 
-import com.slotnslot.slotnslot.MainApplication;
-
 import org.ethereum.geth.Context;
 import org.ethereum.geth.EthereumClient;
 import org.ethereum.geth.Node;
@@ -30,8 +28,8 @@ public class GethManager {
 
     public static GethManager getInstance() {
         if (instance == null) {
-            instance = new GethManager.Builder(MainApplication.getContext().getFilesDir().getPath())
-//                    .setNetworkConfig(NetworkConfig.getTestnetConfig())
+            instance = new GethManager.Builder()
+//                    .networkConfig(NetworkConfig.getTestnetConfig())
                     .build();
         }
         return instance;
@@ -64,9 +62,9 @@ public class GethManager {
         }
 
         try {
-            this.node.stop();
             nodeStarted = false;
             nodeStartedSubject.onNext(false);
+            this.node.stop();
         } catch (Exception e) {
             nodeStarted = false;
             nodeStartedSubject.onNext(false);
@@ -92,53 +90,34 @@ public class GethManager {
 
     public static class Builder {
         GethManager manager;
-        String fileDirPath;
 
-        public Builder(String fileDirPath) {
+        public Builder() {
             this.manager = new GethManager();
-            this.fileDirPath = fileDirPath;
             withDefault();
         }
 
         private void withDefault() {
-            setNetworkConfig(NetworkConfig.getRinkebyConfig());
-            setMainContext(new Context());
+            networkConfig(new NetworkConfig.Builder().build());
+            mainContext(new Context());
         }
 
-        public Builder setNetworkConfig(NetworkConfig networkConfig) {
+        public Builder networkConfig(NetworkConfig networkConfig) {
             this.manager.networkConfig = networkConfig;
             return this;
         }
 
-        public Builder setMainContext(Context context) {
+        public Builder mainContext(Context context) {
             this.manager.mainContext = context;
             return this;
         }
 
         public GethManager build() {
-            String dataDir = getDataDir(this.manager.networkConfig.getNetwork());
-            CredentialManager.setKeyStore(this.fileDirPath, dataDir);
-
+            CredentialManager.setKeyStore();
             this.manager.node = new Node(
-                    this.fileDirPath + dataDir,
+                    Utils.getDataDir(),
                     this.manager.networkConfig.getNodeConfig());
             return manager;
         }
 
-        private String getDataDir(EthereumNetwork network) {
-            if (network == null) {
-                return "/temp";
-            }
-            switch (network) {
-                case MAIN:
-                    return "/mainnet";
-                case TESTNET:
-                    return "/testnet";
-                case RINKEBY:
-                    return "/rinkeby";
-                default:
-                    return "/temp";
-            }
-        }
     }
 }

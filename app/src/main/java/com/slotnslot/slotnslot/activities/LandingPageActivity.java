@@ -15,8 +15,8 @@ import android.widget.TextView;
 
 import com.android.vending.expansion.zipfile.APKExpansionSupport;
 import com.android.vending.expansion.zipfile.ZipResourceFile;
-import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
+import com.slotnslot.slotnslot.geth.GethConstants;
 import com.slotnslot.slotnslot.geth.GethManager;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.utils.Constants;
@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -55,8 +56,8 @@ public class LandingPageActivity extends SlotRootActivity {
 
     private CompletableSubject synced = CompletableSubject.create();
     private boolean doubleBackToExitPressedOnce;
-    private String externalFilePath;
-    private String savedNodeFolderPath;
+    private String baseDir;
+    private String dataDir;
     private PublishSubject<Integer> progressPublisher = PublishSubject.create();
     private PublishSubject<Boolean> copyExpansionPublisher = PublishSubject.create();
 
@@ -80,17 +81,14 @@ public class LandingPageActivity extends SlotRootActivity {
         });
 
         checkPermission(Constants.READ_EXTERNAL_PERMISSION_REQUEST_CODE);
-//        startNode();
-//        setSyncProgressEvent();
-//        setSyncButtonEvent();
     }
 
     private void saveExpansion() {
-        externalFilePath = getExternalFilesDir(null).getAbsolutePath() + File.separator;
-        savedNodeFolderPath = externalFilePath + Constants.SAVED_NODE_FOLDER_NAME;
-        File savedNodeFolder = new File(savedNodeFolderPath);
+        baseDir = Utils.getDataDir() + File.separator + GethConstants.GETH_BASE_DATA_DIR;
+        dataDir = baseDir + File.separator + GethConstants.GETH_CHAIN_DATA_DIR;
+        File savedNodeFolder = new File(dataDir);
         if (savedNodeFolder.exists()) {
-            File completeFile = new File(savedNodeFolderPath + File.separator + "complete");
+            File completeFile = new File(dataDir + File.separator + "complete");
             copyExpansionPublisher.onNext(completeFile.exists());
         } else {
             savedNodeFolder.mkdirs();
@@ -139,14 +137,22 @@ public class LandingPageActivity extends SlotRootActivity {
     }
 
     private void copyExpansionComplete() {
-        //TODO: Next Page Loading
+        startNode();
+        setSyncProgressEvent();
     }
 
     private void copyExpansion() throws IOException, PackageManager.NameNotFoundException {
         PackageManager manager = this.getPackageManager();
         PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
         int version = info.versionCode;
+
         ZipResourceFile zipFile = APKExpansionSupport.getAPKExpansionZipFile(this, version, 0);
+        if (zipFile == null) {
+            Log.e(TAG, "no expansion file. download chaindata from other nodes.");
+            copyExpansionComplete();
+            return;
+        }
+
         Set<String> fileNames = zipFile.getFileNames();
         int currentIndex = 1;
         for (String fileName : fileNames) {
@@ -155,13 +161,13 @@ public class LandingPageActivity extends SlotRootActivity {
             progressPublisher.onNext((currentIndex * 100) / fileNames.size());
             currentIndex++;
         }
-        File completeFile = new File(savedNodeFolderPath + File.separator + "complete");
+        File completeFile = new File(dataDir + File.separator + "complete");
         completeFile.createNewFile();
         copyExpansionComplete();
     }
 
     private void copyFile(InputStream inputStream, String destination) {
-        File file = new File(externalFilePath + File.separator + destination);
+        File file = new File(baseDir + File.separator + destination);
         try {
             OutputStream outputStream = new FileOutputStream(file);
             if (outputStream == null) {
@@ -228,18 +234,15 @@ public class LandingPageActivity extends SlotRootActivity {
                 }, Throwable::printStackTrace);
     }
 
-    private void setSyncButtonEvent() {
-        RxView
-                .clicks(syncButton)
-                .subscribe(o -> {
-                    if (GethManager.nodeStarted) {
-                        syncButton.setText("start syncing");
-                        GethManager.getInstance().stopNode();
-                    } else {
-                        syncButton.setText("stop syncing");
-                        startNode();
-                    }
-                }, Throwable::printStackTrace);
+    @OnClick(R.id.sync_btn)
+    void syncButtonClick() {
+        if (GethManager.nodeStarted) {
+            syncButton.setText("start syncing");
+            GethManager.getInstance().stopNode();
+        } else {
+            syncButton.setText("stop syncing");
+            startNode();
+        }
     }
 
     private void startNode() {

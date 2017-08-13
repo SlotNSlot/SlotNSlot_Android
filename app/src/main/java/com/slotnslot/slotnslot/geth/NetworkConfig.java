@@ -1,6 +1,5 @@
 package com.slotnslot.slotnslot.geth;
 
-import org.ethereum.geth.Enodes;
 import org.ethereum.geth.Geth;
 import org.ethereum.geth.NodeConfig;
 
@@ -10,21 +9,6 @@ public class NetworkConfig {
     private NodeConfig nodeConfig = Geth.newNodeConfig();
 
     private NetworkConfig() {
-    }
-
-    public static NetworkConfig getMainnetConfig() {
-        return new Builder(EthereumNetwork.MAIN)
-                .build();
-    }
-
-    public static NetworkConfig getTestnetConfig() {
-        return new Builder(EthereumNetwork.TESTNET)
-                .build();
-    }
-
-    public static NetworkConfig getRinkebyConfig() {
-        return new Builder(EthereumNetwork.RINKEBY)
-                .build();
     }
 
     public long getNetworkID() {
@@ -42,50 +26,50 @@ public class NetworkConfig {
     public static class Builder {
         private NetworkConfig config;
 
-        public Builder(EthereumNetwork network) {
+        public Builder() {
             config = new NetworkConfig();
-            setNetwork(network);
-            setNetworkID(network.getNetworkId());
+            network(GethConstants.NETWORK);
+            networkID(GethConstants.NETWORK.getNetworkId());
         }
 
         public Builder(long networkID) {
             config = new NetworkConfig();
-            setNetworkID(networkID);
+            networkID(networkID);
         }
 
-        public Builder setNetwork(EthereumNetwork network) {
+        public Builder network(EthereumNetwork network) {
             config.network = network;
             return this;
         }
 
         // EthereumNetworkID is the network identifier used by the Ethereum protocol to
         // decide if remote peers should be accepted or not.
-        public Builder setNetworkID(long networkID) {
+        public Builder networkID(long networkID) {
             config.nodeConfig.setEthereumNetworkID(networkID);
             return this;
         }
 
         // EthereumDatabaseCache is the system memory in MB to allocate for database caching.
         // A minimum of 16MB is always reserved.
-        public Builder setDBCache(long dbCache) {
+        public Builder dbCache(long dbCache) {
             config.nodeConfig.setEthereumDatabaseCache(dbCache);
             return this;
         }
 
         // MaxPeers is the maximum number of peers that can be connected. If this is
         // set to zero, then only the configured static and trusted peers can connect.
-        public Builder setMaxPeerConnection(long maxPeers) {
+        public Builder maxPeerConnection(long maxPeers) {
             config.nodeConfig.setMaxPeers(maxPeers);
             return this;
         }
 
-        public Builder setWhisper(boolean enabled) {
+        public Builder whisper(boolean enabled) {
             config.nodeConfig.setWhisperEnabled(enabled);
             return this;
         }
 
 
-        public Builder setNetStats(String netStats) {
+        public Builder netStats(String netStats) {
             config.nodeConfig.setEthereumNetStats(netStats);
             return this;
         }

@@ -39,7 +39,6 @@ public class Constants {
     public static int BET_MIN_LINE = 1;
     public static double BET_MIN_ETH = 0.001;
 
-    public static final String SAVED_NODE_FOLDER_NAME = "chaindata";
     public static final int READ_EXTERNAL_PERMISSION_REQUEST_CODE = 0;
     public static final int WRITE_EXTERNAL_PERMISSION_REQUEST_CODE = 1;
 
@@ -49,8 +48,7 @@ public class Constants {
     public static final String PLAY_BET_TOTAL_BET_FORMAT = "%.3f ETH";
     public static final String PLAY_PLAYERS_BALANCE_TEXT_FORMAT = "%.4f ETH";
     public static final String PLAY_LAST_WIN_TEXT_FFORMAT = "+ %.3f ETH";
-    public static final String HIT_RATIO_TEXT_FORMAT = "%.1f" +
-            " %%";
+    public static final String HIT_RATIO_TEXT_FORMAT = "%.1f %%";
     public static final String BET_RANGE_TEXT_FORMAT = "%.3f - %.3f ETH";
     public static final String TOTAL_STAKE_TEXT_FORMAT = "%.3f ETH";
     public static final String MAX_PRIZE_TEXT_FORMAT = "x%d ";
