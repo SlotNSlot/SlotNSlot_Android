@@ -19,6 +19,7 @@ import com.slotnslot.slotnslot.utils.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Observable;
 
 public abstract class MakeSlotStepFragment extends SlotRootFragment {
     private int stepIndex;
@@ -59,22 +60,24 @@ public abstract class MakeSlotStepFragment extends SlotRootFragment {
         return view;
     }
 
-    abstract boolean verify();
+    abstract Observable<Boolean> verify();
 
     private void next() {
-        if (!verify()) {
-            return;
-        }
-        Fragment frag = getStepFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt(Constants.BUNDLE_KEY_STEP_INDEX, this.stepIndex + 1);
-        bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, this.slotRoom);
-        frag.setArguments(bundle);
-        FragmentManager fmanager = getActivity().getSupportFragmentManager();
-        FragmentTransaction ftrans = fmanager.beginTransaction();
-        ftrans.replace(R.id.fragment_framelayout, frag);
-        ftrans.addToBackStack(null);
-        ftrans.commit();
+        verify().subscribe(verified -> {
+            if (!verified) {
+                return;
+            }
+            Fragment frag = getStepFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt(Constants.BUNDLE_KEY_STEP_INDEX, this.stepIndex + 1);
+            bundle.putSerializable(Constants.BUNDLE_KEY_SLOT_ROOM, this.slotRoom);
+            frag.setArguments(bundle);
+            FragmentManager fmanager = getActivity().getSupportFragmentManager();
+            FragmentTransaction ftrans = fmanager.beginTransaction();
+            ftrans.replace(R.id.fragment_framelayout, frag);
+            ftrans.addToBackStack(null);
+            ftrans.commit();
+        }, Throwable::printStackTrace);
     }
 
     private void back() {

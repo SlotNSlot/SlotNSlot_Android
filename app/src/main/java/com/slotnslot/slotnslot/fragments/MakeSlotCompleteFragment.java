@@ -80,7 +80,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
         nextButton.setBackgroundResource(R.color.complete_confirm);
         nextButton.setOnClickListener(view1 -> {
             if (roomNameEditText.getText().toString().getBytes().length > 16) {
-                Utils.showDialog(getActivity(), "Slot Title is too long", "Please enter 16 characters or less", "ok");
+                Utils.showDialog(getActivity(), "Slot Title is too long", "Please enter 16 characters or less.", "ok");
                 return;
             }
             this.next();

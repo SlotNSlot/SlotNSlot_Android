@@ -54,6 +54,26 @@ public class Utils {
                 .show();
     }
 
+    public static String getBaseDir() {
+        return MainApplication.getContext().getFilesDir().getPath();
+    }
+
+    public static String getDataDir() {
+        String dataDir;
+
+        if (GethConstants.NETWORK == EthereumNetwork.MAIN) {
+            dataDir = "/mainnet";
+        } else if (GethConstants.NETWORK == EthereumNetwork.TESTNET) {
+            dataDir = "/testnet";
+        } else if (GethConstants.NETWORK == EthereumNetwork.RINKEBY) {
+            dataDir = "/rinkeby";
+        } else {
+            dataDir = "/temp";
+        }
+
+        return getBaseDir() + dataDir;
+    }
+
     public static byte[] hexToByte(String hex) {
         if (Utils.isEmpty(hex)) {
             return null;

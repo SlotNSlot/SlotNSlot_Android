@@ -3,6 +3,12 @@ package com.slotnslot.slotnslot.geth;
 import java.math.BigInteger;
 
 public class GethConstants {
+    // network setup
+    public static final EthereumNetwork NETWORK = EthereumNetwork.RINKEBY;
+
+    public static final String GETH_BASE_DATA_DIR = "GethDroid";
+    public static final String GETH_CHAIN_DATA_DIR = "chaindata";
+
     public static final int LATEST_BLOCK = -1;
     public static final int PENDING_BLOCK = -2;
 

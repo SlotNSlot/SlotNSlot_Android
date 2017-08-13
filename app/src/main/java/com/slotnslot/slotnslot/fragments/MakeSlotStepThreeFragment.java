@@ -7,6 +7,7 @@ import com.slotnslot.slotnslot.R;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.reactivex.Observable;
 
 public class MakeSlotStepThreeFragment extends MakeSlotStepFragment {
 
@@ -22,8 +23,8 @@ public class MakeSlotStepThreeFragment extends MakeSlotStepFragment {
     static final private String BUTTON3_TEXT = "2000";
 
     @Override
-    boolean verify() {
-        return true;
+    Observable<Boolean> verify() {
+        return Observable.just(true);
     }
 
     public void initView() {

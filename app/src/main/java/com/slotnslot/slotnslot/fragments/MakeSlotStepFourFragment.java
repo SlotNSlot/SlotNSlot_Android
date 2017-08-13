@@ -32,21 +32,21 @@ public class MakeSlotStepFourFragment extends MakeSlotStepFragment {
     }
 
     @Override
-    boolean verify() {
+    Observable<Boolean> verify() {
         if (Utils.isEmpty(minRangeEditText.getText().toString())
             || Utils.isEmpty(maxRangeEditText.getText().toString())) {
             Utils.showDialog(getActivity(), null, "Please enter min/max range.", "ok");
-            return false;
+            return Observable.just(false);
         }
         if (Double.parseDouble(minRangeEditText.getText().toString()) <= 0) {
             Utils.showDialog(getActivity(), null, "Min range MUST be higher than 0 ETH.", "ok");
-            return false;
+            return Observable.just(false);
         }
         if (Double.parseDouble(minRangeEditText.getText().toString()) > Double.parseDouble(maxRangeEditText.getText().toString())) {
             Utils.showDialog(getActivity(), null, "Max range MUST be higher than Min range.", "ok");
-            return false;
+            return Observable.just(false);
         }
-        return true;
+        return Observable.just(false);
     }
 
     @Override
