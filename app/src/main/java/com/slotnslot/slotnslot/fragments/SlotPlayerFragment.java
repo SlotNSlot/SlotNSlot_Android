@@ -16,6 +16,7 @@ import com.slotnslot.slotnslot.R;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
@@ -66,6 +67,16 @@ public class SlotPlayerFragment extends AbsSlotFragment {
 
         onBackPressed(view);
         return view;
+    }
+
+    @OnClick(R.id.slot_player_deposite_button)
+    public void onDepositeClick() {
+        //TODO deposite
+    }
+
+    @OnClick(R.id.slot_player_cashout_button)
+    public void onCashOutClick() {
+        //TODO cashout
     }
 
     private void onBackPressed(View view) {
