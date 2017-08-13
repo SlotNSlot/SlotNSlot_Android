@@ -12,7 +12,6 @@ import android.widget.RelativeLayout;
 
 import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
-import com.slotnslot.slotnslot.geth.Utils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -87,8 +86,11 @@ public class SlotPlayerFragment extends AbsSlotFragment {
 
     private void invalidSeedEvent() {
         viewModel.invalidSeedFound.subscribe(invalidSeed -> {
-            Utils.showToast("banker sent invalid seed. exit this game. seed : " + invalidSeed);
-            getActivity().finish();
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Invalid seed received")
+                    .setMessage("Banker sent invalid seed. Exit this slot.")
+                    .setPositiveButton("ok", (d, l) -> getActivity().finish())
+                    .show();
         }, Throwable::printStackTrace);
     }
 
