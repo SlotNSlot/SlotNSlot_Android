@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.slotnslot.slotnslot.contract.SlotMachine;
 import com.slotnslot.slotnslot.geth.GethException;
+import com.slotnslot.slotnslot.geth.InsufficientFundException;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.Seed;
 import com.slotnslot.slotnslot.models.SlotRoom;
@@ -108,7 +109,7 @@ public class RxSlotRoom {
     private void setGameConfirmedEvent() {
         Disposable disposable = machine
                 .gameConfirmedEventObservable()
-                .distinctUntilChanged(response -> response.idx)
+                .distinct(response -> response.randomSeed)
                 .subscribe(response -> {
                     Log.i(TAG, "reward : " + response.reward.getValue());
 
@@ -149,8 +150,15 @@ public class RxSlotRoom {
                             .toObservable()
                             .flatMap(bankerSeed -> machine.setBankerSeed(bankerSeed, new Uint8(index)))
                             .subscribeOn(Schedulers.computation())
-                            .subscribe(o -> {
-                            }, Throwable::printStackTrace);
+                            .subscribe(
+                                    o -> {
+                                    },
+                                    e -> {
+                                        if (e instanceof InsufficientFundException) {
+                                            Utils.showToast("You don't have enough funds for gas fee.");
+                                        }
+                                        e.printStackTrace();
+                                    });
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
@@ -181,7 +189,14 @@ public class RxSlotRoom {
                             .toObservable()
                             .flatMap(initialSeeds -> machine.initBankerSeed(bankerSeed.getInitialSeed()))
                             .subscribeOn(Schedulers.computation())
-                            .subscribe(o -> bankerSeed.save(machine.getContractAddress()), Throwable::printStackTrace);
+                            .subscribe(
+                                    o -> bankerSeed.save(machine.getContractAddress()),
+                                    e -> {
+                                        if (e instanceof InsufficientFundException) {
+                                            Utils.showToast("You don't have enough funds for gas fee.");
+                                        }
+                                        e.printStackTrace();
+                                    });
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }

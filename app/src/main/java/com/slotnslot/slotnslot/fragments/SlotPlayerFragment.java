@@ -2,6 +2,7 @@ package com.slotnslot.slotnslot.fragments;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class SlotPlayerFragment extends AbsSlotFragment {
+    public static final String TAG = SlotPlayerFragment.class.getSimpleName();
 
     @BindView(R.id.play_bet_line_plus_button)
     ImageButton linePlusButton;
@@ -43,12 +45,54 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         totalBetTextView = view.findViewById(R.id.play_total_bet_textview);
         betETHTextView = view.findViewById(R.id.play_bet_eth_textview);
 
+        insufficientFundEvent();
         invalidSeedEvent();
         kickEvent();
         drawEvent();
+        occupiedEvent();
+        noResponseEvent();
 
         onBackPressed(view);
         return view;
+    }
+
+    private void noResponseEvent() {
+        viewModel.timeout
+                .compose(bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(b -> {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("No Response")
+                            .setMessage("Banker seems to be not responding. Do you want to exit the slot?")
+                            .setPositiveButton("Yes", (d, l) -> getActivity().finish())
+                            .setNegativeButton("No", null)
+                            .show();
+                }, Throwable::printStackTrace);
+    }
+
+    private void insufficientFundEvent() {
+        viewModel.fundInsufficient
+                .compose(bindToLifecycle())
+                .subscribe(b -> {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Insufficient Funds")
+                            .setMessage("You don't have enough funds for gas fee. Do you want to exit the slot?")
+                            .setPositiveButton("Yes", (d, l) -> getActivity().finish())
+                            .setNegativeButton("No", null)
+                            .show();
+                }, Throwable::printStackTrace);
+    }
+
+    private void occupiedEvent() {
+        viewModel.alreadyOccupied
+                .compose(bindToLifecycle())
+                .subscribe(b -> {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Occupied")
+                            .setMessage("This slot is already occupied by someone. Exit this slot.")
+                            .setPositiveButton("Ok", (d, l) -> getActivity().finish())
+                            .show();
+                }, Throwable::printStackTrace);
     }
 
     private void drawEvent() {
@@ -57,7 +101,7 @@ public class SlotPlayerFragment extends AbsSlotFragment {
                         viewModel.drawResultSubject,
                         viewModel.txConfirmationSubject,
                         (option, confirm) -> {
-                            System.out.println("winRate : " + option.winRate + ", next idx : " + option.nextIdx + ", next confirm: " + confirm[option.nextIdx]);
+                            Log.i(TAG, "winRate : " + option.winRate + ", next idx : " + option.nextIdx + ", next confirm: " + confirm[option.nextIdx]);
                             option.nextTxConfirmation = confirm[option.nextIdx];
                             return option;
                         })

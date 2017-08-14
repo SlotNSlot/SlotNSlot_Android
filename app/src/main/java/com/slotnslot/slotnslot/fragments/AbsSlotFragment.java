@@ -18,6 +18,7 @@ import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.SlotType;
 import com.slotnslot.slotnslot.Wheel.WheelView;
 import com.slotnslot.slotnslot.Wheel.adapters.SlotAdapter;
+import com.slotnslot.slotnslot.activities.SlotGameActivity;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.DrawingLine;
 import com.slotnslot.slotnslot.models.PlaySlotViewModel;
@@ -68,6 +69,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         if (TextUtils.isEmpty(slotRoomAddress)) {
             Utils.showToast("error! slot room address is empty.");
             getActivity().finish();
+            return;
         }
     }
 
@@ -91,6 +93,9 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
                 ? RxSlotRooms.getMakeSlotRoom(slotRoomAddress)
                 : RxSlotRooms.getSlotRoom(slotRoomAddress);
         viewModel = new PlaySlotViewModel(rxSlotRoom);
+
+        // set title
+        ((SlotGameActivity) getActivity()).setTitle(rxSlotRoom.getSlotRoom().getTitle());
 
         addSlot(0, false);
         addSlot(1, false);

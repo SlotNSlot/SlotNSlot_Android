@@ -3,6 +3,7 @@ package com.slotnslot.slotnslot.models;
 import android.util.Log;
 
 import com.slotnslot.slotnslot.contract.SlotMachine;
+import com.slotnslot.slotnslot.geth.InsufficientFundException;
 import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.provider.RxSlotRoom;
@@ -35,6 +36,7 @@ public class PlaySlotViewModel {
     //Input
     public BehaviorSubject<Integer> betLineSubject = BehaviorSubject.create();
     public BehaviorSubject<Double> betEthSubject = BehaviorSubject.create();
+    public PublishSubject<Boolean> stopWatch = PublishSubject.create();
 
     //Output
     public BehaviorSubject<Double> totalBetSubject = BehaviorSubject.create();
@@ -45,6 +47,9 @@ public class PlaySlotViewModel {
     public PublishSubject<String> invalidSeedFound = PublishSubject.create();
     public PublishSubject<Boolean> clearSpin = PublishSubject.create();
     public PublishSubject<Boolean> playerKicked = PublishSubject.create();
+    public PublishSubject<Boolean> alreadyOccupied = PublishSubject.create();
+    public PublishSubject<Boolean> fundInsufficient = PublishSubject.create();
+    public Observable<Boolean> timeout = stopWatch.debounce(60, TimeUnit.SECONDS).filter(b -> b);
 
     public Observable<BigInteger> playerBalanceObservable;
     public Observable<BigInteger> bankerBalanceObservable;
@@ -169,7 +174,7 @@ public class PlaySlotViewModel {
     }
 
     private void setGameEvents() {
-        setSeedReadyEvent();
+        checkSeedReady();
 
         setOccupiedEvent();
         setBankerSeedInitializedEvent();
@@ -179,7 +184,7 @@ public class PlaySlotViewModel {
         setPlayerLeftEvent();
     }
 
-    private void setSeedReadyEvent() {
+    private void checkSeedReady() {
         Disposable disposable = machine
                 .initialBankerSeedReady()
                 .subscribe(ready -> {
@@ -223,6 +228,7 @@ public class PlaySlotViewModel {
                     playerSeed.setBankerSeeds(seed0, seed1, seed3);
 
                     Utils.showToast("banker seed initialized.");
+                    stopWatch.onNext(false);
                     seedReadySubject.onNext(true);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
@@ -237,6 +243,7 @@ public class PlaySlotViewModel {
                         return;
                     }
                     int index = playerSeed.getIndex();
+                    stopWatch.onNext(true);
                     machine
                             .initGameForPlayer(
                                     new Uint256(Convert.toWei(currentBetEth, Convert.Unit.ETHER)),
@@ -244,7 +251,12 @@ public class PlaySlotViewModel {
                                     new Uint8(index))
                             .subscribe(o -> updateTxConfirmation(true, index), Throwable::printStackTrace);
                     updateTxConfirmation(false, index);
-                }, Throwable::printStackTrace);
+                }, e -> {
+                    if (e instanceof InsufficientFundException) {
+                        fundInsufficient.onNext(true);
+                    }
+                    e.printStackTrace();
+                });
     }
 
     private void setGameInitializedEvent() {
@@ -297,7 +309,12 @@ public class PlaySlotViewModel {
                             .subscribe(() -> machine
                                     .setPlayerSeed(playerSeed.getSeed(), new Uint8(this.playerSeed.getIndex()))
                                     .subscribe(o -> {
-                                    }, Throwable::printStackTrace), Throwable::printStackTrace);
+                                    }, e -> {
+                                        if (e instanceof InsufficientFundException) {
+                                            fundInsufficient.onNext(true);
+                                        }
+                                        e.printStackTrace();
+                                    }));
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
@@ -317,6 +334,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "idx : " + index);
                     Log.i(TAG, "random seed : " + Utils.byteToHex(response.randomSeed.getValue()));
 
+                    stopWatch.onNext(false);
                     drawResultSubject.onNext(new DrawOption(winRate, previousBetEth, (index + 1) % 3));
 
                     if (!isBanker()) {
@@ -354,8 +372,23 @@ public class PlaySlotViewModel {
                 .filter(ready -> !ready.getValue())
                 .observeOn(Schedulers.computation())
                 .map(ready -> playerSeed.getInitialSeed())
-                .flatMap(initialSeeds -> machine.occupy(initialSeeds, Convert.toWei(deposit, Convert.Unit.ETHER)))
-                .subscribe(o -> playerSeed.save(machine.getContractAddress()), Throwable::printStackTrace);
+                .flatMap(initialSeeds -> {
+                    stopWatch.onNext(true);
+                    return machine.occupy(initialSeeds, Convert.toWei(deposit, Convert.Unit.ETHER));
+                })
+                .map(receipt -> machine.getGameOccupiedEvents(receipt))
+                .subscribe(response -> {
+                    if (response.isEmpty() || !AccountProvider.identical(response.get(0).player.toString())) {
+                        alreadyOccupied.onNext(true);
+                        return;
+                    }
+                    playerSeed.save(machine.getContractAddress());
+                }, e -> {
+                    if (e instanceof InsufficientFundException) {
+                        fundInsufficient.onNext(true);
+                    }
+                    e.printStackTrace();
+                });
     }
 
     public void updateTxConfirmation(boolean confirm, int index) {
@@ -396,7 +429,12 @@ public class PlaySlotViewModel {
                             .leave()
                             .flatMap(receipt -> machine.mPlayer())
                             .subscribe(o -> {
-                            }, Throwable::printStackTrace);
+                            }, e -> {
+                                if (e instanceof InsufficientFundException) {
+                                    fundInsufficient.onNext(true);
+                                }
+                                e.printStackTrace();
+                            });
                 });
         Utils.showToast("Your balance [" + Convert.fromWei(rxSlotRoom.getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER) + "] ETH in the slot has been withdrawn and put into your wallet.");
     }

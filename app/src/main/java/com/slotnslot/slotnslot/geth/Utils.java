@@ -39,6 +39,8 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class Utils {
+    private static String TAG = Utils.class.getSimpleName();
+
     private static final int DEFAULT_SLEEP_DURATION = 5000; // ms
     private static final int DEFAULT_ATTEMPTS = 40;
 
@@ -156,8 +158,14 @@ public class Utils {
                                 return;
                             }
                         } catch (Exception e) {
-                            if (e.getMessage() != null && (e.getMessage().contains("no suitable peers") || e.getMessage().contains("not found"))) {
-                                System.out.println("error : " + e.getMessage());
+                            if (emitter.isDisposed()) {
+                                return;
+                            }
+                            if (e.getMessage() == null) {
+                                emitter.onError(e);
+                            }
+                            if (e.getMessage().contains("no suitable peers") || e.getMessage().contains("not found")) {
+                                android.util.Log.d(TAG, "error : " + e.getMessage());
                                 try {
                                     Thread.sleep(sleepDuration);
                                 } catch (InterruptedException ignored) {
@@ -168,11 +176,13 @@ public class Utils {
                                 }
                                 continue;
                             }
-
-                            if (!emitter.isDisposed()) {
-                                emitter.onError(e);
+                            if (e.getMessage().contains("insufficient funds ")) {
+                                emitter.onError(new InsufficientFundException(e.getMessage()));
                                 return;
                             }
+                            // remain exception
+                            emitter.onError(e);
+                            return;
                         }
                     }
                     if (!emitter.isDisposed()) {
@@ -237,7 +247,7 @@ public class Utils {
 //            throw new GethException("topic is not match. topic signature : " + eventSig + ", log topic : " + topic);
             return null;
         }
-        System.out.println("======= LOG DATA : " + byteToHex(log.getData()));
+        android.util.Log.d(TAG, "======= LOG DATA : " + byteToHex(log.getData()));
 
         List<Type> indexedValues = new ArrayList<>();
         List<Type> nonIndexedValues = FunctionReturnDecoder.decode(byteToHex(log.getData()), event.getNonIndexedParameters());
@@ -253,14 +263,14 @@ public class Utils {
     public static boolean isTopicMatch(Event event, Log log) throws Exception {
         Hashes topics = log.getTopics();
         if (topics == null || topics.size() == 0) {
-            System.out.println("topic is empty");
+            android.util.Log.e(TAG, "topic is empty");
             return false;
         }
 
         String eventSig = EventEncoder.encode(event);
         String topic = topics.get(0).getHex();
         if (!topic.equals(eventSig)) {
-            System.out.println("topic is not match. topic signature : " + eventSig + ", log topic : " + topic);
+            android.util.Log.e(TAG, "topic is not match. topic signature : " + eventSig + ", log topic : " + topic);
             return false;
         }
 
@@ -502,7 +512,7 @@ public class Utils {
 
         List<List<Integer>> newResult = new ArrayList<>();
         for (List<Integer> subList : result) {
-            for(Integer i : input) {
+            for (Integer i : input) {
                 List<Integer> newSubList = new ArrayList<>();
                 newSubList.addAll(subList);
                 newSubList.add(i);

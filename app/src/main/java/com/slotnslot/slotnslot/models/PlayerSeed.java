@@ -4,6 +4,7 @@ import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.StorageUtil;
 
+import org.web3j.abi.datatypes.StaticArray;
 import org.web3j.abi.datatypes.generated.Bytes32;
 import org.web3j.crypto.Hash;
 
@@ -21,6 +22,12 @@ public class PlayerSeed extends Seed {
     private String nextBankerSeed;
 
     public PlayerSeed() {
+    }
+
+    @Override
+    public StaticArray<Bytes32> getInitialSeed() {
+        this.index = 0;
+        return super.getInitialSeed();
     }
 
     public Bytes32 getSeed() {
