@@ -183,7 +183,7 @@ public class SlotMainActivity extends SlotRootActivity {
             }
             this.doubleBackToExitPressedOnce = true;
             Utils.showToast("press back again to exit");
-            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 1000);
         }
     }
 

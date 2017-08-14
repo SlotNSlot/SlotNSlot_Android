@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -35,7 +34,6 @@ import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -51,8 +49,6 @@ public class LandingPageActivity extends SlotRootActivity {
     ProgressBar progressBar;
     @BindView(R.id.loading_text)
     TextView loadingText;
-    @BindView(R.id.sync_btn)
-    Button syncButton;
 
     private CompletableSubject synced = CompletableSubject.create();
     private boolean doubleBackToExitPressedOnce;
@@ -212,7 +208,7 @@ public class LandingPageActivity extends SlotRootActivity {
                     long currentTime = System.currentTimeMillis() / 1000;
                     long timeDiff = currentTime - header.getTime();
                     long size = GethManager.getNode().getPeersInfo().size();
-                    if (size > 1 && timeDiff < 300) {
+                    if (size > 2 && timeDiff < 300) {
                         synced.onComplete();
                     }
 
@@ -240,17 +236,6 @@ public class LandingPageActivity extends SlotRootActivity {
                 }, Throwable::printStackTrace);
     }
 
-    @OnClick(R.id.sync_btn)
-    void syncButtonClick() {
-        if (GethManager.nodeStarted) {
-            syncButton.setText("start syncing");
-            GethManager.getInstance().stopNode();
-        } else {
-            syncButton.setText("stop syncing");
-            startNode();
-        }
-    }
-
     private void startNode() {
         Completable
                 .create(e -> {
@@ -258,18 +243,20 @@ public class LandingPageActivity extends SlotRootActivity {
                     e.onComplete();
                 })
                 .subscribeOn(Schedulers.computation())
-                .subscribe(() -> {
-                }, Throwable::printStackTrace);
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> Utils.showToast("node started"), Throwable::printStackTrace);
     }
 
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
             super.onBackPressed();
+            GethManager.getInstance().stopNode();
+            Utils.showToast("node stopped");
             return;
         }
         this.doubleBackToExitPressedOnce = true;
         Utils.showToast("press back again to exit");
-        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+        new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 1000);
     }
 }

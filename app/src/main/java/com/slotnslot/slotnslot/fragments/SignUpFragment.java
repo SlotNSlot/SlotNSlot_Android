@@ -129,7 +129,7 @@ public class SignUpFragment extends SlotRootFragment {
                     CredentialManager.setDefault(Credential.create(account, passphrase));
                     AccountProvider.setAccount(new com.slotnslot.slotnslot.models.Account(account));
 
-                    Log.i(TAG, "account has created : " + account.getAddress().getHex());
+                    Log.d(TAG, "account has created : " + account.getAddress().getHex());
                     return Observable.timer(2, TimeUnit.SECONDS);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
