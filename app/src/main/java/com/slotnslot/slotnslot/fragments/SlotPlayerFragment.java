@@ -50,9 +50,24 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         kickEvent();
         drawEvent();
         occupiedEvent();
+        noResponseEvent();
 
         onBackPressed(view);
         return view;
+    }
+
+    private void noResponseEvent() {
+        viewModel.timeout
+                .compose(bindToLifecycle())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(b -> {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("No Response")
+                            .setMessage("Banker seems to be not responding. Do you want to exit the slot?")
+                            .setPositiveButton("Yes", (d, l) -> getActivity().finish())
+                            .setNegativeButton("No", null)
+                            .show();
+                }, Throwable::printStackTrace);
     }
 
     private void insufficientFundEvent() {

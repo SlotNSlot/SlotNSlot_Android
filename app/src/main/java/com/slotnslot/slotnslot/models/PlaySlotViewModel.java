@@ -36,6 +36,7 @@ public class PlaySlotViewModel {
     //Input
     public BehaviorSubject<Integer> betLineSubject = BehaviorSubject.create();
     public BehaviorSubject<Double> betEthSubject = BehaviorSubject.create();
+    public PublishSubject<Boolean> stopWatch = PublishSubject.create();
 
     //Output
     public BehaviorSubject<Double> totalBetSubject = BehaviorSubject.create();
@@ -48,6 +49,7 @@ public class PlaySlotViewModel {
     public PublishSubject<Boolean> playerKicked = PublishSubject.create();
     public PublishSubject<Boolean> alreadyOccupied = PublishSubject.create();
     public PublishSubject<Boolean> fundInsufficient = PublishSubject.create();
+    public Observable<Boolean> timeout = stopWatch.debounce(60, TimeUnit.SECONDS).filter(b -> b);
 
     public Observable<BigInteger> playerBalanceObservable;
     public Observable<BigInteger> bankerBalanceObservable;
@@ -226,6 +228,7 @@ public class PlaySlotViewModel {
                     playerSeed.setBankerSeeds(seed0, seed1, seed3);
 
                     Utils.showToast("banker seed initialized.");
+                    stopWatch.onNext(false);
                     seedReadySubject.onNext(true);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
@@ -240,6 +243,7 @@ public class PlaySlotViewModel {
                         return;
                     }
                     int index = playerSeed.getIndex();
+                    stopWatch.onNext(true);
                     machine
                             .initGameForPlayer(
                                     new Uint256(Convert.toWei(currentBetEth, Convert.Unit.ETHER)),
@@ -330,6 +334,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "idx : " + index);
                     Log.i(TAG, "random seed : " + Utils.byteToHex(response.randomSeed.getValue()));
 
+                    stopWatch.onNext(false);
                     drawResultSubject.onNext(new DrawOption(winRate, previousBetEth, (index + 1) % 3));
 
                     if (!isBanker()) {
@@ -367,7 +372,10 @@ public class PlaySlotViewModel {
                 .filter(ready -> !ready.getValue())
                 .observeOn(Schedulers.computation())
                 .map(ready -> playerSeed.getInitialSeed())
-                .flatMap(initialSeeds -> machine.occupy(initialSeeds, Convert.toWei(deposit, Convert.Unit.ETHER)))
+                .flatMap(initialSeeds -> {
+                    stopWatch.onNext(true);
+                    return machine.occupy(initialSeeds, Convert.toWei(deposit, Convert.Unit.ETHER));
+                })
                 .map(receipt -> machine.getGameOccupiedEvents(receipt))
                 .subscribe(response -> {
                     if (response.isEmpty() || !AccountProvider.identical(response.get(0).player.toString())) {

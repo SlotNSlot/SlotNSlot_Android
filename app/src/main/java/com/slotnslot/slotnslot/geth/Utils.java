@@ -165,7 +165,7 @@ public class Utils {
                                 emitter.onError(e);
                             }
                             if (e.getMessage().contains("no suitable peers") || e.getMessage().contains("not found")) {
-                                android.util.Log.e(TAG, "error : " + e.getMessage());
+                                android.util.Log.d(TAG, "error : " + e.getMessage());
                                 try {
                                     Thread.sleep(sleepDuration);
                                 } catch (InterruptedException ignored) {
