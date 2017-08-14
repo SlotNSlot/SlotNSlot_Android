@@ -95,15 +95,16 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
         /*
          * BETA VERSION
          * */
-//        new AlertDialog.Builder(getActivity())
-//                .setTitle("The ‘Make’ function is not available in beta.")
-//                .setMessage("The SlotNSlot team is working hard to stabilize the service. Try out the features in upcoming apps.")
-//                .setPositiveButton("I got it", (dialog, which) -> {
-//                    dialog.dismiss();
-//                    getActivity().finish();
-//                })
-//                .show();
+        new AlertDialog.Builder(getActivity())
+                .setTitle("The ‘Make’ function is not available in beta.")
+                .setMessage("The SlotNSlot team is working hard to stabilize the service. Try out the features in upcoming apps.")
+                .setPositiveButton("I got it", (dialog, which) -> {
+                    dialog.dismiss();
+                    getActivity().finish();
+                })
+                .show();
 
+        /*
         SlotMachineManager slotMachineManager = SlotMachineManager.load(GethConstants.getManagerAddress());
         slotMachineManager.createSlotMachine(
                 new Uint16((int) (slotRoom.getHitRatio() * 10)),
@@ -148,6 +149,7 @@ public class MakeSlotCompleteFragment extends SlotRootFragment {
                         Throwable::printStackTrace
                 );
         getActivity().finish();
+        */
     }
 
     private void back() {
