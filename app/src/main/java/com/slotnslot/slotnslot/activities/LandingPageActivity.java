@@ -2,7 +2,6 @@ package com.slotnslot.slotnslot.activities;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -144,11 +143,7 @@ public class LandingPageActivity extends SlotRootActivity {
     }
 
     private void copyExpansion() throws IOException, PackageManager.NameNotFoundException {
-        PackageManager manager = this.getPackageManager();
-        PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
-        int version = info.versionCode;
-
-        ZipResourceFile zipFile = APKExpansionSupport.getAPKExpansionZipFile(this, version, 0);
+        ZipResourceFile zipFile = APKExpansionSupport.getAPKExpansionZipFile(this, Constants.EXPANSION_MAIN_VERSION, 0);
         if (zipFile == null) {
             Log.e(TAG, "no expansion file. download chaindata from other nodes.");
             copyExpansionComplete();
