@@ -44,6 +44,7 @@ public class PlaySlotViewModel {
     public PublishSubject<Boolean> startSpin = PublishSubject.create();
     public PublishSubject<String> invalidSeedFound = PublishSubject.create();
     public PublishSubject<Boolean> clearSpin = PublishSubject.create();
+    public PublishSubject<Boolean> playerKicked = PublishSubject.create();
 
     public Observable<BigInteger> playerBalanceObservable;
     public Observable<BigInteger> bankerBalanceObservable;
@@ -337,7 +338,8 @@ public class PlaySlotViewModel {
 
                         seedReadySubject.onNext(false);
                         clearSpin.onNext(true);
-                        return;
+                    } else {
+                        playerKicked.onNext(true);
                     }
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
@@ -383,17 +385,19 @@ public class PlaySlotViewModel {
             return;
         }
 
-        if (isBanker()) {
-            return;
-        }
-
         machine
-                .leave()
-                .flatMap(receipt -> machine.mPlayer())
-                .subscribe(
-                        address -> Log.i(TAG, "leave... now occupied by : " + address.toString()),
-                        Throwable::printStackTrace
-                );
+                .mPlayer()
+                .subscribe(address -> {
+                    if (!AccountProvider.identical(address.toString())) {
+                        return;
+                    }
+
+                    machine
+                            .leave()
+                            .flatMap(receipt -> machine.mPlayer())
+                            .subscribe(o -> {
+                            }, Throwable::printStackTrace);
+                });
         Utils.showToast("Your balance [" + Convert.fromWei(rxSlotRoom.getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER) + "] ETH in the slot has been withdrawn and put into your wallet.");
     }
 
