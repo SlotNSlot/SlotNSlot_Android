@@ -1,71 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textColor="@color/white"
-        android:text="Keep pass phrase safe"
-        android:layout_marginTop="15.5dp"
         android:layout_gravity="center_horizontal"
-        />
+        android:layout_marginTop="15.5dp"
+        android:text="Account has created!"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="12.5sp"
-        android:textColor="#b7b5cc"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:gravity="center_horizontal"
         android:letterSpacing="0.04"
         android:lineSpacingExtra="5sp"
-        android:gravity="center_horizontal"
-        android:layout_gravity="center_horizontal"
-        android:text="Write down the below phrase and keep it safe.\nThis is required when recovering your account."
-        android:layout_marginTop="16dp"
-        />
+        android:text="The address below is created one.\nPress COPY button to copy your address."
+        android:textColor="#b7b5cc"
+        android:textSize="12.5sp" />
 
     <TextView
+        android:id="@+id/address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
-        android:textColor="@color/white"
-        android:lineSpacingExtra="7sp"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="25dp"
         android:background="@drawable/pass_phrase_box_background"
+        android:lineSpacingExtra="7sp"
         android:padding="15dp"
-        android:layout_gravity="center_horizontal"
-        android:text="vacuum velvet riva village\nannounce mother whip monkey\norphan tuna such public"
-        />
+        android:textColor="@color/white"
+        android:textSize="15sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0dip"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/signup_pass_phrase_copy_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="COPY"
-            android:textSize="16sp"
-            android:textColor="@color/white"
+            android:layout_weight="2"
             android:background="@color/pink2"
-            android:layout_weight="2"/>
+            android:text="COPY"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
         <Button
             android:id="@+id/signup_pass_phrase_done_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="DONE"
-            android:textSize="16sp"
-            android:textColor="@color/white"
+            android:layout_weight="1"
             android:background="#ff1c71"
-            android:layout_weight="1"/>
+            android:text="DONE"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
     </LinearLayout>
 
 </LinearLayout>

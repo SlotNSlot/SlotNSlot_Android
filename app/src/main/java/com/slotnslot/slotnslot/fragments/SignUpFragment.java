@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,6 +129,7 @@ public class SignUpFragment extends SlotRootFragment {
                     CredentialManager.setDefault(Credential.create(account, passphrase));
                     AccountProvider.setAccount(new com.slotnslot.slotnslot.models.Account(account));
 
+                    Log.i(TAG, "account has created : " + account.getAddress().getHex());
                     return Observable.timer(2, TimeUnit.SECONDS);
                 })
                 .observeOn(AndroidSchedulers.mainThread())
