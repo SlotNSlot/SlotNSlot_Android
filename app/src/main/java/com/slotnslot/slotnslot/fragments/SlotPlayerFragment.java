@@ -45,12 +45,39 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         totalBetTextView = view.findViewById(R.id.play_total_bet_textview);
         betETHTextView = view.findViewById(R.id.play_bet_eth_textview);
 
+        insufficientFundEvent();
         invalidSeedEvent();
         kickEvent();
         drawEvent();
+        occupiedEvent();
 
         onBackPressed(view);
         return view;
+    }
+
+    private void insufficientFundEvent() {
+        viewModel.fundInsufficient
+                .compose(bindToLifecycle())
+                .subscribe(b -> {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Insufficient Funds")
+                            .setMessage("You don't have enough funds for gas fee. Do you want to exit the slot?")
+                            .setPositiveButton("Yes", (d, l) -> getActivity().finish())
+                            .setNegativeButton("No", null)
+                            .show();
+                }, Throwable::printStackTrace);
+    }
+
+    private void occupiedEvent() {
+        viewModel.alreadyOccupied
+                .compose(bindToLifecycle())
+                .subscribe(b -> {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Occupied")
+                            .setMessage("This slot is already occupied by someone. Exit this slot.")
+                            .setPositiveButton("Ok", (d, l) -> getActivity().finish())
+                            .show();
+                }, Throwable::printStackTrace);
     }
 
     private void drawEvent() {

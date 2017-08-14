@@ -158,7 +158,13 @@ public class Utils {
                                 return;
                             }
                         } catch (Exception e) {
-                            if (e.getMessage() != null && (e.getMessage().contains("no suitable peers") || e.getMessage().contains("not found"))) {
+                            if (emitter.isDisposed()) {
+                                return;
+                            }
+                            if (e.getMessage() == null) {
+                                emitter.onError(e);
+                            }
+                            if (e.getMessage().contains("no suitable peers") || e.getMessage().contains("not found")) {
                                 android.util.Log.e(TAG, "error : " + e.getMessage());
                                 try {
                                     Thread.sleep(sleepDuration);
@@ -170,11 +176,13 @@ public class Utils {
                                 }
                                 continue;
                             }
-
-                            if (!emitter.isDisposed()) {
-                                emitter.onError(e);
+                            if (e.getMessage().contains("insufficient funds ")) {
+                                emitter.onError(new InsufficientFundException(e.getMessage()));
                                 return;
                             }
+                            // remain exception
+                            emitter.onError(e);
+                            return;
                         }
                     }
                     if (!emitter.isDisposed()) {

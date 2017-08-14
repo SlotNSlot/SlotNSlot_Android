@@ -165,6 +165,10 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                 .setTitle("DEPOSIT")
                 .setMessage("Please write down the amount of ETH to put in this slot. Leave a certain amount of gas fee for the game. (at least 0.5 ETH)")
                 .setPositiveButton("Confirm", (dialogInterface, i) -> {
+                    if (Utils.isEmpty(editText.getText())) {
+                        Utils.showDialog(fragment.getActivity(), null, "Please enter the enough ETH.", "ok");
+                        return;
+                    }
                     deposit = Double.parseDouble(editText.getText().toString());
 
                     AccountProvider.getBalance()
