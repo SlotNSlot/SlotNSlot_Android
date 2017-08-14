@@ -142,12 +142,12 @@ public class Transaction {
 
     String call() throws Exception {
         byte[] hexadecimalResult = GethManager.getClient().pendingCallContract(txContext, toCallMessage());
-        Log.i(TAG, "======= FIRST CALL DATA : " + Utils.byteToHex(hexadecimalResult));
+        Log.d(TAG, "======= FIRST CALL DATA : " + Utils.byteToHex(hexadecimalResult));
 
         // this because first contract call returns null
         if (hexadecimalResult == null) {
             hexadecimalResult = GethManager.getClient().pendingCallContract(txContext, toCallMessage());
-            Log.i(TAG, "======= SECOND CALL DATA : " + Utils.byteToHex(hexadecimalResult));
+            Log.d(TAG, "======= SECOND CALL DATA : " + Utils.byteToHex(hexadecimalResult));
         }
 
         if (hexadecimalResult == null) {
@@ -164,7 +164,7 @@ public class Transaction {
         // transaction.getSigHash().getHex() == signed.getSigHash().getHex()
         // signed.getHash().getHex() -> fullhash
 
-        Log.i(TAG, "======= SENDING TX : nonce - " + signed.getNonce() + ", data - " + Utils.byteToHex(signed.getData()));
+        Log.d(TAG, "======= SENDING TX : nonce - " + signed.getNonce() + ", data - " + Utils.byteToHex(signed.getData()));
         GethManager.getClient().sendTransaction(GethManager.getMainContext(), signed);
         CredentialManager.updateDefaultNonce();
         return signed.getHash();

@@ -2,6 +2,7 @@ package com.slotnslot.slotnslot.fragments;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class SlotPlayerFragment extends AbsSlotFragment {
+    public static final String TAG = SlotPlayerFragment.class.getSimpleName();
 
     @BindView(R.id.play_bet_line_plus_button)
     ImageButton linePlusButton;
@@ -57,7 +59,7 @@ public class SlotPlayerFragment extends AbsSlotFragment {
                         viewModel.drawResultSubject,
                         viewModel.txConfirmationSubject,
                         (option, confirm) -> {
-                            System.out.println("winRate : " + option.winRate + ", next idx : " + option.nextIdx + ", next confirm: " + confirm[option.nextIdx]);
+                            Log.i(TAG, "winRate : " + option.winRate + ", next idx : " + option.nextIdx + ", next confirm: " + confirm[option.nextIdx]);
                             option.nextTxConfirmation = confirm[option.nextIdx];
                             return option;
                         })

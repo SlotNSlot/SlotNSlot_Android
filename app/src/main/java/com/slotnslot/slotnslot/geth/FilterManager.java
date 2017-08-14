@@ -93,7 +93,7 @@ public class FilterManager {
                             dispose();
                             return;
                         }
-                        android.util.Log.i(TAG, "address : " + log.getAddress().getHex()
+                        android.util.Log.d(TAG, "address : " + log.getAddress().getHex()
                                 + ", tx : " + log.getTxHash().getHex()
                                 + ", filter : " + filter.getInt64()
                                 + ", data : " + Utils.byteToHex(log.getData()));
@@ -176,7 +176,7 @@ public class FilterManager {
         }
 
         public Filter addTopic(String topic) {
-            android.util.Log.i(TAG, "event topic hash : " + topic);
+            android.util.Log.d(TAG, "event topic hash : " + topic);
             return addTopics(Collections.singletonList(topic));
         }
 

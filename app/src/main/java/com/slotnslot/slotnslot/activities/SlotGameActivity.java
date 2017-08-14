@@ -23,10 +23,8 @@ public class SlotGameActivity extends SlotFragmentActivity {
         super.onCreate(savedInstanceState);
         slotType = (SlotType) getIntent().getSerializableExtra(Constants.ACTIVITY_EXTRA_KEY_SLOT_TYPE);
         if (slotType == SlotType.BANKER) {
-            setTitle(Constants.SLOT_BANKER_TITLE);
             fragment = new SlotBankerFragment();
         } else {
-            setTitle(Constants.SLOT_PLAYER_TITLE);
             fragment = new SlotPlayerFragment();
         }
         fragment.setArguments(getIntent().getExtras());
