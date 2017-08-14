@@ -44,6 +44,14 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         betETHTextView = view.findViewById(R.id.play_bet_eth_textview);
 
         invalidSeedEvent();
+        kickEvent();
+        drawEvent();
+
+        onBackPressed(view);
+        return view;
+    }
+
+    private void drawEvent() {
         Observable
                 .combineLatest(
                         viewModel.drawResultSubject,
@@ -63,35 +71,30 @@ public class SlotPlayerFragment extends AbsSlotFragment {
                     viewModel.lastWinSubject.onNext(option.winRate * option.bet);
                     spinButton.setEnabled(true);
                 });
-
-        onBackPressed(view);
-        return view;
     }
 
-    private void onBackPressed(View view) {
-        view.setFocusableInTouchMode(true);
-        view.setOnKeyListener((v, keyCode, event) -> {
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Leave")
-                        .setMessage("Do you really want to leave this slot? When you leave, your balance in the current slot is automatically cashed out to your wallet.")
-                        .setPositiveButton("Yes", (dialog, id) -> getActivity().finish())
-                        .setNegativeButton("No", null)
-                        .show();
-                return true;
-            }
-            return false;
-        });
+    private void kickEvent() {
+        viewModel.playerKicked
+                .compose(bindToLifecycle())
+                .subscribe(b -> {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Kicked")
+                            .setMessage("Banker just kicked you out of the slot. Exit this slot.")
+                            .setPositiveButton("Ok", (d, l) -> getActivity().finish())
+                            .show();
+                }, Throwable::printStackTrace);
     }
 
     private void invalidSeedEvent() {
-        viewModel.invalidSeedFound.subscribe(invalidSeed -> {
-            new AlertDialog.Builder(getActivity())
-                    .setTitle("Invalid seed received")
-                    .setMessage("Banker sent invalid seed. Exit this slot.")
-                    .setPositiveButton("ok", (d, l) -> getActivity().finish())
-                    .show();
-        }, Throwable::printStackTrace);
+        viewModel.invalidSeedFound
+                .compose(bindToLifecycle())
+                .subscribe(invalidSeed -> {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Invalid seed received")
+                            .setMessage("Banker sent invalid seed. Exit this slot.")
+                            .setPositiveButton("Ok", (d, l) -> getActivity().finish())
+                            .show();
+                }, Throwable::printStackTrace);
     }
 
     @Override
@@ -115,5 +118,21 @@ public class SlotPlayerFragment extends AbsSlotFragment {
     @Override
     protected int getViewID() {
         return R.layout.fragment_slot_player;
+    }
+
+    private void onBackPressed(View view) {
+        view.setFocusableInTouchMode(true);
+        view.setOnKeyListener((v, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Leave")
+                        .setMessage("Do you really want to leave this slot? When you leave, your balance in the current slot is automatically cashed out to your wallet.")
+                        .setPositiveButton("Yes", (dialog, id) -> getActivity().finish())
+                        .setNegativeButton("No", null)
+                        .show();
+                return true;
+            }
+            return false;
+        });
     }
 }

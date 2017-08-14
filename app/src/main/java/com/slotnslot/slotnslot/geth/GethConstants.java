@@ -20,9 +20,9 @@ public class GethConstants {
 
     public static String getManagerAddress() {
         if (GethManager.getNetworkConfig().getNetwork() == EthereumNetwork.TESTNET) {
-            return "0xa09b797a9c6501f5c032aa038abcefdc165ab42f";
+            return "0xce10092dbf587a3af476174bf94d79d480d6940b";
         } else {
-            return "0xdbc3e11e344e7449eb34a35fe8bd9b0902b01d13";
+            return "0x04d053f69b504ca6b795c5e4e442222e7f16dcb4";
         }
     }
 }

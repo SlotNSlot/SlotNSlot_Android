@@ -46,7 +46,7 @@ public class MakeSlotStepFourFragment extends MakeSlotStepFragment {
             Utils.showDialog(getActivity(), null, "Max range MUST be higher than Min range.", "ok");
             return Observable.just(false);
         }
-        return Observable.just(false);
+        return Observable.just(true);
     }
 
     @Override

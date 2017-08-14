@@ -18,6 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -43,6 +44,7 @@ public class PlaySlotViewModel {
     public PublishSubject<Boolean> startSpin = PublishSubject.create();
     public PublishSubject<String> invalidSeedFound = PublishSubject.create();
     public PublishSubject<Boolean> clearSpin = PublishSubject.create();
+    public PublishSubject<Boolean> playerKicked = PublishSubject.create();
 
     public Observable<BigInteger> playerBalanceObservable;
     public Observable<BigInteger> bankerBalanceObservable;
@@ -208,6 +210,7 @@ public class PlaySlotViewModel {
         Disposable disposable = machine
                 .bankerSeedInitializedEventObservable()
                 .delay(10, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(response -> {
                     String seed0 = Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue());
                     String seed1 = Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue());
@@ -302,7 +305,7 @@ public class PlaySlotViewModel {
     private void setGameConfirmedEvent() {
         Disposable disposable = machine
                 .gameConfirmedEventObservable()
-                .distinctUntilChanged(response -> response.idx)
+                .distinct(response -> response.randomSeed)
                 .subscribe(response -> {
                     BigInteger reward = response.reward.getValue();
                     int winRate = reward.divide(Convert.toWei(previousBetEth, Convert.Unit.ETHER)).intValue();
@@ -312,6 +315,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "bet : " + previousBetEth);
                     Log.i(TAG, "win rate : " + winRate);
                     Log.i(TAG, "idx : " + index);
+                    Log.i(TAG, "random seed : " + Utils.byteToHex(response.randomSeed.getValue()));
 
                     drawResultSubject.onNext(new DrawOption(winRate, previousBetEth, (index + 1) % 3));
 
@@ -334,7 +338,8 @@ public class PlaySlotViewModel {
 
                         seedReadySubject.onNext(false);
                         clearSpin.onNext(true);
-                        return;
+                    } else {
+                        playerKicked.onNext(true);
                     }
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
@@ -380,17 +385,19 @@ public class PlaySlotViewModel {
             return;
         }
 
-        if (isBanker()) {
-            return;
-        }
-
         machine
-                .leave()
-                .flatMap(receipt -> machine.mPlayer())
-                .subscribe(
-                        address -> Log.i(TAG, "leave... now occupied by : " + address.toString()),
-                        Throwable::printStackTrace
-                );
+                .mPlayer()
+                .subscribe(address -> {
+                    if (!AccountProvider.identical(address.toString())) {
+                        return;
+                    }
+
+                    machine
+                            .leave()
+                            .flatMap(receipt -> machine.mPlayer())
+                            .subscribe(o -> {
+                            }, Throwable::printStackTrace);
+                });
         Utils.showToast("Your balance [" + Convert.fromWei(rxSlotRoom.getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER) + "] ETH in the slot has been withdrawn and put into your wallet.");
     }
 
