@@ -292,6 +292,7 @@ public class Utils {
     public static SlotResultDrawingLine getDrawLine(int lineNum, int slotResult) {
         ArrayList<DrawingLine> drawingLines = new ArrayList<>();
         ArrayList<PayLineTuple> payLineTuples = getPayLineTuples(slotResult);
+        if (payLineTuples == null) return new SlotResultDrawingLine(SlotResultDrawingLine.Drawable.BIGWIN, null, null);
         Integer[][] slotLineInfo = new Integer[5][3];
         for (int i = 0; i < slotLineInfo.length; i++) {
             for (int j = 0; j < slotLineInfo[i].length; j++) {
@@ -529,6 +530,7 @@ public class Utils {
 
     private static ArrayList<PayLineTuple> getPayLineTuples(int slotResult) {
         ArrayList<Integer> lineCaseList = getLineCase(slotResult);
+        if (lineCaseList == null) return null;
         ArrayList<PayLineTuple> payLineTuples = new ArrayList<>();
         int[][] duplicateList = new int[Constants.LINE_CASE_2000.length][2];
         for (int i = 0; i < lineCaseList.size(); i++) {
