@@ -175,7 +175,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         complete.delay(600, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(3));
         complete.delay(800, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(4));
 
-//        complete.delay(2000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> drawResult(40));
+        complete.delay(2000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> drawResult(7, 0.1));
     }
 
     private void spin(int index) {
@@ -207,7 +207,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         }
     }
 
-    public void drawResult(int slotResult) {
+    public void drawResult(int slotResult, double bet) {
         if (slotResult == 0) {
             drawDefeatLine(false);
             return;
@@ -216,7 +216,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         if (slotResultDrawline.drawable == SlotResultDrawingLine.Drawable.DRAWABLE) {
             drawSlot(slotResultDrawline);
         } else {
-            drawBigWin(slotResult);
+            drawBigWin(slotResult * bet);
         }
     }
 
@@ -231,10 +231,10 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         tapStop(isBigwin);
     }
 
-    private void drawBigWin(int slotResult) {
+    private void drawBigWin(double lastWin) {
         drawDefeatLine(true);
         bigWinContainer.setVisibility(View.VISIBLE);
-        bigWinTextView.setText("+" + slotResult);
+        bigWinTextView.setText(String.format("+ %.3f", lastWin));
     }
 
     private void drawSlot(SlotResultDrawingLine slotResultDrawingLine) {

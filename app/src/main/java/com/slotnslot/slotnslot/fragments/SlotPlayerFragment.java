@@ -112,7 +112,7 @@ public class SlotPlayerFragment extends AbsSlotFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(option -> {
                     viewModel.updateBalance();
-                    drawResult(option.winRate);
+                    drawResult(option.winRate, option.bet);
                     viewModel.lastWinSubject.onNext(option.winRate * option.bet);
                     spinButton.setEnabled(true);
                 });
