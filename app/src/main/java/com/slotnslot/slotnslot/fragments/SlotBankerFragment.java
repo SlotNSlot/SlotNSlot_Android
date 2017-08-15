@@ -31,7 +31,7 @@ public class SlotBankerFragment extends AbsSlotFragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(option -> {
                     viewModel.updateBalance();
-                    this.drawResult(option.winRate);
+                    this.drawResult(option.winRate, option.bet);
                     viewModel.lastWinSubject.onNext(option.winRate * option.bet);
                 });
 
