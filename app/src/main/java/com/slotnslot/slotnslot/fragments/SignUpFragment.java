@@ -1,5 +1,6 @@
 package com.slotnslot.slotnslot.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -154,6 +155,14 @@ public class SignUpFragment extends SlotRootFragment {
 
     @OnClick(R.id.signup_signin_textview)
     public void onClickSignIn() {
+        if (CredentialManager.getAccounts().size() == 0) {
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("No Account")
+                    .setMessage("There is no account. Please create a new one.")
+                    .setPositiveButton("Ok", null)
+                    .show();
+            return;
+        }
         //TODO Move To SignIn Fragment
         Fragment frag = new SignInListFragment();
         FragmentManager fmanager = getActivity().getSupportFragmentManager();
