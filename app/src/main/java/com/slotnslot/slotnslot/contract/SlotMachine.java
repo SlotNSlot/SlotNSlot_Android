@@ -217,19 +217,19 @@ public final class SlotMachine extends Contract {
         return executeCallSingleValueReturnObservable(function);
     }
 
-    public Observable<Bytes32> previousPlayerSeed() {
+    public Observable<Bytes32> previousPlayerSeed(Uint256 idx) {
         Function function = new Function(
                 "previousPlayerSeed",
-                Collections.emptyList(),
+                Collections.singletonList(idx),
                 Collections.singletonList(new TypeReference<Bytes32>() {
                 }));
         return executeCallSingleValueReturnObservable(function);
     }
 
-    public Observable<Bytes32> previousBankerSeed() {
+    public Observable<Bytes32> previousBankerSeed(Uint256 idx) {
         Function function = new Function(
                 "previousBankerSeed",
-                Collections.emptyList(),
+                Collections.singletonList(idx),
                 Collections.singletonList(new TypeReference<Bytes32>() {
                 }));
         return executeCallSingleValueReturnObservable(function);

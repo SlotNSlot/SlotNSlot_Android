@@ -10,6 +10,7 @@ import com.slotnslot.slotnslot.provider.RxSlotRoom;
 import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 
+import org.web3j.abi.datatypes.Bool;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.abi.datatypes.generated.Uint8;
 
@@ -70,7 +71,7 @@ public class PlaySlotViewModel {
     private boolean seedReady = false;
     private Boolean[] txConfirmation = {true, true, true};
 
-    private PlayerSeed playerSeed;
+    private PlayerSeed playerSeed = new PlayerSeed();
 
     public PlaySlotViewModel(RxSlotRoom rxSlotRoom) {
         this.rxSlotRoom = rxSlotRoom;
@@ -174,26 +175,11 @@ public class PlaySlotViewModel {
     }
 
     private void setGameEvents() {
-        checkSeedReady();
-
         setOccupiedEvent();
-        setBankerSeedInitializedEvent();
         setGameInitializedEvent();
         setBankerSeedSetEvent();
         setGameConfirmedEvent();
         setPlayerLeftEvent();
-    }
-
-    private void checkSeedReady() {
-        Disposable disposable = machine
-                .initialBankerSeedReady()
-                .subscribe(ready -> {
-                    Log.i(TAG, "banker seed ready : " + ready.getValue());
-                    if (ready.getValue()) {
-                        seedReadySubject.onNext(true);
-                    }
-                });
-        compositeDisposable.add(disposable);
     }
 
     private void setOccupiedEvent() {
@@ -207,29 +193,6 @@ public class PlaySlotViewModel {
 
                     Utils.showToast("slot occupied by : " + response.player.toString());
                     rxSlotRoom.updateBalance();
-                }, Throwable::printStackTrace);
-        compositeDisposable.add(disposable);
-    }
-
-    private void setBankerSeedInitializedEvent() {
-        Disposable disposable = machine
-                .bankerSeedInitializedEventObservable()
-                .delay(10, TimeUnit.SECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(response -> {
-                    String seed0 = Utils.byteToHex(response._bankerSeed.getValue().get(0).getValue());
-                    String seed1 = Utils.byteToHex(response._bankerSeed.getValue().get(1).getValue());
-                    String seed3 = Utils.byteToHex(response._bankerSeed.getValue().get(2).getValue());
-
-                    Log.i(TAG, "banker initial seed1 : " + seed0);
-                    Log.i(TAG, "banker initial seed2 : " + seed1);
-                    Log.i(TAG, "banker initial seed3 : " + seed3);
-
-                    playerSeed.setBankerSeeds(seed0, seed1, seed3);
-
-                    Utils.showToast("banker seed initialized.");
-                    stopWatch.onNext(false);
-                    seedReadySubject.onNext(true);
                 }, Throwable::printStackTrace);
         compositeDisposable.add(disposable);
     }
@@ -350,7 +313,6 @@ public class PlaySlotViewModel {
                 .subscribe(response -> {
                     if (isBanker()) {
                         Log.i(TAG, "player : " + response.player.toString() + " has left");
-
                         Utils.showToast("player : " + response.player.toString() + " has left");
 
                         seedReadySubject.onNext(false);
@@ -363,9 +325,6 @@ public class PlaySlotViewModel {
     }
 
     public void gameOccupy(Double deposit) {
-        if (deposit == null || isBanker()) {
-            return;
-        }
         machine
                 .initialPlayerSeedReady()
                 .filter(ready -> !ready.getValue())
@@ -373,6 +332,7 @@ public class PlaySlotViewModel {
                 .map(ready -> playerSeed.getInitialSeed())
                 .flatMap(initialSeeds -> {
                     stopWatch.onNext(true);
+                    waitBankerInitialSeeds();
                     return machine.occupy(initialSeeds, Convert.toWei(deposit, Convert.Unit.ETHER));
                 })
                 .map(receipt -> machine.getGameOccupiedEvents(receipt))
@@ -401,12 +361,61 @@ public class PlaySlotViewModel {
 
     public void onCreate(Double deposit) {
         machine = SlotMachine.load(rxSlotRoom.getSlotAddress());
+        setGameEvents();
+
+        if (isBanker()) {
+            return;
+        }
+
+        if (deposit != null) {
+            gameOccupy(deposit);
+            return;
+        }
+
         PlayerSeed.load(rxSlotRoom.getSlotAddress())
                 .subscribe(seed -> {
                     playerSeed = (PlayerSeed) seed;
-                    gameOccupy(deposit);
+                    waitBankerInitialSeeds();
                 }, Throwable::printStackTrace);
-        setGameEvents();
+    }
+
+    private void waitBankerInitialSeeds() {
+        if (playerSeed.isBankerSeedValid()) {
+            seedReadySubject.onNext(true);
+            return;
+        }
+        Disposable disposable = Observable.interval(1, TimeUnit.SECONDS)
+                .flatMap(n -> machine.initialBankerSeedReady())
+                .filter(Bool::getValue)
+                .take(1)
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(b -> Observable.zip(
+                        machine.previousBankerSeed(new Uint256(0)),
+                        machine.previousBankerSeed(new Uint256(1)),
+                        machine.previousBankerSeed(new Uint256(2)),
+                        (byte0, byte1, byte2) -> {
+                            String seed0 = Utils.byteToHex(byte0.getValue());
+                            String seed1 = Utils.byteToHex(byte1.getValue());
+                            String seed2 = Utils.byteToHex(byte2.getValue());
+                            if (Utils.isEmpty(seed0) || Utils.isEmpty(seed1) || Utils.isEmpty(seed2)) {
+                                Log.e(TAG, "banker initial seeds invalid...");
+                                invalidSeedFound.onNext("invalid");
+                                return false;
+                            }
+                            Log.i(TAG, "banker initial seed1 : " + seed0);
+                            Log.i(TAG, "banker initial seed2 : " + seed1);
+                            Log.i(TAG, "banker initial seed2 : " + seed2);
+
+                            playerSeed.setBankerSeeds(seed0, seed1, seed2);
+                            playerSeed.save(machine.getContractAddress());
+                            Utils.showToast("banker seed initialized.\npreparing the game...");
+                            return true;
+                        }))
+                .filter(b -> b)
+                .delay(10, TimeUnit.SECONDS)
+                .subscribe(o -> seedReadySubject.onNext(true), Throwable::printStackTrace);
+
+        compositeDisposable.add(disposable);
     }
 
     public void onDestroy() {

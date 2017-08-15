@@ -30,6 +30,10 @@ public class PlayerSeed extends Seed {
         return super.getInitialSeed();
     }
 
+    public boolean isBankerSeedValid() {
+        return Utils.isNotEmpty(bankerSeeds[0]) && Utils.isNotEmpty(bankerSeeds[1]) && Utils.isNotEmpty(bankerSeeds[2]);
+    }
+
     public Bytes32 getSeed() {
         return getSeed(index);
     }
