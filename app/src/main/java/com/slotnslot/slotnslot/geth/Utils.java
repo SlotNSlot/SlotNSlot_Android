@@ -221,6 +221,10 @@ public class Utils {
         return str == null || str.length() == 0;
     }
 
+    public static boolean isNotEmpty(CharSequence str) {
+        return !isEmpty(str);
+    }
+
     public static List<EventValues> extractEventParameters(Event event, Receipt transactionReceipt) throws Exception {
         Logs logs = transactionReceipt.getLogs();
         List<EventValues> values = new ArrayList<>();

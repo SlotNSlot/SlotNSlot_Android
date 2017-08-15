@@ -367,6 +367,21 @@ public class PlayExampleActivity extends RxAppCompatActivity {
                                 Log.i(TAG, "mMaxPrize : " + response.mMaxPrize.getValue());
                                 Log.i(TAG, "banker balance : " + response.bankerBalance.getValue());
                             });
+                    machine.previousBankerSeed(new Uint256(0))
+                            .subscribe(response -> {
+                                String seed = Utils.byteToHex(response.getValue());
+                                Log.i(TAG, "banker initial seed0 : " + seed);
+                            }, Throwable::printStackTrace);
+                    machine.previousBankerSeed(new Uint256(1))
+                            .subscribe(response -> {
+                                String seed = Utils.byteToHex(response.getValue());
+                                Log.i(TAG, "banker initial seed1 : " + seed);
+                            }, Throwable::printStackTrace);
+                    machine.previousBankerSeed(new Uint256(2))
+                            .subscribe(response -> {
+                                String seed = Utils.byteToHex(response.getValue());
+                                Log.i(TAG, "banker initial seed2 : " + seed);
+                            }, Throwable::printStackTrace);
                 })
                 .subscribe(() -> {
                 }, Throwable::printStackTrace);
