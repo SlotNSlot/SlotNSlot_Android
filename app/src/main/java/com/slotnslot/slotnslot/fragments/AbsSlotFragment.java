@@ -175,7 +175,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
         complete.delay(600, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(3));
         complete.delay(800, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> spin(4));
 
-        complete.delay(2000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> drawResult(7, 0.1));
+//        complete.delay(2000, TimeUnit.MILLISECONDS).observeOn(AndroidSchedulers.mainThread()).subscribe(() -> drawResult(7, 0.1));
     }
 
     private void spin(int index) {
