@@ -33,6 +33,8 @@ public class WalletFragment extends SlotRootFragment {
     TextView addressTextView;
     @BindView(R.id.wallet_withdraw_eth_button)
     Button withdrawEthButton;
+    @BindView(R.id.wallet_change_eth_button)
+    Button changeButton;
     @BindView(R.id.wallet_more_button)
     ImageButton moreButton;
 
@@ -49,6 +51,13 @@ public class WalletFragment extends SlotRootFragment {
             ftrans.replace(R.id.fragment_framelayout, fragment);
             ftrans.addToBackStack(null);
             ftrans.commit();
+        });
+        RxView.clicks(changeButton).subscribe(v -> {
+            ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("text", addressTextView.getText());
+            clipboard.setPrimaryClip(clip);
+
+            Utils.showToast("Wallet address copied. It will be charged when you send Rinkeby testnet Ether to this address.");
         });
         RxView.clicks(moreButton).subscribe(v -> {
             ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);

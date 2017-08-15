@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 
 import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
+import com.slotnslot.slotnslot.utils.Convert;
 
 import java.util.concurrent.TimeUnit;
 
@@ -144,6 +145,16 @@ public class SlotPlayerFragment extends AbsSlotFragment {
     @Override
     protected void setClickEvents() {
         RxView.clicks(spinButton).subscribe(o -> {
+            double playerBalance = Convert.fromWei(viewModel.getRxSlotRoom().getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER).doubleValue();
+            double currentBet = viewModel.getCurrentLine() * viewModel.getCurrentBetEth();
+            if (playerBalance < currentBet) {
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Insufficient Balance")
+                        .setMessage("You don't have enough balance for next game. Please adjust your bet.")
+                        .setPositiveButton("Ok", null)
+                        .show();
+                return;
+            }
             spinButton.setEnabled(false);
             tapSpin();
             if ("test".equals(viewModel.getRxSlotRoom().getSlotAddress())) {

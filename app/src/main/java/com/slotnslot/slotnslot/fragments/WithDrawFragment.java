@@ -13,6 +13,7 @@ import com.slotnslot.slotnslot.R;
 import com.slotnslot.slotnslot.activities.MyPageActivity;
 import com.slotnslot.slotnslot.geth.CredentialManager;
 import com.slotnslot.slotnslot.geth.TransactionManager;
+import com.slotnslot.slotnslot.geth.Utils;
 import com.slotnslot.slotnslot.models.AccountViewModel;
 import com.slotnslot.slotnslot.provider.AccountProvider;
 import com.slotnslot.slotnslot.utils.Convert;
@@ -80,31 +81,12 @@ public class WithDrawFragment extends SlotRootFragment {
         String toAddress = withdrawAddress.getText().toString();
         double etherAmount = Double.parseDouble(withdrawAmount.getText().toString());
 
-        if (toAddress.length() == 1) {
-            Observable
-                    .<String>create(e -> {
-                        Account account = CredentialManager.getKeyStore().getAccounts().get(Integer.parseInt(toAddress));
-                        e.onNext(account.getAddress().getHex());
-                        e.onComplete();
-                    })
-                    .flatMap(address -> TransactionManager.sendFunds(address, Convert.toWei(etherAmount, Convert.Unit.ETHER)))
-                    .subscribe(
-                            hash -> {
-                                Log.i(TAG, "ether sent, hash : " + hash.getHex());
-                                withdrawAmount.setText("");
-                                AccountProvider.updateBalance();
-                                TransactionManager.processResponse(hash)
-                                        .subscribe(receipt -> AccountProvider.updateBalance());
-                            },
-                            Throwable::printStackTrace);
-            return;
-        }
-
         TransactionManager.sendFunds(toAddress, Convert.toWei(etherAmount, Convert.Unit.ETHER))
                 .subscribe(
                         hash -> {
                             Log.i(TAG, "ether sent, hash : " + hash.getHex());
                             withdrawAmount.setText("");
+                            Utils.showToast("sent [" + etherAmount + "] ETH to address : " + toAddress);
                             AccountProvider.updateBalance();
                             TransactionManager.processResponse(hash)
                                     .subscribe(receipt -> AccountProvider.updateBalance());
