@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
 import com.slotnslot.slotnslot.R;
+import com.slotnslot.slotnslot.fragments.SignInFragment;
 import com.slotnslot.slotnslot.fragments.SignInListFragment;
 import com.slotnslot.slotnslot.fragments.SignUpFragment;
 import com.slotnslot.slotnslot.geth.GethManager;
@@ -33,7 +34,7 @@ public class SignInUpActivity extends SlotFragmentActivity {
     @Override
     public void onBackPressed() {
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.fragment_framelayout);
-        if (f instanceof SignInListFragment) {
+        if (f instanceof SignInListFragment || f instanceof SignInFragment) {
             super.onBackPressed();
             return;
         }
