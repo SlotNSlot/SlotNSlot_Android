@@ -3,7 +3,7 @@ package com.slotnslot.slotnslot.utils;
 import com.slotnslot.slotnslot.R;
 
 public class Constants {
-    public static final int EXPANSION_MAIN_VERSION = 2;
+    public static final int EXPANSION_MAIN_VERSION = 8;
 
     public static final int DURATION = 1500;
 

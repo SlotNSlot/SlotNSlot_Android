@@ -203,11 +203,12 @@ public class LandingPageActivity extends SlotRootActivity {
                     long currentTime = System.currentTimeMillis() / 1000;
                     long timeDiff = currentTime - header.getTime();
                     long size = GethManager.getNode().getPeersInfo().size();
-                    if (size > 2 && timeDiff < 300) {
+
+                    SyncProgress syncProgress = GethManager.getClient().syncProgress(GethManager.getMainContext());
+                    if (size > 2 && timeDiff < 300 && syncProgress == null) {
                         synced.onComplete();
                     }
 
-                    SyncProgress syncProgress = GethManager.getClient().syncProgress(GethManager.getMainContext());
                     if (syncProgress == null) {
                         return;
                     }
