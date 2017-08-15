@@ -2,6 +2,8 @@ package com.slotnslot.slotnslot.activities;
 
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,10 +29,10 @@ public class SlotFragmentActivity extends SlotRootActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.back_button);
+        setSupportActionBar(toolbar);
         toolbar.setNavigationOnClickListener(v -> {
             onClickBackButton();
         });
-        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
