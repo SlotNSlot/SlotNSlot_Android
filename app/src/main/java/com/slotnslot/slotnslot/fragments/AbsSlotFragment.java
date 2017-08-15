@@ -233,6 +233,7 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
 
     private void drawBigWin(double lastWin) {
         drawDefeatLine(true);
+        bigWinContainer.bringToFront();
         bigWinContainer.setVisibility(View.VISIBLE);
         bigWinTextView.setText(String.format("+ %.3f", lastWin));
     }
