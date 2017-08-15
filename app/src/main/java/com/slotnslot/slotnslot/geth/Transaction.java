@@ -113,8 +113,8 @@ public class Transaction {
             gas = GethConstants.DEFAULT_GAS_LIMIT;
         }
         if (gasPrice == null) {
-//            gasPrice = BigInteger.valueOf(GethManager.getClient().suggestGasPrice(txContext).getInt64());
-            gasPrice = GethConstants.DEFAULT_GAS_PRICE; // for testnet only
+            gasPrice = BigInteger.valueOf(GethManager.getClient().suggestGasPrice(txContext).getInt64());
+//            gasPrice = GethConstants.DEFAULT_GAS_PRICE; // for testnet only
         }
         return new org.ethereum.geth.Transaction(
                 nonce, // nonce
