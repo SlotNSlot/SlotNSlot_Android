@@ -49,7 +49,7 @@ public class PlaySlotViewModel {
     public PublishSubject<Boolean> playerKicked = PublishSubject.create();
     public PublishSubject<Boolean> alreadyOccupied = PublishSubject.create();
     public PublishSubject<Boolean> fundInsufficient = PublishSubject.create();
-    public Observable<Boolean> timeout = stopWatch.debounce(60, TimeUnit.SECONDS).filter(b -> b);
+    public Observable<Boolean> timeout = stopWatch.debounce(120, TimeUnit.SECONDS).filter(b -> b);
 
     public Observable<BigInteger> playerBalanceObservable;
     public Observable<BigInteger> bankerBalanceObservable;
@@ -271,7 +271,6 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "bet : " + bet);
 
                     previousBetEth = bet;
-                    rxSlotRoom.updateBalance();
 
                     if (isBanker()) {
                         betEthSubject.onNext(bet);

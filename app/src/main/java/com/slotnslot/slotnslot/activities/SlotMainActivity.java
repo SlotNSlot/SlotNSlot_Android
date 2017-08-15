@@ -115,9 +115,9 @@ public class SlotMainActivity extends SlotRootActivity {
             Utils.showToast("Wallet address copied.");
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                .setAction("Action", null).show());
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -183,7 +183,7 @@ public class SlotMainActivity extends SlotRootActivity {
             }
             this.doubleBackToExitPressedOnce = true;
             Utils.showToast("press back again to exit");
-            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 2000);
+            new Handler().postDelayed(() -> doubleBackToExitPressedOnce = false, 1000);
         }
     }
 

@@ -41,18 +41,4 @@
         android:textColor="#c9b3e3"
         android:textSize="15sp" />
 
-    <Button
-        android:id="@+id/sync_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_below="@+id/loading_text"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:background="#ff1c71"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:textSize="12sp"
-        android:text="stop syncing"
-        android:textColor="@color/white" />
-
 </RelativeLayout>
