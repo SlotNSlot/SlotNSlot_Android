@@ -86,8 +86,8 @@ public class RxSlotRooms {
     public static void updatePlaySlotMachines() {
         clearPlaySlot();
 
-//        SlotRoom test = new SlotRoom("test", "test", 0.15, 2000, 0.001, 0.050, "test", Convert.toWei(10, Convert.Unit.ETHER));
-//        test.setPlayerBalance(Convert.toWei(10, Convert.Unit.ETHER));
+//        SlotRoom test = new SlotRoom("test", "test", 0.15, 2000, 120.001, 1.050, "test", Convert.toWei(10, Convert.Unit.ETHER));
+//        test.setPlayerBalance(Convert.toWei(1, Convert.Unit.ETHER));
 //        addSlot(test);
 
         slotMachineStorageLoaded.subscribe(() -> slotMachineStorage

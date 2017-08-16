@@ -34,6 +34,7 @@ public class SlotBankerFragment extends AbsSlotFragment {
                     this.drawResult(option.winRate, option.bet);
                     viewModel.lastWinSubject.onNext(option.winRate * option.bet);
                 });
+        viewModel.startSpin.subscribe(bool -> tapSpin());
 
         onBackPressed(view);
         return view;
