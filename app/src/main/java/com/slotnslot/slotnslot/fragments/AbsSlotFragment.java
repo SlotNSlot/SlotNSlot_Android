@@ -115,7 +115,6 @@ public abstract class AbsSlotFragment extends SlotRootFragment {
 
         viewModel.getRxSlotRoom().updateBalance();
         viewModel.seedReadySubject.observeOn(AndroidSchedulers.mainThread()).subscribe(ready -> loadingViewSetVisible(!ready));
-        viewModel.startSpin.subscribe(bool -> tapSpin());
         viewModel.clearSpin.subscribe(bool -> {
             bigWinContainer.setVisibility(View.INVISIBLE);
             removePayLines();

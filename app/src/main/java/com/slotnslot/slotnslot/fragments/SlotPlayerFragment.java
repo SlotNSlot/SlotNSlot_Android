@@ -13,7 +13,6 @@ import android.widget.RelativeLayout;
 
 import com.jakewharton.rxbinding2.view.RxView;
 import com.slotnslot.slotnslot.R;
-import com.slotnslot.slotnslot.utils.Convert;
 
 import java.util.concurrent.TimeUnit;
 
@@ -52,9 +51,32 @@ public class SlotPlayerFragment extends AbsSlotFragment {
         drawEvent();
         occupiedEvent();
         noResponseEvent();
+        spinStartEvent();
+        insufficientBalanceEvent();
 
         onBackPressed(view);
         return view;
+    }
+
+    private void spinStartEvent() {
+        viewModel.startSpin
+                .compose(bindToLifecycle())
+                .subscribe(bool -> {
+                    spinButton.setEnabled(false);
+                    tapSpin();
+                }, Throwable::printStackTrace);
+    }
+
+    private void insufficientBalanceEvent() {
+        viewModel.balanceInsufficient
+                .compose(bindToLifecycle())
+                .subscribe(b -> {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle("Insufficient Balance")
+                            .setMessage("You don't have enough balance for next game. Please adjust your bet.")
+                            .setPositiveButton("Ok", null)
+                            .show();
+                }, Throwable::printStackTrace);
     }
 
     private void noResponseEvent() {
@@ -115,6 +137,7 @@ public class SlotPlayerFragment extends AbsSlotFragment {
                     drawResult(option.winRate, option.bet);
                     viewModel.lastWinSubject.onNext(option.winRate * option.bet);
                     spinButton.setEnabled(true);
+                    viewModel.spinStarted = false;
                 });
     }
 
@@ -145,21 +168,7 @@ public class SlotPlayerFragment extends AbsSlotFragment {
     @Override
     protected void setClickEvents() {
         RxView.clicks(spinButton).subscribe(o -> {
-            double playerBalance = Convert.fromWei(viewModel.getRxSlotRoom().getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER).doubleValue();
-            double currentBet = viewModel.getCurrentLine() * viewModel.getCurrentBetEth();
-            if (playerBalance < currentBet) {
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Insufficient Balance")
-                        .setMessage("You don't have enough balance for next game. Please adjust your bet.")
-                        .setPositiveButton("Ok", null)
-                        .show();
-                return;
-            }
-            spinButton.setEnabled(false);
-            tapSpin();
-            if ("test".equals(viewModel.getRxSlotRoom().getSlotAddress())) {
-                return;
-            }
+            viewModel.spinStarted = true;
             viewModel.initGame();
         });
 //        RxView.clicks(autoButton).subscribe(o -> tapStop(false));

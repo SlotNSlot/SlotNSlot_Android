@@ -50,6 +50,7 @@ public class PlaySlotViewModel {
     public PublishSubject<Boolean> playerKicked = PublishSubject.create();
     public PublishSubject<Boolean> alreadyOccupied = PublishSubject.create();
     public PublishSubject<Boolean> fundInsufficient = PublishSubject.create();
+    public PublishSubject<Boolean> balanceInsufficient = PublishSubject.create();
     public Observable<Boolean> timeout = stopWatch.debounce(120, TimeUnit.SECONDS).filter(b -> b);
 
     public Observable<BigInteger> playerBalanceObservable;
@@ -69,6 +70,7 @@ public class PlaySlotViewModel {
     private double currentTotalBet = currentLine * currentBetEth;
 
     private boolean seedReady = false;
+    public boolean spinStarted = false;
     private Boolean[] txConfirmation = {true, true, true};
 
     private PlayerSeed playerSeed = new PlayerSeed();
@@ -198,6 +200,20 @@ public class PlaySlotViewModel {
     }
 
     public void initGame() {
+        double playerBalance = Convert.fromWei(rxSlotRoom.getSlotRoom().getPlayerBalance(), Convert.Unit.ETHER).doubleValue();
+        double currentBet = currentLine * currentBetEth;
+        if (playerBalance < currentBet) {
+            balanceInsufficient.onNext(true);
+            spinStarted = false;
+            return;
+        }
+
+        spinStarted = true;
+        startSpin.onNext(true);
+        if ("test".equals(rxSlotRoom.getSlotAddress())) {
+            return;
+        }
+
         machine
                 .initialBankerSeedReady()
                 .subscribe(bool -> {
