@@ -135,7 +135,15 @@ public class SlotListAdapter extends RecyclerView.Adapter {
                 holder.itemView.setOnClickListener(view -> {
                     SlotRoomViewModel slotRoomViewModel = items.get(position - 1);
                     if (type == ListType.PLAY) {
-                        setDeposit(slotRoomViewModel);
+                        AccountProvider.getBalance()
+                                .subscribe(balance -> {
+                                    double playerBalance = Convert.fromWei(balance, Convert.Unit.ETHER).doubleValue();
+                                    if (slotRoomViewModel.getRxSlotRoom().getSlotRoom().getMinBet() > playerBalance) {
+                                        Utils.showDialog(fragment.getActivity(), "Insufficient Balance", "The minimum bet amount is greater than your balance. Please choose another slot machine.", "ok");
+                                        return;
+                                    }
+                                    setDeposit(slotRoomViewModel);
+                                }, Throwable::printStackTrace);
                     } else {
                         enterSlotRoom(slotRoomViewModel);
                     }
@@ -173,8 +181,9 @@ public class SlotListAdapter extends RecyclerView.Adapter {
 
                     AccountProvider.getBalance()
                             .subscribe(balance -> {
-                                if (deposit > Convert.fromWei(balance, Convert.Unit.ETHER).doubleValue() - 0.5) {
-                                    Utils.showDialog(fragment.getActivity(), null, "deposit amount exceeds balance + 0.5(ETH) gas fee.", "ok");
+                                double playerBalance = Convert.fromWei(balance, Convert.Unit.ETHER).doubleValue();
+                                if (deposit > playerBalance - 0.5) {
+                                    Utils.showDialog(fragment.getActivity(), "Insufficient Balance", "deposit amount exceeds balance + 0.5(ETH) gas fee.", "ok");
                                     return;
                                 }
                                 enterSlotRoom(viewModel);
