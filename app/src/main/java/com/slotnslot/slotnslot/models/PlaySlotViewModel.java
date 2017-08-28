@@ -250,6 +250,7 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "bet : " + bet);
 
                     previousBetEth = bet;
+                    Utils.showToast("game initialized.");
 
                     if (isBanker()) {
                         betEthSubject.onNext(bet);
@@ -281,6 +282,8 @@ public class PlaySlotViewModel {
                     }
                     playerSeed.setNextBankerSeed(bankerSeed);
 
+                    Utils.showToast("banker seed set.\nsending player seed.");
+
                     Completable
                             .complete()
                             .observeOn(Schedulers.computation())
@@ -311,6 +314,8 @@ public class PlaySlotViewModel {
                     Log.i(TAG, "win rate : " + winRate);
                     Log.i(TAG, "idx : " + index);
                     Log.i(TAG, "random seed : " + Utils.byteToHex(response.randomSeed.getValue()));
+
+                    Utils.showToast("game confirmed.");
 
                     stopWatch.onNext(false);
                     drawResultSubject.onNext(new DrawOption(winRate, previousBetEth, (index + 1) % 3));

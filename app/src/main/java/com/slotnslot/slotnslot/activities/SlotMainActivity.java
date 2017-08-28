@@ -34,11 +34,15 @@ import com.slotnslot.slotnslot.utils.Constants;
 import com.slotnslot.slotnslot.utils.Convert;
 import com.slotnslot.slotnslot.utils.SlotUtil;
 
+import org.ethereum.geth.Node;
+
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class SlotMainActivity extends SlotRootActivity {
     public static final String TAG = SlotMainActivity.class.getSimpleName();
@@ -55,6 +59,8 @@ public class SlotMainActivity extends SlotRootActivity {
     TextView amountTextView;
     @BindView(R.id.global_loading_container)
     RelativeLayout loadingView;
+    @BindView(R.id.nav_bio_textview)
+    TextView peerCount;
 
     private AccountViewModel accountViewModel;
     private boolean doubleBackToExitPressedOnce;
@@ -132,6 +138,18 @@ public class SlotMainActivity extends SlotRootActivity {
         setAccountModel();
         RxSlotRooms.init();
         continuePlaying();
+        showPeerCount();
+    }
+
+    private void showPeerCount() {
+        Observable.interval(1, TimeUnit.SECONDS)
+                .compose(bindToLifecycle())
+                .map(n -> {
+                    Node node = GethManager.getNode();
+                    return node.getPeersInfo().size();
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(size -> peerCount.setText("peer count : " + size), Throwable::printStackTrace);
     }
 
     private void continuePlaying() {

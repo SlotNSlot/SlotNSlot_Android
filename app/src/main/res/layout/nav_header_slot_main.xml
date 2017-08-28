@@ -16,7 +16,7 @@
         android:layout_marginLeft="22.8dp"
         android:textSize="13sp"
         android:textColor="@color/white"
-        android:text="Android Studio" />
+        android:text="SlotNSlot" />
 
     <TextView
         android:id="@+id/nav_bio_textview"
@@ -27,7 +27,7 @@
         android:layout_below="@id/nav_username_textview"
         android:textSize="13sp"
         android:textColor="@color/white"
-        android:text="someone in the crowd"/>
+        android:text="peer count : 0"/>
 
     <View
         android:layout_width="match_parent"
